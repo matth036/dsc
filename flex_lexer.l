@@ -50,6 +50,8 @@ AAA555                       display_current_time_view();
 AAA556                       add_seconds_dialog();
 AAA554                       subtract_seconds_dialog();
 
+AAA090 angular_coordinate_view();
+
 AAA58                        navigation_star_menu_test();
 AAA360                       sexagesimal_test_dialog();
 

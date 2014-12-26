@@ -551,6 +551,29 @@ void countdown_to_Saint_Patricks_Day()
 }
 
 
+/* AAA090 */
+void angular_coordinate_view(){
+  auto lcd = check_out_main_lcd();
+  Simple_Altazimuth_Scope* scope = get_main_simple_telescope();
+  std::unique_ptr<Angular_Coordinates_View> view = 
+    std::unique_ptr<Angular_Coordinates_View>( new Angular_Coordinates_View( scope ) );
+  
+  while( !view->is_finished() ){
+    lcd->setCursor(0,0);
+    lcd = view->write_first_line(std::move(lcd));
+    lcd->setCursor(0,1);
+    lcd = view->write_second_line(std::move(lcd));
+    lcd->setCursor(0,2);
+    lcd = view->write_third_line(std::move(lcd));
+    lcd->setCursor(0,3);
+    lcd = view->write_fourth_line(std::move(lcd));
+  }
+
+  check_in_main_lcd(std::move(lcd));
+}
+
+
+
 /* AAA58 */
 void navigation_star_menu_test(){
   auto lcd = check_out_main_lcd();
