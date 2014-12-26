@@ -247,12 +247,13 @@ int main(void)
     while (n < 20) {
       n += lcd->print(' ');
     }
+
     n = lcd->print(dsc_controller::char_buffer);
     while (n < 20) {
       n += lcd->print(' ');
     }
-    Alt_Azi_Snapshot_t data = main_simple_telescope->get_snapshot();
 
+    Alt_Azi_Snapshot_t data = main_simple_telescope->get_snapshot();
     lcd->setCursor( 0, 1);
     n = 0;
     n += lcd->print( data.azi_value );
@@ -263,6 +264,20 @@ int main(void)
     while (n < 20) {
       n += lcd->print(' ');
     }
+    
+    sexagesimal::Sexagesimal longitude = get_backup_domain_longitude();
+    sexagesimal::Sexagesimal latitude = get_backup_domain_latitude();
+    n=0;
+    n += lcd->print( longitude.to_string() ); 
+    while (n < 10) {
+      n += lcd->print(' ');
+    }
+    n += lcd->print( latitude.to_latitude_string() ); 
+    while (n < 20) {
+      n += lcd->print(' ');
+    }
+
+
   }
 }
 

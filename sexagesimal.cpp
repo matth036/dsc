@@ -365,3 +365,43 @@ const std::string sexagesimal::Sexagesimal::to_dms_string()
   return str;
 }
 
+/* Usefull for comparison with Nautical Almanac. */
+const std::string sexagesimal::Sexagesimal::to_latitude_string()
+{
+  std::string str;
+  std::string addon;
+  if (data.ui & 1 << 31) {
+    str = 'N';
+  } else {
+    str = 'S';
+  }
+  str += sexagesimal::to_string_hack(msb());	// std::to_string( msb() );
+  while (str.size() < 4) {	// space padding
+    str = ' ' + str;
+  }
+  str += ':';
+  addon = sexagesimal::to_string_hack(minutes());	// std::to_string( minutes() );
+  while (addon.size() < 2) {	// zero padding
+    addon = '0' + addon;
+  }
+  str += addon;
+  str += ':';
+  addon = sexagesimal::to_string_hack(seconds());	// std::to_string( minutes() );
+  while (addon.size() < 2) {	// zero padding
+    addon = '0' + addon;
+  }
+  str += addon;
+  /************************************
+  str += '.';
+  // finally add on 4 digits of decimal minutes.
+  uint32_t milli_seconds = 1000 * seconds() + millis();	// 1 second = 1000 milliseconds.
+  uint32_t temp = milli_seconds * 10;	// 10^(-4) seconds
+  temp = temp / 60;		// Four digits of decimal minutes.
+  addon = sexagesimal::to_string_hack(temp);	// std::to_string( temp );
+  while (addon.size() < 4) {	// zero padding
+    addon = '0' + addon;
+  }
+  str += addon;
+  ************************************/
+  return str;
+}

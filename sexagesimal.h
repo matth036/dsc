@@ -32,6 +32,10 @@ namespace sexagesimal{
     const std::string to_hms_string();
     const std::string to_HMS_string();
     const std::string to_dms_string();
+
+
+    const std::string to_latitude_string();
+    const std::string to_longitude_string();
     void setData( int32_t deg, uint32_t min, uint32_t sec, uint32_t xxx);
     void setData( double value );
     const uint32_t get_data();
