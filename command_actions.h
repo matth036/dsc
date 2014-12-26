@@ -8,6 +8,8 @@ void solar_system_point_to_action( char* yytext, int yyleng );
 void almanac_star_point_to_action( char* yytext, int yyleng );
 void default_action( char* yytext, int yyleng );
 
+void navigation_star_menu_test();
+void sexagesimal_test_dialog();
 
 void display_current_time_view();
 void add_seconds_dialog();

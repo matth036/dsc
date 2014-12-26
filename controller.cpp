@@ -401,61 +401,6 @@ void pre_fab_example_test(){
 
 
 
-/* AAA58 */
-void navigation_star_menu_test(){
-  auto lcd = check_out_main_lcd();
-  lcd->clear();
-  lcd->noDisplay();
-  MicroSecondDelay::millisecond_delay(1);
-  lcd->display();
-
-  lcd->home();
-  lcd->print( "Test of LCD menu ..." );
-  MicroSecondDelay::millisecond_delay(2000);
-
-  std::unique_ptr<Numbered_List_Menu> star_menu =
-    std::unique_ptr<Numbered_List_Menu>(new Numbered_List_Menu{ "*** STARS ***" });
-
-  for( uint32_t num = 0; num<=navigation_star::NAVIGATION_LIST_MAX; ++num ){
-    star_menu->insert_menu_item( num, navigation_star::get_navigation_star_name(num) );
-  }
-
-
-  while( !star_menu->is_finished() ){
-    lcd->setCursor(0,0);
-    lcd = star_menu->write_first_line(std::move(lcd));
-    lcd->setCursor(0,1);
-    lcd = star_menu->write_second_line(std::move(lcd));
-    lcd->setCursor(0,2);
-    lcd = star_menu->write_third_line(std::move(lcd));
-    lcd->setCursor(0,3);
-    lcd = star_menu->write_fourth_line(std::move(lcd));
-  }
-
-  check_in_main_lcd(std::move(lcd));
-}
-
-/* AAA0317 */
-
-
-void sexagesimal_test_dialog(){
-  auto lcd = check_out_main_lcd();
-  std::unique_ptr<Sexagesimal_Input_View> view =
-    std::unique_ptr<Sexagesimal_Input_View>(new Sexagesimal_Input_View{ "Longitude DDD:MM:SS." });
-  view->set_plus_char( 'W' );
-  view->set_minus_char( 'E' );
-  lcd->setCursor(0,0);
-  lcd = view->write_first_line(std::move(lcd));
-  //lcd->cursor();
-  while( !view->is_finished() ){
-    lcd->setCursor(0,1);
-    lcd = view->write_second_line(std::move(lcd));
-    int col = view->get_cursor_column();
-    lcd->setCursor(col,1);
-  }
-  MicroSecondDelay::millisecond_delay(350);
-  check_in_main_lcd(std::move(lcd));
-}
 
 /* AAA2490 */
 void RA_and_Declination_dialog(){
@@ -577,11 +522,11 @@ void dsc_controller::AAA_command(std::string & cmd){
   }else if( cmd == "AAA554" ){
     // subtract_seconds_dialog();
   }else if( cmd == "AAA360" ){
-    sexagesimal_test_dialog();
+    //    sexagesimal_test_dialog();
   }else if( cmd == "AAA720" ){
     // long_lat_dialog();
   }else if( cmd == "AAA58" ){
-    navigation_star_menu_test();
+    // navigation_star_menu_test();
   }else if( cmd == "AAA0317" ){
     // countdown_to_Saint_Patricks_Day();
   }else if( cmd == "AAA234" ){
@@ -646,61 +591,12 @@ void dsc_controller::A_command(std::string & cmd){
 
 /* All dead code now, remove */
 void dsc_controller::B_command(std::string & cmd){
-  if( cmd.size() < 2 ){
-    return;
-  }
-  switch( cmd[1] ){
-  case 'A':
-    dsc_controller::BA_command(cmd);
-    return;
-  case 'B':
-    dsc_controller::BB_command(cmd);
-    return;
-  case 'C':
-    dsc_controller::BC_command(cmd);
-    return;
-  case '*':
-    if( cmd[2] == 'C' ){
-      /* cmd begins with B*C (Bright Star Catalog) */
-      // bsc_point_to( cmd );
-    }
-    return;
-  case'0':
-  case'1':
-  case'2':
-  case'4':
-  case'5':
-  case'6':
-  case'7':
-  case'8':
-  case'9':
-    // B0123456789_point_to( cmd );
-    return;
-  default:
-    return;
-  }
+
 }
 
 /* All dead code now, remove */
 void dsc_controller::C_command(std::string & cmd){
-  if( cmd.size() < 2 ){
-    return;
-  }
-  switch( cmd[1] ){
-  case 'A':
-    dsc_controller::CA_command(cmd);
-    /* CA => Catalog (NGC) */
-    // ngc_catalog_point_to( cmd );
-    return;
-  case 'B':
-    dsc_controller::CB_command(cmd);
-    return;
-  case 'C':
-    dsc_controller::CC_command(cmd);
-    return;
-  default:
-    return;
-  }
+
 }
 
 void dsc_controller::do_execute_command(std::string & cmd)

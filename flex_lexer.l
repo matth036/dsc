@@ -47,6 +47,9 @@ AAA555                       display_current_time_view();
 AAA556                       add_seconds_dialog();
 AAA554                       subtract_seconds_dialog();
 
+AAA58                        navigation_star_menu_test();
+AAA360                       sexagesimal_test_dialog();
+
 AAA720                       long_lat_dialog();
 AAA0317                      countdown_to_Saint_Patricks_Day();
 
