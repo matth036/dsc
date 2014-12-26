@@ -35,21 +35,6 @@
 void navigation_star_menu_test();
 void navigation_star_menu();
 void solar_system_menu();
-/* Display Julian Day of current time. */
-void cmd_555()
-{
-  double JD;
-  // JD = JD_timestamp();
-  JD = JD_timestamp_pretty_good_000();
-  auto lcd = check_out_main_lcd();
-  lcd->clear();
-  //lcd->setCursor(0,0);      
-  lcd->home();
-  MicroSecondDelay::millisecond_delay(1);
-  lcd->print(JD, 8);
-  MicroSecondDelay::millisecond_delay(6000);
-  check_in_main_lcd(std::move(lcd));
-}
 
 void display_details(std::string name, CAAEllipticalPlanetaryDetails & details)
 {
@@ -325,9 +310,7 @@ void four_digit_command(int value)
 }
 
 void dsc_controller::execute_early_experimental_command_implementations(std::string & cmd){
-  if (cmd == "555") {
-    cmd_555();
-  } else if (cmd == "0") {
+  if (cmd == "0") {
     calculate_and_display("Sun");
   } else if (cmd == "1") {
     calculate_and_display("Mercury");
