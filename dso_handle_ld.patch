@@ -1,0 +1,10 @@
+107a108,116
+>  .dso_handle     :
+>   {
+>     PROVIDE_HIDDEN (__dso_handle = .);
+>     KEEP (*(.dso_handle*))
+>     KEEP (*(SORT(.dso_handle.*)))
+>     PROVIDE_HIDDEN (__dso_handle_end = .);
+>   } >FLASH
+> 
+> 

@@ -1,0 +1,30 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252"><title>SAO TDC BSC5 Catalog Binary Entry Format</title>
+</head><body><h2><a href="http://tdc-www.harvard.edu/catalogs/bsc5.html">Yale Bright Star Catalog 5 (BSC5)</a>
+<a href="http://tdc-www.harvard.edu/catalogs/catalogsb.html">Binary Entry Format</a></h2>
+Each catalog entry in <i>BSC5</i> and <i>BSC5ra</i> contains 32 bytes with
+the following information:
+<pre>Real*4 XNO		Catalog number of star
+Real*8 SRA0		B1950 Right Ascension (radians)
+Real*8 SDEC0		B1950 Declination (radians)
+Character*2 IS		Spectral type (2 characters)
+Integer*2 MAG		V Magnitude * 100
+Real*4 XRPM		R.A. proper motion (radians per year)
+Real*4 XDPM		Dec. proper motion (radians per year)
+</pre>
+
+<h3>Sample Entries</h3>
+<p>
+The first and last entries in the Yale Bright Star (BSC5) catalog file are:
+</p><pre>sbsc5 WCSTools 3.8.1, 30 April 2010, Doug Mink SAO
+BSC_number  RA2000       Dec2000       Mag Type
+  000001  00:05:09.900 +45:13:45.00   6.70  A1
+  009110  00:05:06.200 +61:18:51.00   5.80  B8
+</pre>
+<p>
+The first and last entries in the RA-sorted BSC5ra catalog file are:
+</p><pre>BSC_num   RA2000       Dec2000     Mag Type
+009077 00:00:19.200 -44:17:26.00  6.29  G3
+009076 23:59:55.000 -65:34:38.00  4.50  B9
+</pre>
+</body></html>

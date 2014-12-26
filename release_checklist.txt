@@ -1,0 +1,15 @@
+Make sure build works with all -O optimization levels. Ship withh -Og.
+
+Sanitize the code for F-bombs.
+
+Make sure the linkerscript hack works and remains necessary.
+
+Make the slackbuild script file are up to date 
+Make sure the buildkit_kit is present and current.
+
+Put headerss on all files. Plan=MIT Licence.
+
+Test under the stars.
+
+Make parameters such as ticks per revolution setable.
+

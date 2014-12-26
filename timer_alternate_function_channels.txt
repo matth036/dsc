@@ -1,0 +1,21 @@
+TIM1_CH1      PE9
+TIM1_CH2      PE11
+TIM1_CH3      PE13
+TIM1_CH4      PE14
+TIM1_CH1      PA8
+TIM1_CH2      PA9
+TIM1_CH3      PA10
+TIM1_CH4      PA11
+
+TIM2_CH1      PA0
+TIM2_CH1      PA5
+TIM2_CH1      PA15   ? Table 9 p.60
+TIM2_CH2      PA1
+TIM2_CH2      PB3
+
+Try CH3, CH4 via boot RX,TX == PB10,PB11
+TIM2_CH3      PA2    Tied to ethernet chip on E407
+TIM2_CH3      PB10   UEXT (Accessible)
+TIM2_CH4      PA3    Tied to ethernet chip on E407
+TIM2_CH4      PB11   (Not on the E407)
+

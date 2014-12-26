@@ -1,0 +1,11 @@
+In the nutation calculation 
+double CAANutation::NutationInLongitude(double JD)
+and
+double CAANutation::NutationInObliquity(double JD)
+
+the function
+
+CAACoordinateTransformation::MapTo0To360Range(double)
+
+is called several times with large argument. > 60000.
+This results in considerable looping 360 is repeatedly subtracted.

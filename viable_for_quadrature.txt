@@ -1,0 +1,92 @@
+The STM32F4 family of chips has 6 timers useable for quadrature encoder interfacing.
+
+TIM1  
+  PA8 | PE9
+  PA9 | PE11
+
+TIM2 (32 bit)
+  PA0 | PA5 | PA15
+  PA1 | PB3
+
+TIM3
+  PA6 | PB4 | PC6
+  PA7 | PB6 | PC7
+
+TIM4
+  PB6 | PD12
+  PB7 | PD13
+
+TIM5 (32 bit)
+  PA0 | PH10
+  PA1 | PH11
+
+TIM8
+  PC6 | PI5
+  PC7 | PI6	
+
+/************************************************************/
+STM32F4 Discovery board:
+/* 
+ * On the stm32f4discovery board avoid these pins:
+ * TIM1   should avoid    PA9  used by USB. (green led which indicates VBUS is present.) 
+ * TIM2   should avoid    PB3  used by SWD  (Can be disconnected by opening a solder bridge.)
+ * TIM4   should avoid    PD11 used by user LED 4, green.   
+ * TIM4   should avoid    PD13 used by user LED 3, orange.
+*/
+
+LIS203DL is a motion sensor.            PA5 is pinned out.
+SWD      is single wire debug.          PB3 is pinned out.
+CS43L32  is a DAC with speaker driver.
+
+TIM1  
+  PA8 | PE9             *** PA8==free,      PE9==free
+  PA9 | PE11            *** PA9==Green_LED, PE11==free
+
+TIM2 (32 bit)
+  PA0 | PA5 | PA15      ***  PA0==userButton, PA5==LIS203DL, PA15==free
+  PA1 | PB3             ***  PA1==free,       PB3==SWD
+
+TIM3
+  PA6 | PB4 | PC6       ***  PA6==LIS203DL, PB4==free,    PC6==free
+  PA7 | PB6 | PC7       ***  PA7==LIS203DL, PB6==CS43L32, PC7==CS43L32
+
+TIM4
+  PB6 | PD12
+  PB7 | PD13
+
+TIM5 (32 bit)
+  PA0 | PH10             *** PA0==userButton, PH10 IS NOT ON CHIP OR BOARD
+  PA1 | PH11             *** PA1==free      , PH11 IS NOT ON CHIP OR BOARD
+
+TIM8
+  PC6 | PI5
+  PC7 | PI6	
+/************************************************************/
+
+STM32-E407:
+I built this in fact.
+Azimuth Encoder:
+TIM4
+pins D13 and D12
+
+Altitude Encoder:
+TIM1
+pins E9 and E11
+
+/************************************************************/
+
+STM32-H407:
+This has more possibilities because the absence of Ethernet and other pin hogs.
+Here is one possibility
+
+TIM1 PE9 PE11 These are on the E dual row of pins.
+
+TIM2 PA5 PA1 These are on the CON4 Arduino header.  RESERVE FOR 32 bit EQUATORIAL PLATFORM
+
+TIM3 PA6 PA7 These are on the CON4 Arduino header.
+
+TIM4 PD12 PD13  These are on the D dual row of pins.
+
+# TIM5  // is not available because PA0 is the Wakeup Button and the H pins are not present on the chip.
+
+TIM8 PC6 PC7 These pins are on the UEXT Connector
