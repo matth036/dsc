@@ -31,7 +31,7 @@
 #include "telescope_model.h"
 // #include "starlist.h"
 /* forward declarations */
-void long_lat_dialog();
+
 void navigation_star_menu_test();
 void navigation_star_menu();
 void solar_system_menu();
@@ -366,41 +366,6 @@ void dsc_controller::execute_early_experimental_command_implementations(std::str
 }
 
 
-void alignment_prompt(Simple_Altazimuth_Scope* scope, std::string object ){
-  auto lcd = check_out_main_lcd();
-  std::unique_ptr<Alignment_Timestamp_Prompt> prompt_view = 
-    std::unique_ptr<Alignment_Timestamp_Prompt>(
-						new Alignment_Timestamp_Prompt(scope,object)  );
-  while( !prompt_view->is_finished() ){
-    lcd->setCursor(0,0);
-    lcd = prompt_view->write_first_line(std::move(lcd));
-    lcd->setCursor(0,1);
-    lcd = prompt_view->write_second_line(std::move(lcd));
-    lcd->setCursor(0,2);
-    lcd = prompt_view->write_third_line(std::move(lcd));
-    lcd->setCursor(0,3);
-    lcd = prompt_view->write_fourth_line(std::move(lcd));
-  }
-  if( prompt_view->has_data() ){
-    //    get_main_sight_data()
-    /* Here is where we collate the pieces of information associated 
-     * with an alignment sight.
-     **/
-    Alignment_Sight_Item item{ prompt_view->get_object_name() };
-    double timestamp = prompt_view->get_timestamp();   /* A Julian date. */
-    Alt_Azi_Snapshot_t encoder_data = prompt_view->get_encoder_data();
-    item.set_pointing_information( timestamp, encoder_data );
-    /* Alignment_Sight_Item also has fields for the temperature and pressure.  
-     * These are set to default values that they are non zero and somewhat arbitrary 
-     * but not insane.
-     **/
-    // Alignment_Data_Set
-    get_main_sight_data()->push_item( item );
-  }
-  check_in_main_lcd(std::move(lcd));
-}
-
-
 
 /* Bright star catalog point to. B*Cdddd */
 void bsc_point_to( std::string cmd ){
@@ -500,155 +465,6 @@ void make_optimized_solution_test(){
   lcd->print( scope->get_align_error_mean(), 6 );
 
   MicroSecondDelay::millisecond_delay(9000);  
-  check_in_main_lcd(std::move(lcd));
-}
-
-/* AAA234 */
-void alignment_sight_test(){
-  auto lcd = check_out_main_lcd();
-  lcd->clear();
-  lcd->noDisplay();
-  MicroSecondDelay::millisecond_delay(1);
-  lcd->display();
-  lcd->home();
-  lcd->print( "Test Alignment Menu" );
-  MicroSecondDelay::millisecond_delay(2000);
-  Alignment_Data_Set* data_set = get_main_sight_data();
-  if( !data_set->has_longitude_and_latitude() ){
-    sexagesimal::Sexagesimal longitude = get_backup_domain_longitude();
-    sexagesimal::Sexagesimal latitude = get_backup_domain_latitude();
-    if( longitude.get_data() == 0 || latitude.get_data() == 0 ){
-      check_in_main_lcd(std::move(lcd));
-      long_lat_dialog();
-      lcd = check_out_main_lcd();
-      longitude = get_backup_domain_longitude();
-      latitude =  get_backup_domain_latitude();
-    }
-    data_set->set_longitude_and_latitude( longitude, latitude );
-  }
-  std::unique_ptr<Alignment_Sights_View> sight_view =
-    std::unique_ptr<Alignment_Sights_View>(new Alignment_Sights_View{ data_set });
-  while( !sight_view->is_finished() ){
-    lcd->setCursor(0,0);
-    lcd = sight_view->write_first_line(std::move(lcd));
-    lcd->setCursor(0,1);
-    lcd = sight_view->write_second_line(std::move(lcd));
-    lcd->setCursor(0,2);
-    lcd = sight_view->write_third_line(std::move(lcd));
-    lcd->setCursor(0,3);
-    lcd = sight_view->write_fourth_line(std::move(lcd));
-    if( sight_view->prompt_for_new_star_sight() ){
-      check_in_main_lcd(std::move(lcd));
-      navigation_star_menu();
-      sight_view->clear_prompts();
-      lcd = check_out_main_lcd();
-    }
-    if( sight_view->prompt_for_new_planet_sight() ){
-      check_in_main_lcd(std::move(lcd));
-      solar_system_menu();
-      sight_view->clear_prompts();
-      lcd = check_out_main_lcd();
-    }
-  }
-  check_in_main_lcd(std::move(lcd));
-}
-
-void solar_system_menu(){
-  auto lcd = check_out_main_lcd();
-  lcd->clear();
-  lcd->noDisplay();
-  MicroSecondDelay::millisecond_delay(1);
-  lcd->display();
-  std::unique_ptr<Numbered_List_Menu> ss_menu =
-    std::unique_ptr<Numbered_List_Menu>(new Numbered_List_Menu{ "Solar System" });
-  double JD = JD_timestamp_pretty_good_000();
-  Alignment_Data_Set* data_set = get_main_sight_data();
-
-  std::vector<std::string> bodies{"Sun","Mercury","Venus","Moon","Mars","Jupiter","Saturn","Uranus","Neptune" };
-
-  for( uint32_t num = 0; num<bodies.size(); ++num ){
-    bool success = false;
-    CAA2DCoordinate RA_and_Dec = calulate_RA_and_Dec(bodies[num], JD, success );
-    if( success ){
-      CAA2DCoordinate azi_alt = data_set->azimuth_altitude( RA_and_Dec, JD,
-							    Alignment_Sight_Item::DEFAULT_PRESSURE,
-							    Alignment_Sight_Item::DEFAULT_TEMPERATURE);
-      if( azi_alt.Y > 0 ){
-	ss_menu->insert_menu_item( num, bodies[num] );
-      }else{
-	ss_menu->insert_menu_item( num, "(" + bodies[num] + ")" );
-      }
-    }
-    // star_menu->insert_menu_item( num, navigation_star::get_navigation_star_name(num) );
-  }
-  while( !ss_menu->is_finished() ){
-    lcd->setCursor(0,0);
-    lcd = ss_menu->write_first_line(std::move(lcd));
-    lcd->setCursor(0,1);
-    lcd = ss_menu->write_second_line(std::move(lcd));
-    lcd->setCursor(0,2);
-    lcd = ss_menu->write_third_line(std::move(lcd));
-    lcd->setCursor(0,3);
-    lcd = ss_menu->write_fourth_line(std::move(lcd));
-  }
-  std::string selection = ss_menu->get_selection_text();
-  Simple_Altazimuth_Scope* telescope = get_main_simple_telescope();
-  if( selection != "" ){
-    check_in_main_lcd(std::move(lcd));
-    alignment_prompt( telescope, selection );
-    lcd = check_out_main_lcd();
-  }
-  check_in_main_lcd(std::move(lcd));
-}
-
-
-
-void navigation_star_menu(){
-  auto lcd = check_out_main_lcd();
-  lcd->clear();
-  lcd->noDisplay();
-  MicroSecondDelay::millisecond_delay(1);
-  lcd->display();
-
-  std::unique_ptr<Numbered_List_Menu> star_menu =
-    std::unique_ptr<Numbered_List_Menu>(new Numbered_List_Menu{ "*** STARS ***" });
-
-  double JD = JD_timestamp_pretty_good_000();
-  Alignment_Data_Set* data_set = get_main_sight_data();
-
-  for( uint32_t num = 0; num<=navigation_star::NAVIGATION_LIST_MAX; ++num ){
-    std::string star_name = navigation_star::get_navigation_star_name(num);
-    bool success = false;
-    CAA2DCoordinate RA_and_Dec = calulate_RA_and_Dec(star_name, JD, success );
-    if( success ){
-      CAA2DCoordinate azi_alt = data_set->azimuth_altitude( RA_and_Dec, JD, 
-							   Alignment_Sight_Item::DEFAULT_PRESSURE,
-							   Alignment_Sight_Item::DEFAULT_TEMPERATURE);
-      if( azi_alt.Y>0 ){
-	star_menu->insert_menu_item( num, star_name );
-      }
-    }
-    // star_menu->insert_menu_item( num, navigation_star::get_navigation_star_name(num) );
-  }
-
-
-  while( !star_menu->is_finished() ){
-    lcd->setCursor(0,0);
-    lcd = star_menu->write_first_line(std::move(lcd));
-    lcd->setCursor(0,1);
-    lcd = star_menu->write_second_line(std::move(lcd));
-    lcd->setCursor(0,2);
-    lcd = star_menu->write_third_line(std::move(lcd));
-    lcd->setCursor(0,3);
-    lcd = star_menu->write_fourth_line(std::move(lcd));
-  }
-  std::string selection = star_menu->get_selection_text();
-  Simple_Altazimuth_Scope* telescope = get_main_simple_telescope();
-  if( selection != "" ){
-    check_in_main_lcd(std::move(lcd));
-    alignment_prompt( telescope, selection );
-    lcd = check_out_main_lcd();
-  }
   check_in_main_lcd(std::move(lcd));
 }
 
@@ -836,7 +652,7 @@ void dsc_controller::AAA_command(std::string & cmd){
   }else if( cmd == "AAA0317" ){
     // countdown_to_Saint_Patricks_Day();
   }else if( cmd == "AAA234" ){
-    alignment_sight_test();
+    // alignment_sight_test();
   }else if( cmd == "AAA456" ){
     make_optimized_solution_test();
   }else if( cmd == "AAA789" ){
