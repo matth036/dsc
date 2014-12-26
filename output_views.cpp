@@ -753,9 +753,23 @@ std::unique_ptr < CharLCD_STM32F >
   return std::move(lcd);
 }
 
+
 /***************************************
  *  Planetary Details View
  ***************************************/
+
+Planetary_Details_View::Planetary_Details_View( int planet_num  ){
+  planet_num_ = planet_num;
+  finished = false;
+  width_ = INPUT_VIEW_DEFAULT_WIDTH;
+  saved_cr = dsc_controller::get_character_reciever();
+  dsc_controller::set_character_reciever(this);
+}
+
+Planetary_Details_View::~Planetary_Details_View(){
+  dsc_controller::set_character_reciever(saved_cr);
+}
+
 
 
 std::unique_ptr < CharLCD_STM32F > Planetary_Details_View::write_first_line(std::unique_ptr <

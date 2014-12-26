@@ -208,7 +208,7 @@ class Alignment_Sights_View:public Character_Reciever{
 
 class Planetary_Details_View:Character_Reciever {
  public:
-  Planetary_Details_View( Simple_Altazimuth_Scope* );
+  Planetary_Details_View( int planet );
   ~Planetary_Details_View( );
   void put_char(char);
   std::unique_ptr < CharLCD_STM32F > write_first_line(std::unique_ptr <
@@ -225,7 +225,7 @@ class Planetary_Details_View:Character_Reciever {
     return finished;
   }
  private:
-
+  int planet_num_;
   Simple_Altazimuth_Scope* telescope;
   Character_Reciever* saved_cr;
   int32_t width_;
