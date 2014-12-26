@@ -47,14 +47,6 @@ class Current_Time_View:Character_Reciever {
 };
 
 
-
-
-
-
-
-
-
-// constexpr uint32_t INPUT_VIEW_DEFAULT_WIDTH = 20;
 class Angular_Coordinates_View:Character_Reciever {
  public:
   Angular_Coordinates_View( Simple_Altazimuth_Scope* );
@@ -212,6 +204,34 @@ class Alignment_Sights_View:public Character_Reciever{
    bool _prompt_for_new_star_sight;
    bool _prompt_for_new_planet_sight;
 };
+
+
+class Planetary_Details_View:Character_Reciever {
+ public:
+  Planetary_Details_View( Simple_Altazimuth_Scope* );
+  ~Planetary_Details_View( );
+  void put_char(char);
+  std::unique_ptr < CharLCD_STM32F > write_first_line(std::unique_ptr <
+						      CharLCD_STM32F >);
+  std::unique_ptr < CharLCD_STM32F > write_second_line(std::unique_ptr <
+						       CharLCD_STM32F >);
+  std::unique_ptr < CharLCD_STM32F > write_third_line(std::unique_ptr <
+						      CharLCD_STM32F >);
+  std::unique_ptr < CharLCD_STM32F > write_fourth_line(std::unique_ptr <
+						       CharLCD_STM32F >);
+
+  void dismiss_action();
+  inline bool is_finished(){
+    return finished;
+  }
+ private:
+
+  Simple_Altazimuth_Scope* telescope;
+  Character_Reciever* saved_cr;
+  int32_t width_;
+  bool finished;
+};
+
 
 
 #endif				/*  OUTPUT_VIEWS_H  */

@@ -753,4 +753,51 @@ std::unique_ptr < CharLCD_STM32F >
   return std::move(lcd);
 }
 
+/***************************************
+ *  Planetary Details View
+ ***************************************/
 
+
+std::unique_ptr < CharLCD_STM32F > Planetary_Details_View::write_first_line(std::unique_ptr <
+									      CharLCD_STM32F > lcd)
+{
+  int n = 0;
+  n += lcd->print( "Line 1 here " );
+  while (n < width_) {
+    n += lcd->print(' ');
+  } 
+  return std::move(lcd);
+}
+
+std::unique_ptr < CharLCD_STM32F > Planetary_Details_View::write_second_line(std::unique_ptr <
+									      CharLCD_STM32F > lcd)
+{
+  int n = 0;
+  n += lcd->print( "Line 2 here " );
+  while (n < width_) {
+    n += lcd->print(' ');
+  } 
+  return std::move(lcd);
+}
+
+std::unique_ptr < CharLCD_STM32F > Planetary_Details_View::write_third_line(std::unique_ptr <
+									      CharLCD_STM32F > lcd)
+{
+  int n = 0;
+  n += lcd->print( "Line 3 here " );
+  while (n < width_) {
+    n += lcd->print(' ');
+  } 
+  return std::move(lcd);
+}
+
+std::unique_ptr < CharLCD_STM32F > Planetary_Details_View::write_fourth_line(std::unique_ptr <
+									       CharLCD_STM32F > lcd)
+{
+  int n = 0;
+  n += lcd->print( "Line 4 here " );
+  while (n < width_) {
+    n += lcd->print(' ');
+  } 
+  return std::move(lcd);
+}

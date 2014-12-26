@@ -29,7 +29,7 @@
 #include "linear_algebra_interface.h"
 #include "navigation_star.h"
 #include "telescope_model.h"
-// #include "starlist.h"
+
 /* forward declarations */
 
 void navigation_star_menu_test();
