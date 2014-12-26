@@ -402,66 +402,6 @@ void pre_fab_example_test(){
 
 
 
-/* AAA2490 */
-void RA_and_Declination_dialog(){
-  auto lcd = check_out_main_lcd();
-  lcd->clear();
-  std::unique_ptr<Sexagesimal_Input_View> RA_view =
-    std::unique_ptr<Sexagesimal_Input_View>(new Sexagesimal_Input_View{ "RA HH:MM:SS.xxx" });
-  RA_view->set_minus_char( '-' );  /* Not expected to be used. */
-  RA_view->set_minus_char( ' ' );
-  RA_view->set_msd_digits( 2 );
-  RA_view->set_center_label(false);
-  while( !RA_view->is_finished() ){
-    lcd->setCursor(0,0);
-    lcd = RA_view->write_first_line(std::move(lcd));
-    lcd->setCursor(0,1);
-    lcd = RA_view->write_second_line(std::move(lcd));
-  }
-  sexagesimal::Sexagesimal RA = RA_view->get_value();
-
-  std::unique_ptr<Sexagesimal_Input_View> Dec_view =
-    std::unique_ptr<Sexagesimal_Input_View>(new Sexagesimal_Input_View{ "Declination DD:MM:SS" });
-  Dec_view->set_plus_char( 'N' );
-  Dec_view->set_minus_char( 'S' );
-  Dec_view->set_msd_digits( 2 );
-  lcd->setCursor(0,2);
-  lcd = Dec_view->write_first_line(std::move(lcd));
-  while( !Dec_view->is_finished() ){
-    lcd->setCursor(0,3);
-    lcd = Dec_view->write_second_line(std::move(lcd));
-  }
-  sexagesimal::Sexagesimal declination = Dec_view->get_value();
-  CAA2DCoordinate RA_Dec;
-  RA_Dec.X = RA.to_double();
-  RA_Dec.Y = declination.to_double();
-
-  MicroSecondDelay::millisecond_delay(750);
-
-  lcd->clear();
-  lcd->setCursor( 0,0 );
-  lcd->print( RA.to_string() + " " + declination.to_string() );
-
-  std::unique_ptr< Pushto_Output_View > view = 
-    std::unique_ptr<Pushto_Output_View >( new Pushto_Output_View( RA_Dec ) );
-  view->set_label_2( "Current Epoch" );
-
-  while( !view->is_finished() ){
-    lcd->setCursor(0,0);
-    lcd = view->write_first_line(std::move(lcd));
-    lcd->setCursor(0,1);
-    lcd = view->write_second_line(std::move(lcd));
-    lcd->setCursor(0,2);
-    lcd = view->write_third_line(std::move(lcd));
-    lcd->setCursor(0,3);
-    lcd = view->write_fourth_line(std::move(lcd));
-  }
-
-  check_in_main_lcd(std::move(lcd));
-}
-
-
-
 /* AAA1950 
  * For Burnham's Guide.
  * 
@@ -542,7 +482,7 @@ void dsc_controller::AAA_command(std::string & cmd){
   }else if( cmd == "AAAB*C" ){
     /* Bright star catalog point to action. */;
   }else if( cmd == "AAA2490" ){
-    RA_and_Declination_dialog();
+    //  RA_and_Declination_dialog();
   }else if( cmd == "AAA1950" ){
     Burnham_Handbook_Point_To();
   }

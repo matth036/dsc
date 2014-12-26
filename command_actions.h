@@ -6,6 +6,12 @@ void ngc_point_to_action( char* yytext, int yyleng );
 void bsc_point_to_action( char* yytext, int yyleng );
 void solar_system_point_to_action( char* yytext, int yyleng );
 void almanac_star_point_to_action( char* yytext, int yyleng );
+
+void RA_and_Declination_dialog();
+
+
+
+
 void default_action( char* yytext, int yyleng );
 
 void navigation_star_menu_test();
