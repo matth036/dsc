@@ -274,7 +274,6 @@ void ngc_object_command(int num)
   while (n < 20) {
     n += lcd->print(" ");
   }
-
   MicroSecondDelay::millisecond_delay(9000);
   lcd->clear();
   MicroSecondDelay::millisecond_delay(1);
@@ -365,24 +364,6 @@ void dsc_controller::execute_early_experimental_command_implementations(std::str
   }
 }
 
-
-
-/* Bright star catalog point to. B*Cdddd */
-void bsc_point_to( std::string cmd ){
-  assert_param( cmd[0] == 'B' );
-  assert_param( cmd[1] == '*' );
-  assert_param( cmd[2] == 'C' );
-
-}
-
-
-/*  B[0-9] command Solar system bodies. */
-void B0123456789_point_to( std::string cmd ){
-}
-
-/* CA**** NGC ngc   */
-void ngc_catalog_point_to( std::string cmd ){
-}
 
 
 /* AAA090 */
@@ -662,6 +643,8 @@ void dsc_controller::A_command(std::string & cmd){
   }
 }
 
+
+/* All dead code now, remove */
 void dsc_controller::B_command(std::string & cmd){
   if( cmd.size() < 2 ){
     return;
@@ -679,7 +662,7 @@ void dsc_controller::B_command(std::string & cmd){
   case '*':
     if( cmd[2] == 'C' ){
       /* cmd begins with B*C (Bright Star Catalog) */
-      bsc_point_to( cmd );
+      // bsc_point_to( cmd );
     }
     return;
   case'0':
@@ -691,13 +674,14 @@ void dsc_controller::B_command(std::string & cmd){
   case'7':
   case'8':
   case'9':
-    B0123456789_point_to( cmd );
+    // B0123456789_point_to( cmd );
     return;
   default:
     return;
   }
 }
 
+/* All dead code now, remove */
 void dsc_controller::C_command(std::string & cmd){
   if( cmd.size() < 2 ){
     return;
@@ -706,7 +690,7 @@ void dsc_controller::C_command(std::string & cmd){
   case 'A':
     dsc_controller::CA_command(cmd);
     /* CA => Catalog (NGC) */
-    ngc_catalog_point_to( cmd );
+    // ngc_catalog_point_to( cmd );
     return;
   case 'B':
     dsc_controller::CB_command(cmd);
