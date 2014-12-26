@@ -50,6 +50,8 @@ AAA554                       subtract_seconds_dialog();
 AAA720                       long_lat_dialog();
 AAA0317                      countdown_to_Saint_Patricks_Day();
 
+
+AAA789                       ;
 AAA987                       clear_sight_data();
 
 .*                           return 0;

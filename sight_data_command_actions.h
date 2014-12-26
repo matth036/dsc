@@ -4,6 +4,7 @@
 
 void clear_sight_data();
 
+void pre_fab_example_test();
 
 
 
