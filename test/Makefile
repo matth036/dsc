@@ -175,5 +175,5 @@ clean:
 	rm -f memoized_apparent_sidereal memoized_apparent_sidereal.o
 	rm -f nutation_data nutation_data.o
 	rm -f horizontal2equatorial horizontal2equatorial.o
-	rm -f h2q horizontal2equatorial.o
+	rm -f h2q h2q.o
 	rm -f jd jd.o
