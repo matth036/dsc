@@ -1,5 +1,4 @@
 #include "command_actions.h"
-
 #include "flex_lexer.h"
 #include "flex_lexer_declare.h"
 #include "main.h"
@@ -627,5 +626,42 @@ void sexagesimal_test_dialog(){
     lcd->setCursor(col,1);
   }
   MicroSecondDelay::millisecond_delay(350);
+  check_in_main_lcd(std::move(lcd));
+}
+
+void planetary_details_view_action( char* yytext, int yyleng ){
+  int body_num;
+  int n;
+  n = sscanf(yytext + 2, "%d", &body_num);
+  if (n != 1) {
+    return;
+  }
+
+  std::string body_name = solar_system::solar_system_body_name(body_num);
+  double JD = JD_timestamp_pretty_good_000();
+  CAA2DCoordinate RA_Dec;
+  if (body_num == 3) {
+    CAA3DCoordinate RA_Dec_Dist = solar_system::calculate_moon_RA_Dec_Dist(JD);
+    RA_Dec.X = RA_Dec_Dist.X;
+    RA_Dec.Y = RA_Dec_Dist.Y;
+  } else {
+    CAAEllipticalPlanetaryDetails details =
+	solar_system::calculate_details(body_name, JD);
+    RA_Dec.X = details.ApparentGeocentricRA;
+    RA_Dec.Y = details.ApparentGeocentricDeclination;
+  }
+  /******************************
+  std::unique_ptr<Planetary_Details_View> view =
+    std::unique_ptr<Planetary_Details_View>(new Plantary_Details_View(body_num) );
+  ********************************/
+  std::unique_ptr< Planetary_Details_View > view = 
+    std::unique_ptr<Planetary_Details_View >( new Planetary_Details_View( body_num ) );
+
+
+  auto lcd = check_out_main_lcd();
+  {
+
+
+  }
   check_in_main_lcd(std::move(lcd));
 }

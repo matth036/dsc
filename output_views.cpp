@@ -757,6 +757,7 @@ std::unique_ptr < CharLCD_STM32F >
 /***************************************
  *  Planetary Details View
  ***************************************/
+//                         Planetary_Details_View
 
 Planetary_Details_View::Planetary_Details_View( int planet_num  ){
   planet_num_ = planet_num;
@@ -770,13 +771,22 @@ Planetary_Details_View::~Planetary_Details_View(){
   dsc_controller::set_character_reciever(saved_cr);
 }
 
+void Planetary_Details_View::put_char( char c ){
+  if( c == keypad_return_char ){
+    dismiss_action();
+  }
+}
 
+void Planetary_Details_View::dismiss_action( ){
+  finished = true;
+}
 
 std::unique_ptr < CharLCD_STM32F > Planetary_Details_View::write_first_line(std::unique_ptr <
 									      CharLCD_STM32F > lcd)
 {
   int n = 0;
-  n += lcd->print( "Line 1 here " );
+  n += lcd->print( "Planet number: " );
+  n += lcd->print( planet_num_ );
   while (n < width_) {
     n += lcd->print(' ');
   } 

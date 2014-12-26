@@ -40,6 +40,7 @@ CA{DIGIT}{1,4}               ngc_point_to_action( yytext, yyleng );
 B{STAR}C{DIGIT}{1,4}         bsc_point_to_action( yytext, yyleng );
 
 B{DIGIT}{1}                  solar_system_point_to_action(  yytext, yyleng );
+AB{DIGIT}{1}                 planetary_details_view_action( yytext, yyleng );
 
 A{STAR}{DIGIT}{1,2}          almanac_star_point_to_action( yytext, yyleng );
 

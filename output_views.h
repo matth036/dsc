@@ -206,6 +206,7 @@ class Alignment_Sights_View:public Character_Reciever{
 };
 
 
+
 class Planetary_Details_View:Character_Reciever {
  public:
   Planetary_Details_View( int planet );
