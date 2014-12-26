@@ -8,7 +8,7 @@ void solar_system_point_to_action( char* yytext, int yyleng );
 void almanac_star_point_to_action( char* yytext, int yyleng );
 
 void RA_and_Declination_dialog();
-
+void Burnham_Handbook_Point_To();
 
 
 

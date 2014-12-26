@@ -389,117 +389,11 @@ void angular_coordinate_view(){
 
 
 
-
-
-
-/* AAA789 */
-#if 0
-void pre_fab_example_test(){
-  // This Functionality has been moved to sight_data_command_actions.cpp
-}
-#endif
-
-
-
-
-/* AAA1950 
- * For Burnham's Guide.
- * 
- * Burnham gives the coordinates in this format:
- * 22115s2119 = RA 22h 11.5m: Dec -21(deg) 19(min).
- * 06078n4844 = RA  6h 07.8m: Dec +48(deg) 44(min).
- *
- */
-void Burnham_Handbook_Point_To(){
-  auto lcd = check_out_main_lcd();
-  lcd->clear();
-  std::unique_ptr<Burnham_Format_Input_View> input_view =
-    std::unique_ptr<Burnham_Format_Input_View>(new Burnham_Format_Input_View{ });
-  while( !input_view->is_finished() ){
-    lcd->setCursor(0,0);
-    lcd = input_view->write_first_line(std::move(lcd));
-    lcd->setCursor(0,1);
-    lcd = input_view->write_second_line(std::move(lcd));
-  }
-  CAA2DCoordinate RA_Dec = input_view->get_RA_and_Dec();
-  double JD = JD_timestamp_pretty_good_000();
-  RA_Dec = burnham_correct(RA_Dec, JD);
-
-  std::unique_ptr< Pushto_Output_View > pushto_view = 
-    std::unique_ptr<Pushto_Output_View >( new Pushto_Output_View( RA_Dec ) );
-
-  pushto_view->set_label_1( "Push To Data" );
-
-  while( !pushto_view->is_finished() ){
-    lcd->setCursor(0,2);
-    lcd = pushto_view->write_first_line(std::move(lcd));
-    lcd->setCursor(0,3);
-    lcd = pushto_view->write_second_line(std::move(lcd));
-  }
-
-  check_in_main_lcd(std::move(lcd));
-}
-
-
-
-
-
-
 void dsc_controller::AAA_command(std::string & cmd){
-  if( cmd == "AAA1032" ){
-    auto lcd = check_out_main_lcd();
-    lcd->row_switcheroo();
-    check_in_main_lcd(std::move(lcd));
-  }else if( cmd == "AAA0" ){
-    auto lcd = check_out_main_lcd();
-    lcd->VARIOUS_HACKS();
-    check_in_main_lcd(std::move(lcd));    
-  }else if( cmd == "AAA555" ){
-    // This command has been moved to command_actions.cpp
-    // display_time_view();
-  }else if( cmd == "AAA556" ){
-    // add_seconds_dialog();
-  }else if( cmd == "AAA554" ){
-    // subtract_seconds_dialog();
-  }else if( cmd == "AAA360" ){
-    //    sexagesimal_test_dialog();
-  }else if( cmd == "AAA720" ){
-    // long_lat_dialog();
-  }else if( cmd == "AAA58" ){
-    // navigation_star_menu_test();
-  }else if( cmd == "AAA0317" ){
-    // countdown_to_Saint_Patricks_Day();
-  }else if( cmd == "AAA234" ){
-    // alignment_sight_test();
-  }else if( cmd == "AAA456" ){
-    // make_optimized_solution_test();
-  }else if( cmd == "AAA789" ){
-    //    pre_fab_example_test();
-  }else if( cmd == "AAA987" ){
-    //clear_sight_data();
-  }else if( cmd == "AAA090" ){
-    angular_coordinate_view();
-  }else if( cmd == "AAAB*C" ){
-    /* Bright star catalog point to action. */;
-  }else if( cmd == "AAA2490" ){
-    //  RA_and_Declination_dialog();
-  }else if( cmd == "AAA1950" ){
-    Burnham_Handbook_Point_To();
-  }
 
 }
 
 void dsc_controller::AA_command(std::string & cmd){
-  if( cmd.size() < 3 ){
-    return;
-  }
-  switch( cmd[2] ){
-  case 'A':
-    dsc_controller::AAA_command(cmd);
-    return;
-  default:
-    return;
-  }
 }
 
 void dsc_controller::BA_command(std::string &cmd){}
@@ -516,16 +410,6 @@ void dsc_controller::CC_command(std::string &cmd){}
 
 
 void dsc_controller::A_command(std::string & cmd){
-  if( cmd.size() < 2 ){
-    return;
-  }
-  switch( cmd[1] ){
-  case 'A':
-    dsc_controller::AA_command(cmd);
-    return;
-  default:
-    return;
-  }
 }
 
 

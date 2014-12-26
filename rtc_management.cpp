@@ -425,6 +425,8 @@ void save_backup_domain_azimuth_home( int azi_home ){
     RTC_WriteBackupRegister(RTC_BKP_DR7, azi_home );
 }
 
+
+
 /******** Backup domain get funtions. *************/
 sexagesimal::Sexagesimal get_backup_domain_longitude(){
   sexagesimal::Sexagesimal longitude;
@@ -453,4 +455,7 @@ int get_backup_domain_altitude_home(){
 int get_backup_domain_azimuth_home(){
   return  RTC_ReadBackupRegister(RTC_BKP_DR7);
 }
+
+
+
 /* 12 Registers left. */

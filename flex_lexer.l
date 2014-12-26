@@ -43,8 +43,8 @@ B{DIGIT}{1}                  solar_system_point_to_action(  yytext, yyleng );
 
 A{STAR}{DIGIT}{1,2}          almanac_star_point_to_action( yytext, yyleng );
 
-AAA2490
-AAA1950
+AAA2490                      RA_and_Declination_dialog();
+AAA1950                      Burnham_Handbook_Point_To();
 
 AAA555                       display_current_time_view();
 AAA556                       add_seconds_dialog();

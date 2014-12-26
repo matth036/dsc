@@ -345,6 +345,48 @@ void RA_and_Declination_dialog(){
 }
 
 
+/* AAA1950 
+ * For Burnham's Guide.
+ * 
+ * Burnham gives the coordinates in this format:
+ * 22115s2119 = RA 22h 11.5m: Dec -21(deg) 19(min).
+ * 06078n4844 = RA  6h 07.8m: Dec +48(deg) 44(min).
+ *
+ */
+void Burnham_Handbook_Point_To(){
+  auto lcd = check_out_main_lcd();
+  lcd->clear();
+  std::unique_ptr<Burnham_Format_Input_View> input_view =
+    std::unique_ptr<Burnham_Format_Input_View>(new Burnham_Format_Input_View{ });
+  while( !input_view->is_finished() ){
+    lcd->setCursor(0,0);
+    lcd = input_view->write_first_line(std::move(lcd));
+    lcd->setCursor(0,1);
+    lcd = input_view->write_second_line(std::move(lcd));
+  }
+  CAA2DCoordinate RA_Dec = input_view->get_RA_and_Dec();
+  double JD = JD_timestamp_pretty_good_000();
+  RA_Dec = burnham_correct(RA_Dec, JD);
+
+  std::unique_ptr< Pushto_Output_View > pushto_view = 
+    std::unique_ptr<Pushto_Output_View >( new Pushto_Output_View( RA_Dec ) );
+
+  pushto_view->set_label_1( "Push To Data" );
+
+  while( !pushto_view->is_finished() ){
+    lcd->setCursor(0,2);
+    lcd = pushto_view->write_first_line(std::move(lcd));
+    lcd->setCursor(0,3);
+    lcd = pushto_view->write_second_line(std::move(lcd));
+  }
+
+  check_in_main_lcd(std::move(lcd));
+}
+
+
+
+
+
 
 void default_action(char *yytext, int yyleng)
 {

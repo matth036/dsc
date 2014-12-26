@@ -829,12 +829,12 @@ almanac_star_point_to_action( yytext, yyleng );
 case 5:
 YY_RULE_SETUP
 #line 46 "flex_lexer.l"
-
+RA_and_Declination_dialog();
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
 #line 47 "flex_lexer.l"
-
+Burnham_Handbook_Point_To();
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
