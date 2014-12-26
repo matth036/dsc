@@ -268,7 +268,7 @@ int main(void)
     sexagesimal::Sexagesimal longitude = get_backup_domain_longitude();
     sexagesimal::Sexagesimal latitude = get_backup_domain_latitude();
     n=0;
-    n += lcd->print( longitude.to_string() ); 
+    n += lcd->print( longitude.to_longitude_string() ); 
     while (n < 10) {
       n += lcd->print(' ');
     }
