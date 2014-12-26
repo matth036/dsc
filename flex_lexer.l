@@ -50,8 +50,10 @@ AAA554                       subtract_seconds_dialog();
 AAA720                       long_lat_dialog();
 AAA0317                      countdown_to_Saint_Patricks_Day();
 
+AAA234                       alignment_sight_test();
+AAA456                       make_optimized_solution_test();
 
-AAA789                       ;
+AAA789                       pre_fab_example_test();
 AAA987                       clear_sight_data();
 
 .*                           return 0;

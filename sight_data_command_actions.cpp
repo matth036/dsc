@@ -292,3 +292,51 @@ void alignment_prompt(Simple_Altazimuth_Scope* scope, std::string object ){
   check_in_main_lcd(std::move(lcd));
 }
 
+/* AAA456 */
+/* This is now believed to be funtional and correct if not optimal.
+ *
+ * compare_pair_by_pair() is slow for large data sets. O(N^2). 
+ * Introduced a second argument to limit the size considered.
+ *
+ */
+void make_optimized_solution_test(){
+  auto lcd = check_out_main_lcd();
+  lcd->clear();
+  lcd->noDisplay();
+  MicroSecondDelay::millisecond_delay(1);
+  lcd->display();
+  lcd->home();
+  lcd->setCursor(0,0);
+  lcd->print( "Extracting Solution" );
+  //  MicroSecondDelay::millisecond_delay(2000);  
+  Simple_Altazimuth_Scope* scope = get_main_simple_telescope();
+  Alignment_Data_Set*  data_set =  get_main_sight_data();
+
+  double least_error = std::numeric_limits<double>::max();
+  double most_error = std::numeric_limits<double>::min();
+  double best_offset = 0;
+  for( double offset=0; offset<=360.0; offset += 12.0 ){
+    scope->set_altitude_offset( offset );
+    double error = compare_pair_by_pair(  data_set, 4 );
+    if( error < least_error ){
+      least_error = error;
+      best_offset = offset;
+    }
+    if( error > most_error ){
+      most_error = error;
+    }
+  }
+  scope->set_altitude_offset( best_offset );
+
+  linear_algebra_interface::simple_altazimuth_optimize_altitude_offset(data_set,scope);
+
+  lcd->setCursor(0,1);
+  lcd->print( " Max Error: ");
+  lcd->print( scope->get_align_error_max(), 6 );
+  lcd->setCursor(0,2);
+  lcd->print( "Mean Error: " );
+  lcd->print( scope->get_align_error_mean(), 6 );
+
+  MicroSecondDelay::millisecond_delay(9000);  
+  check_in_main_lcd(std::move(lcd));
+}
