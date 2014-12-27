@@ -237,6 +237,38 @@ class Planetary_Details_View:Character_Reciever {
   bool finished;
 };
 
+class NGC_Details_View:Character_Reciever {
+ public:
+  NGC_Details_View( int ngc_num );
+  ~NGC_Details_View( );
+  void put_char(char);
+  std::unique_ptr < CharLCD_STM32F > write_first_line(std::unique_ptr <
+						      CharLCD_STM32F >);
+  std::unique_ptr < CharLCD_STM32F > write_second_line(std::unique_ptr <
+						       CharLCD_STM32F >);
+  std::unique_ptr < CharLCD_STM32F > write_third_line(std::unique_ptr <
+						      CharLCD_STM32F >);
+  std::unique_ptr < CharLCD_STM32F > write_fourth_line(std::unique_ptr <
+						       CharLCD_STM32F >);
+
+  void dismiss_action();
+  inline bool is_finished(){
+    return finished;
+  }
+ private:
+  int ngc_num_;
+  int index;
+  float magnitude;
+  void setup( int ngc_num );
+  double JD;
+  CAA2DCoordinate RA_Dec;
+  //   double distance;
+  //  Simple_Altazimuth_Scope* telescope;
+  Character_Reciever* saved_cr;
+  int32_t width_;
+  bool finished;
+};
+
 
 
 #endif				/*  OUTPUT_VIEWS_H  */

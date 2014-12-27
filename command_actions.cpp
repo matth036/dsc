@@ -666,3 +666,29 @@ void planetary_details_view_action( char* yytext, int yyleng ){
   }
   check_in_main_lcd(std::move(lcd));
 }
+
+
+void ngc_details_view_action( char* yytext, int yyleng ){
+  int ngc_num;
+  int n;
+  n = sscanf(yytext + 3, "%d", &ngc_num);
+  if (n != 1) {
+    return;
+  }
+  std::unique_ptr< NGC_Details_View > view = 
+    std::unique_ptr< NGC_Details_View >( new NGC_Details_View( ngc_num ) );
+  auto lcd = check_out_main_lcd();
+  while( !view->is_finished() ){
+    lcd->setCursor(0,0);
+    lcd = view->write_first_line(std::move(lcd));
+    lcd->setCursor(0,1);
+    lcd = view->write_second_line(std::move(lcd));
+    lcd->setCursor(0,2);
+    lcd = view->write_third_line(std::move(lcd));
+    lcd->setCursor(0,3);
+    lcd = view->write_fourth_line(std::move(lcd));
+  }
+  check_in_main_lcd(std::move(lcd));
+
+
+}

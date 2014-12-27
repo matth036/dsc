@@ -5,6 +5,7 @@
 
 namespace ngc_objects{
   float get_magnitude( uint32_t ngc_num );
+  float get_magnitude_i( int ngc_num );
   int get_index( uint32_t ngc_num );
 
 }

@@ -11,6 +11,8 @@
 #include "main.h"
 #include "binary_tidbits.h"
 #include "solar_system.h"
+#include "ngc_objects.h"
+// #include "ngc_list.h"
 
 /******************************************************************/
 
@@ -847,6 +849,103 @@ std::unique_ptr < CharLCD_STM32F > Planetary_Details_View::write_fourth_line(std
   }else{
     n += lcd->print( " AU" );
   }
+  while (n < width_) {
+    n += lcd->print(' ');
+  } 
+  return std::move(lcd);
+}
+
+/*******************************************
+ * NGC_Details_View
+ *********************************************/
+
+NGC_Details_View::NGC_Details_View( int num  ){
+  finished = false;
+  width_ = INPUT_VIEW_DEFAULT_WIDTH;
+  saved_cr = dsc_controller::get_character_reciever();
+  dsc_controller::set_character_reciever(this);
+  setup( num );
+}
+
+NGC_Details_View::~NGC_Details_View(){
+  dsc_controller::set_character_reciever(saved_cr);
+}
+
+void NGC_Details_View::put_char( char c ){
+  if( c == keypad_return_char ){
+    dismiss_action();
+  }
+}
+
+void NGC_Details_View::dismiss_action( ){
+  finished = true;
+}
+
+void NGC_Details_View::setup( int num ){
+  ngc_num_ = num;
+  index = ngc_objects::get_index( num );
+  if( index != -1 ){
+    magnitude = ngc_objects::get_magnitude_i( index );
+    sexagesimal::Sexagesimal RA;
+    sexagesimal::Sexagesimal Dec;
+    // RA.set_binary_data(ngc_list[index].RA_data);
+    // Dec.set_binary_data(ngc_list[index].DEC_data);
+    RA_Dec.X = RA.to_double();
+    RA_Dec.Y = Dec.to_double();
+
+    // magnitude = ngc_objects::get_magnitude( num );
+  }else{
+    magnitude = 0.0;
+    RA_Dec.X = 0.0;
+    RA_Dec.Y = 0.0;
+  }
+}
+
+std::unique_ptr < CharLCD_STM32F > NGC_Details_View::write_first_line(std::unique_ptr <
+									      CharLCD_STM32F > lcd)
+{
+  int n = 0;
+  n += lcd->print( "NGC_" );
+  n += lcd->print( ngc_num_ );
+  while (n < width_/2 ) {
+    n += lcd->print(' ');
+  } 
+  n += lcd->print( "Vmag = " );
+  n += lcd->print( magnitude, 1 );
+  while (n < width_ ) {
+    n += lcd->print(' ');
+  } 
+  return std::move(lcd);
+}
+
+std::unique_ptr < CharLCD_STM32F > NGC_Details_View::write_second_line(std::unique_ptr <
+									      CharLCD_STM32F > lcd)
+{
+  int n = 0;
+  n += lcd->print( " RA " );
+  n += lcd->print( sexagesimal::Sexagesimal(RA_Dec.X).to_string());
+  while (n < width_) {
+    n += lcd->print(' ');
+  } 
+  return std::move(lcd);
+}
+
+std::unique_ptr < CharLCD_STM32F > NGC_Details_View::write_third_line(std::unique_ptr <
+									      CharLCD_STM32F > lcd)
+{
+  int n = 0;
+  n += lcd->print( "DEC " );
+  n += lcd->print( sexagesimal::Sexagesimal(RA_Dec.Y).to_string());
+  while (n < width_) {
+    n += lcd->print(' ');
+  } 
+  return std::move(lcd);
+}
+
+std::unique_ptr < CharLCD_STM32F > NGC_Details_View::write_fourth_line(std::unique_ptr <
+									      CharLCD_STM32F > lcd)
+{
+  int n = 0;
   while (n < width_) {
     n += lcd->print(' ');
   } 
