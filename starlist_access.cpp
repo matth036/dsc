@@ -15,6 +15,14 @@ int starlist_access::get_index( int bsc_number ){
   return index;
 }
 
+float starlist_access::magnitude( int index ){
+  return starlist[index].magnitude;
+}
+
+int32_t starlist_access::bsc_number( int index ){
+  return starlist[index].BSCnum;
+}
+
 CAA2DCoordinate starlist_access::proper_motion_adjusted_position( int index, double JD){
   CAA2DCoordinate ra_dec;
   sexagesimal::Sexagesimal RA;
@@ -42,3 +50,6 @@ CAA2DCoordinate starlist_access::proper_motion_adjusted_position( int index, dou
 
 }
 
+int32_t starlist_access::starlist_size(){
+  return STARLIST_SIZE;
+}

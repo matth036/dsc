@@ -7,13 +7,111 @@
 #include "sexagesimal.h"
 #include "AADate.h"
 #include "AASidereal.h"
+#include "AADynamicalTime.h"
 #include <cmath>
 #include "main.h"
 #include "binary_tidbits.h"
 #include "solar_system.h"
 #include "ngc_objects.h"
+#include "starlist_access.h"
+#include "extra_solar_transforms.h"
+#include "keypad_layout.h"
 
-/******************************************************************/
+/*********************************************
+ *
+ * Information_View
+ *
+ **********************************************/
+
+Information_View::Information_View(){
+  finished = false;
+  width_ = INPUT_VIEW_DEFAULT_WIDTH;
+  saved_cr = dsc_controller::get_character_reciever();
+  dsc_controller::set_character_reciever(this);
+}
+
+Information_View::~Information_View( ){
+  dsc_controller::set_character_reciever(saved_cr);
+}
+
+
+void Information_View::put_char( char c ){
+  if( c == keypad_return_char ){
+    dismiss_action();
+  }
+}
+
+void Information_View::dismiss_action(){
+  finished = true;
+}
+
+void Information_View::set_text_1( std::string t ){
+  text_1 = t;
+}
+
+void Information_View::set_text_2( std::string t ){
+  text_2 = t;
+}
+
+void Information_View::set_text_3( std::string t ){
+  text_3 = t;
+}
+
+void Information_View::set_text_4( std::string t ){
+  text_4 = t;
+}
+
+
+
+std::unique_ptr < CharLCD_STM32F > Information_View::write_first_line(std::unique_ptr < CharLCD_STM32F > lcd)
+{
+  int n = 0;
+  n += lcd->print( text_2 );
+  while (n < width_) {
+    n += lcd->print(' ');
+  } 
+  return std::move(lcd);
+}
+
+std::unique_ptr < CharLCD_STM32F > Information_View::write_second_line(std::unique_ptr <
+									      CharLCD_STM32F > lcd)
+{
+  int n = 0;
+  n += lcd->print( text_2 );
+  while (n < width_) {
+    n += lcd->print(' ');
+  } 
+  return std::move(lcd);
+}
+
+
+std::unique_ptr < CharLCD_STM32F > Information_View::write_third_line(std::unique_ptr <
+									      CharLCD_STM32F > lcd)
+{
+  int n = 0;
+  n += lcd->print( text_3 );
+  while (n < width_) {
+    n += lcd->print(' ');
+  } 
+  return std::move(lcd);
+}
+
+std::unique_ptr < CharLCD_STM32F > Information_View::write_fourth_line(std::unique_ptr <
+									      CharLCD_STM32F > lcd)
+{
+  int n = 0;
+  n += lcd->print( text_4 );
+  while (n < width_) {
+    n += lcd->print(' ');
+  } 
+  return std::move(lcd);
+}
+
+/*********************************************
+ *
+ * Current_Time_View
+ *
+ **********************************************/
 
 Current_Time_View::Current_Time_View(){
   finished = false;
@@ -878,6 +976,107 @@ std::unique_ptr < CharLCD_STM32F > Planetary_Details_View::write_fourth_line(std
   } 
   return std::move(lcd);
 }
+
+/*********************************************
+ *
+ * BSC_Details_View
+ *
+ **********************************************/
+
+BSC_Details_View::BSC_Details_View(){
+  finished = false;
+  width_ = INPUT_VIEW_DEFAULT_WIDTH;
+  saved_cr = dsc_controller::get_character_reciever();
+  JD = JD_timestamp_pretty_good_000();
+  dsc_controller::set_character_reciever(this);
+}
+
+BSC_Details_View::~BSC_Details_View( ){
+  dsc_controller::set_character_reciever(saved_cr);
+}
+
+
+void BSC_Details_View::put_char( char c ){
+  if( c == keypad_return_char ){
+    dismiss_action();
+  }else if( c == scroll_up_char ){
+    if( index+1 < starlist_access::starlist_size() ){
+      set_index( index+1 );
+    }
+  }else if( c == scroll_down_char ){
+    if( index-1 >= 0 ){
+      set_index( index-1 );
+    }
+  }
+}
+
+void BSC_Details_View::set_index( int i ){
+  index = i;
+  RA_Dec = starlist_access::proper_motion_adjusted_position( index, JD);
+  double deltaT = CAADynamicalTime::DeltaT( JD );
+  RA_Dec = apply_aberration( RA_Dec, JD + deltaT/86400.0 );
+  RA_Dec = precession_and_nutation_correct_from_mean_eqinox( RA_Dec, JD );
+}
+
+void BSC_Details_View::dismiss_action(){
+  finished = true;
+}
+
+std::unique_ptr < CharLCD_STM32F > BSC_Details_View::write_first_line(std::unique_ptr < CharLCD_STM32F > lcd)
+{
+  
+  int n = 0;
+  n += lcd->print( "B*C " );
+  n += lcd->print( starlist_access::bsc_number(index) );
+  while (n < width_/2 ) {
+    n += lcd->print(' ');
+  } 
+  n += lcd->print( "Mag " );
+  n += lcd->print( starlist_access::magnitude(index), 2 );
+
+  while (n < width_) {
+    n += lcd->print(' ');
+  } 
+  return std::move(lcd);
+}
+
+std::unique_ptr < CharLCD_STM32F > BSC_Details_View::write_second_line(std::unique_ptr <
+									      CharLCD_STM32F > lcd)
+{
+  int n = 0;
+  n += lcd->print( " RA " );
+  n += lcd->print( sexagesimal::Sexagesimal( RA_Dec.X ).to_string() );
+
+  while (n < width_) {
+    n += lcd->print(' ');
+  } 
+  return std::move(lcd);
+}
+
+
+std::unique_ptr < CharLCD_STM32F > BSC_Details_View::write_third_line(std::unique_ptr <
+									      CharLCD_STM32F > lcd)
+{
+  int n = 0;
+  n += lcd->print( "Dec " );
+  n += lcd->print( sexagesimal::Sexagesimal( RA_Dec.Y ).to_string() );
+  while (n < width_) {
+    n += lcd->print(' ');
+  } 
+  return std::move(lcd);
+}
+
+std::unique_ptr < CharLCD_STM32F > BSC_Details_View::write_fourth_line(std::unique_ptr <
+									      CharLCD_STM32F > lcd)
+{
+  int n = 0;
+  // n += lcd->print( text_4 );
+  while (n < width_) {
+    n += lcd->print(' ');
+  } 
+  return std::move(lcd);
+}
+
 
 /*******************************************
  * NGC_Details_View

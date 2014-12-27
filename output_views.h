@@ -19,6 +19,39 @@ class CharLCD_STM32F;
 
 
 
+class Information_View:Character_Reciever {
+ public:
+  Information_View( );
+  ~Information_View( );
+  void put_char(char);
+  std::unique_ptr < CharLCD_STM32F > write_first_line(std::unique_ptr <
+						      CharLCD_STM32F >);
+  std::unique_ptr < CharLCD_STM32F > write_second_line(std::unique_ptr <
+						       CharLCD_STM32F >);
+  std::unique_ptr < CharLCD_STM32F > write_third_line(std::unique_ptr <
+						      CharLCD_STM32F >);
+  std::unique_ptr < CharLCD_STM32F > write_fourth_line(std::unique_ptr <
+						       CharLCD_STM32F >);
+
+  void dismiss_action();
+  inline bool is_finished(){
+    return finished;
+  }
+  void set_text_1( std::string );
+  void set_text_2( std::string );
+  void set_text_3( std::string );
+  void set_text_4( std::string );
+ private:
+  std::string text_1;
+  std::string text_2;
+  std::string text_3;
+  std::string text_4;
+  Character_Reciever* saved_cr;
+  int32_t width_;
+  bool center_text;
+  bool finished;
+};
+
 class Current_Time_View:Character_Reciever {
  public:
   Current_Time_View( );
@@ -240,6 +273,35 @@ class Planetary_Details_View:Character_Reciever {
   CAA2DCoordinate RA_Dec;
   double distance;
   //  Simple_Altazimuth_Scope* telescope;
+  Character_Reciever* saved_cr;
+  int32_t width_;
+  bool finished;
+};
+
+
+class BSC_Details_View:Character_Reciever {
+ public:
+  BSC_Details_View( );
+  ~BSC_Details_View( );
+  void put_char(char);
+  std::unique_ptr < CharLCD_STM32F > write_first_line(std::unique_ptr <
+						      CharLCD_STM32F >);
+  std::unique_ptr < CharLCD_STM32F > write_second_line(std::unique_ptr <
+						       CharLCD_STM32F >);
+  std::unique_ptr < CharLCD_STM32F > write_third_line(std::unique_ptr <
+						      CharLCD_STM32F >);
+  std::unique_ptr < CharLCD_STM32F > write_fourth_line(std::unique_ptr <
+						       CharLCD_STM32F >);
+
+  void dismiss_action();
+  inline bool is_finished(){
+    return finished;
+  }
+  void set_index(int i);
+ private:
+  int index;
+  double JD;
+  CAA2DCoordinate RA_Dec;
   Character_Reciever* saved_cr;
   int32_t width_;
   bool finished;

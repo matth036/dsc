@@ -1,7 +1,5 @@
 #include "navigation_star.h"
 #include "extra_solar_transforms.h"
-
-// #include "starlist.h"
 #include "starlist_access.h"
 #include "solar_system.h"
 #include <cmath>

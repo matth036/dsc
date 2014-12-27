@@ -4,7 +4,6 @@
 #include "microsecond_delay.h"
 #include "rtc_management.h"
 #include "solar_system.h"
-// #include <regex>
 #include <cctype>
 #include <cmath>
 #include "matrix_keypad.h"
@@ -17,7 +16,7 @@
 #include "sexagesimal.h"
 #include "extra_solar_transforms.h"
 #include "ngc_objects.h"
-#include "ngc_list.h"
+
 #include "input_views.h"
 #include "output_views.h"
 #include "menu_views.h"
@@ -32,9 +31,9 @@
 
 /* forward declarations */
 
-void navigation_star_menu_test();
-void navigation_star_menu();
-void solar_system_menu();
+// void navigation_star_menu_test();
+// void navigation_star_menu();
+// void solar_system_menu();
 
 
 bool is_two_digits(std::string & cmd)
@@ -63,25 +62,6 @@ bool is_four_digits(std::string & cmd)
   if (!isdigit(cmd[3]))
     return false;
   return true;
-}
-
-void debug_print(std::string & msg)
-{
-  auto lcd = check_out_main_lcd();
-  lcd->clear();
-  lcd->home();
-  MicroSecondDelay::millisecond_delay(1);
-  lcd->setCursor(0, 0);
-  int n = lcd->print("[");
-  n += lcd->print(msg);
-  n += lcd->print("]");
-  while (n < 20) {
-    n += lcd->print("]");
-  }
-  MicroSecondDelay::millisecond_delay(9000);
-  lcd->clear();
-  MicroSecondDelay::millisecond_delay(1);
-  check_in_main_lcd(std::move(lcd));
 }
 
 void nav_star_command(int num)
@@ -223,13 +203,6 @@ void four_digit_command(int value)
   }
 }
 
-void dsc_controller::execute_early_experimental_command_implementations(std::string & cmd){
-
-}
-
-
-
-
 
 
 void dsc_controller::AAA_command(std::string & cmd){
@@ -283,7 +256,7 @@ void dsc_controller::do_execute_command(std::string & cmd)
     return;
 
   default:
-    dsc_controller::execute_early_experimental_command_implementations(cmd);
+   return;
   }
 } 
 
@@ -305,7 +278,6 @@ void dsc_controller::set_character_reciever(Character_Reciever* cr){
 Character_Reciever* dsc_controller::get_character_reciever(){
   return current_character_reciever;
 }
-
 
 /* The default treatment of input characters is to take them as forming command language words. */
 void default_put_char(char c){
