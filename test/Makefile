@@ -62,6 +62,7 @@ CPPSRC+=AAPluto.cpp
 
 CPPSRC+=AASidereal.cpp
 
+CPPSRC+=starlist_access.cpp
 
 
 COMMONFLAGS=-O$(OPTLVL) -ggdb3 -Wall -Werror -std=c++11
