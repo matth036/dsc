@@ -57,7 +57,7 @@ class Confirm_Input_View:Character_Reciever {
   /* N.B. Call by reference in this constructor. */
   Confirm_Input_View( bool& ok );
   ~Confirm_Input_View();
-  void put_char(char);
+  void put_char(char c);
   void set_text( std::string text );
   void set_true_text( std::string text );
   void set_false_text( std::string text );

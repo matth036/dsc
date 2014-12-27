@@ -667,19 +667,92 @@ void Sexagesimal_Input_View::decrement_position()
 /********************************************************
  *
  *   Confirm_Input_View;
+ *   N.B. The constructor argument is a reference (to a bool).
  *
  ********************************************************/
 Confirm_Input_View::Confirm_Input_View( bool& ok ):is_okay_{ok}
 {
   width_ = INPUT_VIEW_DEFAULT_WIDTH;
   saved_cr = dsc_controller::get_character_reciever();
+  text_ = "Should I?";
+  true_text_ = "Yes";
+  false_text_ = "No";
   dsc_controller::set_character_reciever(this);
 }
 
+Confirm_Input_View::~Confirm_Input_View(){
+  dsc_controller::set_character_reciever(saved_cr);
+}
+
+void Confirm_Input_View::put_char(char c){
+  switch( c ){
+  case keypad_enter_char:
+    is_okay_ = true;
+    finished = true;
+    return;
+  case keypad_backspace_char:
+    is_okay_ = false;
+    finished = true;
+    return;
+  }
+}
+
+
+void Confirm_Input_View::set_text( std::string text ){
+  text_ = text;
+}
+
+void Confirm_Input_View::set_true_text( std::string text ){
+  true_text_ = text;
+}
+
+void Confirm_Input_View::set_false_text( std::string text ){
+  false_text_ = text;
+}
+ 
 
 
 
 
+
+
+
+
+
+std::unique_ptr < CharLCD_STM32F >
+    Confirm_Input_View::write_first_line(std::unique_ptr < CharLCD_STM32F > lcd)
+{
+  int space = width_ - text_.size();
+  int n = 0;
+  while (n < space / 2) {
+    n += lcd->print(' ');
+  }
+  n += lcd->print( text_ );
+  while (n < width_) {
+    n += lcd->print(' ');
+  }
+  return std::move(lcd);
+}
+
+std::unique_ptr < CharLCD_STM32F >
+    Confirm_Input_View::write_second_line(std::unique_ptr < CharLCD_STM32F >
+					  lcd)
+{
+  int n = 0;
+  n += lcd->print( keypad_backspace_char );
+  n += lcd->print( ") " );
+  n += lcd->print( false_text_ );
+  while ( n < width_/2 ) {
+    n += lcd->print(' ');
+  }
+  n += lcd->print( keypad_enter_char );
+  n += lcd->print( ") " );
+  n += lcd->print( true_text_ );
+  while ( n < width_ ) {
+    n += lcd->print(' ');
+  }
+  return std::move(lcd);
+}
 
 
 
