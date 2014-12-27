@@ -11,7 +11,7 @@
 #include "solar_system.h"
 #include "ngc_objects.h"
 #include "ngc_list.h"
-#include "starlist.h"
+#include "starlist_access.h"
 #include "extra_solar_transforms.h"
 
 #include "AADynamicalTime.h"
@@ -109,13 +109,15 @@ void bsc_point_to_action(char *yytext, int yyleng)
     return;
   }
   CAA2DCoordinate RA_Dec;
-  int index = -1;
+  int index = starlist_access::get_index( bsc_num );
+  /*************************
   for (int i = 0; i < STARLIST_SIZE; ++i) {
     if (starlist[i].BSCnum == bsc_num) {
       index = i;
       break;
     }
   }
+  **********************************/
   if( index < 0 ){
     auto lcd = check_out_main_lcd();
     lcd->setCursor(0,0);
@@ -137,9 +139,8 @@ void bsc_point_to_action(char *yytext, int yyleng)
   }
 
   double JD = JD_timestamp_pretty_good_000();
-  double days = JD - solar_system::J2000_0;
 
-  RA_Dec = proper_motion_adjusted_position( starlist[index], days );
+  RA_Dec = starlist_access::proper_motion_adjusted_position( index, JD);
   double deltaT = CAADynamicalTime::DeltaT( JD );
   RA_Dec = apply_aberration( RA_Dec, JD + deltaT/86400.0 );
   RA_Dec = precession_and_nutation_correct_from_mean_eqinox( RA_Dec, JD );
@@ -235,22 +236,13 @@ void almanac_star_point_to_action(char *yytext, int yyleng)
   }
   std::string star_name = navigation_star::get_navigation_star_name( nav_num );
   int bsc_num = navigation_star::nav2bsc[nav_num];
-  int index = -1;
-  for (int i = 0; i < STARLIST_SIZE; ++i) {
-    if (starlist[i].BSCnum == bsc_num) {
-      index = i;
-      break;
-    }
-  }
+  int index = starlist_access::get_index( bsc_num );
   if( index == -1 ){
     return;
   }
-  CAA2DCoordinate RA_Dec;
-
-
   double JD = JD_timestamp_pretty_good_000();
-  double days = JD - solar_system::J2000_0;
-  RA_Dec = proper_motion_adjusted_position( starlist[index], days );
+  CAA2DCoordinate RA_Dec = starlist_access::proper_motion_adjusted_position( index, JD);
+
   double deltaT = CAADynamicalTime::DeltaT( JD );
   RA_Dec = apply_aberration( RA_Dec, JD + deltaT/86400.0 );
   RA_Dec = precession_and_nutation_correct_from_mean_eqinox( RA_Dec, JD );

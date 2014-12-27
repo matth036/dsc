@@ -1,7 +1,8 @@
 #include "navigation_star.h"
 #include "extra_solar_transforms.h"
 
-#include "starlist.h"
+// #include "starlist.h"
+#include "starlist_access.h"
 #include "solar_system.h"
 #include <cmath>
 #include "AACoordinateTransformation.h"
@@ -263,20 +264,12 @@ CAA2DCoordinate navigation_star::nav_star_RA_Dec(int navstar_num, double JD)
 {
   CAA2DCoordinate RA_Dec;
   int bsc_num = navigation_star::nav2bsc[navstar_num];
-  int index = -1;
-  for (int i = 0; i < STARLIST_SIZE; ++i) {
-    if (starlist[i].BSCnum == bsc_num) {
-      index = i;
-      break;
-    }
-  }
+  int index = starlist_access::get_index( bsc_num );
   if (index < 0) {
     RA_Dec.X = RA_Dec.Y = 0;
     return RA_Dec;
   }
-  double days = JD - solar_system::J2000_0;
-
-  RA_Dec = proper_motion_adjusted_position(starlist[index], days);
+  RA_Dec = starlist_access::proper_motion_adjusted_position(index, JD);
 
   double deltaT = CAADynamicalTime::DeltaT(JD);
 
