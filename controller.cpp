@@ -36,92 +36,6 @@ void navigation_star_menu_test();
 void navigation_star_menu();
 void solar_system_menu();
 
-void display_details(std::string name, CAAEllipticalPlanetaryDetails & details)
-{
-  int n;
-  auto lcd = check_out_main_lcd();
-  lcd->clear();
-  lcd->home();
-  MicroSecondDelay::millisecond_delay(1);
-  lcd->setCursor(0, 0);
-  n = lcd->print(name);
-  while (n < 20) {
-    n += lcd->print(" ");
-  }
-  lcd->setCursor(0, 1);
-  n = lcd->print(" RA: ");
-  n += lcd->print(sexagesimal::Sexagesimal(details.ApparentGeocentricRA).
-		  to_string());
-  while (n < 20) {
-    n += lcd->print(" ");
-  }
-  lcd->setCursor(0, 2);
-  n = lcd->print("DEC: ");
-  n += lcd->
-      print(sexagesimal::Sexagesimal(details.ApparentGeocentricDeclination).
-	    to_string());
-  while (n < 20) {
-    n += lcd->print(" ");
-  }
-  lcd->setCursor(0, 3);
-  n = lcd->print("Distance: ");
-  n += lcd->print(details.ApparentGeocentricDistance, 4);
-  while (n < 20)
-    n += lcd->print(" ");
-  MicroSecondDelay::millisecond_delay(9000);
-  lcd->clear();
-  MicroSecondDelay::millisecond_delay(1);
-  check_in_main_lcd(std::move(lcd));
-}
-
-void calculate_and_display(std::string body)
-{
-  double JD = JD_timestamp_pretty_good_000();
-  CAAEllipticalPlanetaryDetails details =
-      solar_system::calculate_details(body, JD);
-  display_details(body, details);
-}
-
-void moon_stuff()
-{
-  double JD = JD_timestamp_pretty_good_000();
-
-  CAA3DCoordinate RA_Dec_Dist = solar_system::calculate_moon_RA_Dec_Dist(JD);
-
-  int n;
-  auto lcd = check_out_main_lcd();
-  lcd->clear();
-  lcd->home();
-  MicroSecondDelay::millisecond_delay(1);
-  lcd->setCursor(0, 0);
-  n = lcd->print("Moon, Geocentric");
-  while (n < 20) {
-    n += lcd->print(" ");
-  }
-  lcd->setCursor(0, 1);
-  n = lcd->print(" RA: ");
-  n += lcd->print(sexagesimal::Sexagesimal(RA_Dec_Dist.X).to_string());
-  while (n < 20) {
-    n += lcd->print(" ");
-  }
-  lcd->setCursor(0, 2);
-  n = lcd->print("DEC: ");
-  n += lcd->print(sexagesimal::Sexagesimal(RA_Dec_Dist.Y).to_string());
-  while (n < 20) {
-    n += lcd->print(" ");
-  }
-  lcd->setCursor(0, 3);
-  n = lcd->print("  R: ");
-  n += lcd->print(RA_Dec_Dist.Z);
-  n += lcd->print(" km");
-  while (n < 20) {
-    n += lcd->print(" ");
-  }
-  MicroSecondDelay::millisecond_delay(9000);
-  lcd->clear();
-  MicroSecondDelay::millisecond_delay(1);
-  check_in_main_lcd(std::move(lcd));
-}
 
 bool is_two_digits(std::string & cmd)
 {
@@ -310,41 +224,7 @@ void four_digit_command(int value)
 }
 
 void dsc_controller::execute_early_experimental_command_implementations(std::string & cmd){
-  if (cmd == "0") {
-    calculate_and_display("Sun");
-  } else if (cmd == "1") {
-    calculate_and_display("Mercury");
-  } else if (cmd == "2") {
-    calculate_and_display("Venus");
-  } else if (cmd == "3") {
-    moon_stuff();
-  } else if (cmd == "4") {
-    calculate_and_display("Mars");
-  } else if (cmd == "5") {
-    calculate_and_display("Jupiter");
-  } else if (cmd == "6") {
-    calculate_and_display("Saturn");
-  } else if (cmd == "7") {
-    calculate_and_display("Uranus");
-  } else if (cmd == "8") {
-    calculate_and_display("Neptune");
-  } else if (cmd == "9") {
-    calculate_and_display("Pluto");
-  } else if (is_two_digits(cmd)) {
-    int value;
-    int n = sscanf(cmd.data(), "%d", &value);
-    if (n == 1) {
-      two_digit_command(value);
-    }
-  } else if ( is_four_digits(cmd) ){
-    int value;
-    int n = sscanf(cmd.data(), "%d", &value);
-    if (n == 1) {
-      four_digit_command(value);
-    }
-  }else {
-    // debug_print( "fall through" );
-  }
+
 }
 
 
