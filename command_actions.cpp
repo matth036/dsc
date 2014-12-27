@@ -26,7 +26,6 @@ void scan_for_action(std::string command)
   yy_delete_buffer(buffer_state);
 }
 
-
 void ngc_point_to_action(char *yytext, int yyleng)
 {
   int ngc_num;

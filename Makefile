@@ -99,6 +99,7 @@ CPPSRC+=char_lcd_stm32f4.cpp
 CPPSRC+=quadrature_decoder.cpp
 CPPSRC+=sexagesimal.cpp
 CPPSRC+=navigation_star.cpp
+CPPSRC+=starlist_access.cpp
 CPPSRC+=controller.cpp
 CPPSRC+=telescope_model.cpp
 CPPSRC+=rtc_management.cpp

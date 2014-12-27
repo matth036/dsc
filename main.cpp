@@ -7,7 +7,6 @@
 #include "char_lcd_stm32f4.h"
 #include "sexagesimal.h"
 #include "rtc_management.h"
-#include "starlist.h"
 #include "matrix_keypad.h"
 #include "quadrature_decoder.h"
 #include "telescope_model.h"
