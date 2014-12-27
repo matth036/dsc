@@ -153,6 +153,13 @@ void Alignment_Data_Set::clear(){
   }
 }
 
+void Alignment_Data_Set::delete_item( uint32_t position ){
+  for( uint32_t i = position; i+1<sights.size(); ++i ){
+    sights[i] = sights[i+1];
+  }
+  sights.pop_back();
+}
+
 const double Alignment_Data_Set::get_longitude(){
   return longitude.to_double();
 }

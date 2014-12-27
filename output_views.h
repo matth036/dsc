@@ -185,6 +185,8 @@ class Alignment_Sights_View:public Character_Reciever{
     return _delete_item_with_confirm;
   }
   void clear_prompts();
+  void trim_position();
+  uint32_t get_position();
  private:
    std::unique_ptr < CharLCD_STM32F > write_date_line(std::unique_ptr <
 						    CharLCD_STM32F >, double jd);

@@ -153,7 +153,9 @@ void alignment_sight_test(){
     }
     if( sight_view->delete_item_with_confirm() ){
       check_in_main_lcd(std::move(lcd));
-      delete_sight_item_with_confirm();
+      delete_sight_item_with_confirm(data_set, sight_view->get_position() );
+      /* If we deleted the last item we are now out of range */
+      sight_view->trim_position();
       sight_view->clear_prompts();
       lcd = check_out_main_lcd();
     }
@@ -262,7 +264,8 @@ void solar_system_menu(){
   check_in_main_lcd(std::move(lcd));
 }
 
-void delete_sight_item_with_confirm(){
+void delete_sight_item_with_confirm( Alignment_Data_Set* data_set, uint32_t position ){
+
   std::unique_ptr<Confirm_Input_View> confirm =
     std::unique_ptr<Confirm_Input_View>(new Confirm_Input_View{} );
   auto lcd = check_out_main_lcd();
@@ -273,12 +276,15 @@ void delete_sight_item_with_confirm(){
     lcd->setCursor(0,3);
     lcd = confirm->write_second_line(std::move(lcd));
   }
-
-
+  if( confirm->get_is_okay() ){
+    delete_sight_item_without_confirm( data_set, position );
+  }
   check_in_main_lcd(std::move(lcd));
 }
 
-
+void delete_sight_item_without_confirm( Alignment_Data_Set* data_set, uint32_t position ){
+  data_set->delete_item( position );
+}
 
 void alignment_prompt(Simple_Altazimuth_Scope* scope, std::string object ){
   auto lcd = check_out_main_lcd();

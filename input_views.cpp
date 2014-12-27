@@ -830,7 +830,7 @@ void Burnham_Format_Input_View::increment_position(){
   }
   ++position;
   if( position == 5 ){
-    ++position; // Skip over the [n|s] character.
+    ++position; // Skip over the [ns] character.
   }
   char_buffer[position] = '\0';
 }
@@ -842,7 +842,7 @@ void Burnham_Format_Input_View::decrement_position(){
   char_buffer[position] = '\0';
   --position;
   if( position == 5 ){
-    --position; // Skip over the [n|s] character.
+    --position; // Skip over the [ns] character.
   }
   char_buffer[position] = '\0';
 }

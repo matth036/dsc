@@ -74,6 +74,7 @@ class Alignment_Data_Set{
   const float get_temperature( uint32_t item );
   const bool has_longitude_and_latitude();
   void push_item( Alignment_Sight_Item& );
+  void delete_item( uint32_t position );
   void clear();
  private:
   std::vector<Alignment_Sight_Item> sights;

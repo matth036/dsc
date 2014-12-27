@@ -579,12 +579,19 @@ void Alignment_Sights_View::scroll_down(){
   }
 }
 
-void Alignment_Sights_View::delete_with_confirm(){
-  bool confirmed = false;
-  _delete_item_with_confirm = true;
-  if( confirmed ){
-    delete_without_confirm();
+void Alignment_Sights_View::trim_position(){
+  if( position > size() - 1 ){
+    position = size() - 1;
   }
+}
+
+uint32_t Alignment_Sights_View::get_position(){
+  return position;
+}
+
+
+void Alignment_Sights_View::delete_with_confirm(){
+  _delete_item_with_confirm = true;
 }
 
 void Alignment_Sights_View::delete_without_confirm(){

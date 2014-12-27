@@ -16,7 +16,7 @@ class Telescope_Model;
  * entry on an LCD
  **/
 
-constexpr uint32_t INPUT_VIEW_DEFAULT_WIDTH = 20;
+constexpr uint32_t INPUT_VIEW_DEFAULT_WIDTH = 20;  /* The width of the display in characters */
 
 
 class Integer_Input_View:Character_Reciever {

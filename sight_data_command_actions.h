@@ -8,6 +8,7 @@
 #include "command_actions.h"
 #include <string>
 #include "telescope_model.h"
+#include "alignment_sight_info.h"
 
 void clear_sight_data();
 
@@ -19,7 +20,9 @@ void navigation_star_menu();
 
 void solar_system_menu();
 
-void delete_sight_item_with_confirm();
+// void delete_sight_item_with_confirm();
+void delete_sight_item_with_confirm( Alignment_Data_Set* data_set, uint32_t position );
+void delete_sight_item_without_confirm( Alignment_Data_Set* data_set, uint32_t position );
 
 void alignment_prompt(Simple_Altazimuth_Scope* scope, std::string object );
 
