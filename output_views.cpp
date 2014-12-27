@@ -10,6 +10,8 @@
 #include <cmath>
 #include "main.h"
 #include "binary_tidbits.h"
+#include "solar_system.h"
+
 /******************************************************************/
 
 Current_Time_View::Current_Time_View(){
@@ -765,6 +767,7 @@ Planetary_Details_View::Planetary_Details_View( int planet_num  ){
   width_ = INPUT_VIEW_DEFAULT_WIDTH;
   saved_cr = dsc_controller::get_character_reciever();
   dsc_controller::set_character_reciever(this);
+  body_name = solar_system::solar_system_body_name( planet_num_ );
 }
 
 Planetary_Details_View::~Planetary_Details_View(){
@@ -784,9 +787,23 @@ void Planetary_Details_View::dismiss_action( ){
 std::unique_ptr < CharLCD_STM32F > Planetary_Details_View::write_first_line(std::unique_ptr <
 									      CharLCD_STM32F > lcd)
 {
+  JD = JD_timestamp_pretty_good_000();
+  if ( planet_num_ == 3) {
+    CAA3DCoordinate RA_Dec_Dist = solar_system::calculate_moon_RA_Dec_Dist(JD);
+    RA_Dec.X = RA_Dec_Dist.X;
+    RA_Dec.Y = RA_Dec_Dist.Y;
+  } else {
+    CAAEllipticalPlanetaryDetails details =
+	solar_system::calculate_details(body_name, JD);
+    RA_Dec.X = details.ApparentGeocentricRA;
+    RA_Dec.Y = details.ApparentGeocentricDeclination;
+  }
   int n = 0;
-  n += lcd->print( "Planet number: " );
-  n += lcd->print( planet_num_ );
+  int space = (width_ - body_name.size())/2;
+  while( n < space ){
+    n += lcd->print( ' ' );
+  }
+  n += lcd->print( body_name );
   while (n < width_) {
     n += lcd->print(' ');
   } 

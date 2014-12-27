@@ -227,7 +227,11 @@ class Planetary_Details_View:Character_Reciever {
   }
  private:
   int planet_num_;
-  Simple_Altazimuth_Scope* telescope;
+  double JD;
+  std::string body_name;
+  CAA2DCoordinate RA_Dec;
+
+  //  Simple_Altazimuth_Scope* telescope;
   Character_Reciever* saved_cr;
   int32_t width_;
   bool finished;

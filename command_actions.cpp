@@ -636,7 +636,7 @@ void planetary_details_view_action( char* yytext, int yyleng ){
   if (n != 1) {
     return;
   }
-
+  /*******************************
   std::string body_name = solar_system::solar_system_body_name(body_num);
   double JD = JD_timestamp_pretty_good_000();
   CAA2DCoordinate RA_Dec;
@@ -650,18 +650,21 @@ void planetary_details_view_action( char* yytext, int yyleng ){
     RA_Dec.X = details.ApparentGeocentricRA;
     RA_Dec.Y = details.ApparentGeocentricDeclination;
   }
-  /******************************
-  std::unique_ptr<Planetary_Details_View> view =
-    std::unique_ptr<Planetary_Details_View>(new Plantary_Details_View(body_num) );
-  ********************************/
+  **********************************/
   std::unique_ptr< Planetary_Details_View > view = 
     std::unique_ptr<Planetary_Details_View >( new Planetary_Details_View( body_num ) );
-
-
   auto lcd = check_out_main_lcd();
   {
-
-
+    while( !view->is_finished() ){
+      lcd->setCursor(0,0);
+      lcd = view->write_first_line(std::move(lcd));
+      lcd->setCursor(0,1);
+      lcd = view->write_second_line(std::move(lcd));
+      lcd->setCursor(0,2);
+      lcd = view->write_third_line(std::move(lcd));
+      lcd->setCursor(0,3);
+      lcd = view->write_fourth_line(std::move(lcd));
+    }
   }
   check_in_main_lcd(std::move(lcd));
 }
