@@ -792,7 +792,7 @@ std::unique_ptr < CharLCD_STM32F > Planetary_Details_View::write_first_line(std:
     CAA3DCoordinate RA_Dec_Dist = solar_system::calculate_moon_RA_Dec_Dist(JD);
     RA_Dec.X = RA_Dec_Dist.X;
     RA_Dec.Y = RA_Dec_Dist.Y;
-    distance = RA_Dec_Dist.Y; // KM
+    distance = RA_Dec_Dist.Z; // KM
   } else {
     CAAEllipticalPlanetaryDetails details =
 	solar_system::calculate_details(body_name, JD);
