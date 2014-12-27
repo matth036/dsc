@@ -25,11 +25,6 @@ float ngc_objects::get_dimension_b_i( int index ){
   return ngc_list[index].dimension_b;
 }
 
-
-
-
-
-
 sexagesimal::Sexagesimal ngc_objects::get_RA_i( int index ){
   sexagesimal::Sexagesimal RA;
   RA.set_binary_data( ngc_list[index].RA_data );

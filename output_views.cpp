@@ -12,7 +12,6 @@
 #include "binary_tidbits.h"
 #include "solar_system.h"
 #include "ngc_objects.h"
-// #include "ngc_list.h"
 
 /******************************************************************/
 
@@ -560,6 +559,9 @@ void Alignment_Sights_View::put_char(char c)
  case '*':
    asterix_char_action();
    return;
+ case keypad_backspace_char:
+   delete_with_confirm();
+   return;
  }
  return;
 }
@@ -575,6 +577,19 @@ void Alignment_Sights_View::scroll_down(){
     ++position;
   }
 }
+
+void Alignment_Sights_View::delete_with_confirm(){
+  bool confirmed = false;
+
+  if( confirmed ){
+    delete_without_confirm();
+  }
+}
+
+void Alignment_Sights_View::delete_without_confirm(){
+
+}
+
 
 void Alignment_Sights_View::select_char_action(){
   _prompt_for_new_planet_sight = true;
@@ -886,16 +901,16 @@ void NGC_Details_View::setup( int num ){
   index = ngc_objects::get_index( num );
   if( index != -1 ){
     magnitude = ngc_objects::get_magnitude_i( index );
-    sexagesimal::Sexagesimal RA;
-    sexagesimal::Sexagesimal Dec;
-    // RA.set_binary_data(ngc_list[index].RA_data);
-    // Dec.set_binary_data(ngc_list[index].DEC_data);
+    dimension_a = ngc_objects::get_dimension_a_i( index );
+    dimension_b = ngc_objects::get_dimension_b_i( index );
+    sexagesimal::Sexagesimal RA = ngc_objects::get_RA_i(index);
+    sexagesimal::Sexagesimal Dec = ngc_objects::get_Dec_i(index);
     RA_Dec.X = RA.to_double();
     RA_Dec.Y = Dec.to_double();
-
-    // magnitude = ngc_objects::get_magnitude( num );
   }else{
     magnitude = 0.0;
+    dimension_a = 0.0;
+    dimension_b = 0.0;
     RA_Dec.X = 0.0;
     RA_Dec.Y = 0.0;
   }
@@ -905,13 +920,13 @@ std::unique_ptr < CharLCD_STM32F > NGC_Details_View::write_first_line(std::uniqu
 									      CharLCD_STM32F > lcd)
 {
   int n = 0;
-  n += lcd->print( "NGC_" );
+  n += lcd->print( "NGC " );
   n += lcd->print( ngc_num_ );
-  while (n < width_/2 ) {
+  while (n < width_/2 -1 ) {
     n += lcd->print(' ');
   } 
   n += lcd->print( "Vmag = " );
-  n += lcd->print( magnitude, 1 );
+  n += lcd->print( magnitude, 2 );
   while (n < width_ ) {
     n += lcd->print(' ');
   } 
@@ -946,6 +961,9 @@ std::unique_ptr < CharLCD_STM32F > NGC_Details_View::write_fourth_line(std::uniq
 									      CharLCD_STM32F > lcd)
 {
   int n = 0;
+  n += lcd->print( dimension_a, 2 );
+  n += lcd->print( " X " );
+  n += lcd->print( dimension_b, 2 );
   while (n < width_) {
     n += lcd->print(' ');
   } 

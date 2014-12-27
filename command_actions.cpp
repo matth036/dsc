@@ -689,6 +689,4 @@ void ngc_details_view_action( char* yytext, int yyleng ){
     lcd = view->write_fourth_line(std::move(lcd));
   }
   check_in_main_lcd(std::move(lcd));
-
-
 }

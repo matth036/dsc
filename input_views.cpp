@@ -664,6 +664,25 @@ void Sexagesimal_Input_View::decrement_position()
   position = temp;
 }
 
+/********************************************************
+ *
+ *   Confirm_Input_View;
+ *
+ ********************************************************/
+Confirm_Input_View::Confirm_Input_View( bool& ok ):is_okay_{ok}
+{
+  width_ = INPUT_VIEW_DEFAULT_WIDTH;
+  saved_cr = dsc_controller::get_character_reciever();
+  dsc_controller::set_character_reciever(this);
+}
+
+
+
+
+
+
+
+
 /****************************************
  *
  *  Burnham_Format_Input_View methods

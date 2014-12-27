@@ -193,6 +193,8 @@ class Alignment_Sights_View:public Character_Reciever{
 							CharLCD_STM32F >);
    void scroll_up();
    void scroll_down();
+   void delete_with_confirm();
+   void delete_without_confirm();
    void select_char_action();
    void return_char_action();
    void asterix_char_action();
@@ -262,6 +264,8 @@ class NGC_Details_View:Character_Reciever {
   void setup( int ngc_num );
   double JD;
   CAA2DCoordinate RA_Dec;
+  float dimension_a;
+  float dimension_b;
   //   double distance;
   //  Simple_Altazimuth_Scope* telescope;
   Character_Reciever* saved_cr;

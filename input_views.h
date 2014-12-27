@@ -18,6 +18,7 @@ class Telescope_Model;
 
 constexpr uint32_t INPUT_VIEW_DEFAULT_WIDTH = 20;
 
+
 class Integer_Input_View:Character_Reciever {
  public:
   Integer_Input_View(std::string label);
@@ -49,6 +50,42 @@ class Integer_Input_View:Character_Reciever {
   bool is_two_line;
   bool finished;
 };
+
+
+class Confirm_Input_View:Character_Reciever {
+ public:
+  /* N.B. Call by reference in this constructor. */
+  Confirm_Input_View( bool& ok );
+  ~Confirm_Input_View();
+  void put_char(char);
+  void set_text( std::string text );
+  void set_true_text( std::string text );
+  void set_false_text( std::string text );
+
+  void enter_char_action();
+  void backspace_char_action();
+   std::unique_ptr < CharLCD_STM32F > write_first_line(std::unique_ptr <
+						       CharLCD_STM32F >);
+   std::unique_ptr < CharLCD_STM32F > write_second_line(std::unique_ptr <
+							CharLCD_STM32F >);
+
+  inline bool is_finished() {
+    return finished;
+  } 
+
+ private:
+  Character_Reciever* saved_cr;
+  bool& is_okay_;
+  int32_t width_;
+  std::string text_;
+  std::string true_text_;
+  std::string false_text_;
+  bool finished;
+};
+
+
+
+
 
 //     Sexagesimal( int32_t hhh, uint8_t mm, uint8_t ss, uint16_t xxx);
 class Sexagesimal_Input_View:Character_Reciever {
