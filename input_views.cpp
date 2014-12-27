@@ -667,16 +667,17 @@ void Sexagesimal_Input_View::decrement_position()
 /********************************************************
  *
  *   Confirm_Input_View;
- *   N.B. The constructor argument is a reference (to a bool).
  *
  ********************************************************/
-Confirm_Input_View::Confirm_Input_View( bool& ok ):is_okay_{ok}
+Confirm_Input_View::Confirm_Input_View()
 {
   width_ = INPUT_VIEW_DEFAULT_WIDTH;
   saved_cr = dsc_controller::get_character_reciever();
+  is_okay = false;
   text_ = "Should I?";
   true_text_ = "Yes";
   false_text_ = "No";
+  finished = false;
   dsc_controller::set_character_reciever(this);
 }
 
@@ -687,11 +688,11 @@ Confirm_Input_View::~Confirm_Input_View(){
 void Confirm_Input_View::put_char(char c){
   switch( c ){
   case keypad_enter_char:
-    is_okay_ = true;
+    is_okay = true;
     finished = true;
     return;
   case keypad_backspace_char:
-    is_okay_ = false;
+    is_okay = false;
     finished = true;
     return;
   }
@@ -710,13 +711,9 @@ void Confirm_Input_View::set_false_text( std::string text ){
   false_text_ = text;
 }
  
-
-
-
-
-
-
-
+bool Confirm_Input_View::get_is_okay(){
+  return is_okay;
+}
 
 
 std::unique_ptr < CharLCD_STM32F >

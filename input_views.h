@@ -54,8 +54,7 @@ class Integer_Input_View:Character_Reciever {
 
 class Confirm_Input_View:Character_Reciever {
  public:
-  /* N.B. Call by reference in this constructor. */
-  Confirm_Input_View( bool& ok );
+  Confirm_Input_View();
   ~Confirm_Input_View();
   void put_char(char c);
   void set_text( std::string text );
@@ -72,10 +71,12 @@ class Confirm_Input_View:Character_Reciever {
   inline bool is_finished() {
     return finished;
   } 
+  bool get_is_okay();
+
 
  private:
   Character_Reciever* saved_cr;
-  bool& is_okay_;
+  bool is_okay;
   int32_t width_;
   std::string text_;
   std::string true_text_;

@@ -19,6 +19,8 @@ void navigation_star_menu();
 
 void solar_system_menu();
 
+void delete_sight_item_with_confirm();
+
 void alignment_prompt(Simple_Altazimuth_Scope* scope, std::string object );
 
 void make_optimized_solution_test();

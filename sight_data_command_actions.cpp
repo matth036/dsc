@@ -113,7 +113,7 @@ void alignment_sight_test(){
   MicroSecondDelay::millisecond_delay(1);
   lcd->display();
   lcd->home();
-  lcd->print( "Test Alignment Menu" );
+  lcd->print( "Alignment Sight Menu" );
   MicroSecondDelay::millisecond_delay(2000);
   Alignment_Data_Set* data_set = get_main_sight_data();
   if( !data_set->has_longitude_and_latitude() ){
@@ -148,6 +148,12 @@ void alignment_sight_test(){
     if( sight_view->prompt_for_new_planet_sight() ){
       check_in_main_lcd(std::move(lcd));
       solar_system_menu();
+      sight_view->clear_prompts();
+      lcd = check_out_main_lcd();
+    }
+    if( sight_view->delete_item_with_confirm() ){
+      check_in_main_lcd(std::move(lcd));
+      delete_sight_item_with_confirm();
       sight_view->clear_prompts();
       lcd = check_out_main_lcd();
     }
@@ -253,6 +259,22 @@ void solar_system_menu(){
     alignment_prompt( telescope, selection );
     lcd = check_out_main_lcd();
   }
+  check_in_main_lcd(std::move(lcd));
+}
+
+void delete_sight_item_with_confirm(){
+  std::unique_ptr<Confirm_Input_View> confirm =
+    std::unique_ptr<Confirm_Input_View>(new Confirm_Input_View{} );
+  auto lcd = check_out_main_lcd();
+
+  while( !confirm->is_finished() ){
+    lcd->setCursor(0,2);
+    lcd = confirm->write_first_line(std::move(lcd));
+    lcd->setCursor(0,3);
+    lcd = confirm->write_second_line(std::move(lcd));
+  }
+
+
   check_in_main_lcd(std::move(lcd));
 }
 

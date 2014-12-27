@@ -529,8 +529,9 @@ std::unique_ptr < CharLCD_STM32F >
 Alignment_Sights_View::Alignment_Sights_View( Alignment_Data_Set* data ){
   data_set = data;
   finished = false;
-  _prompt_for_new_star_sight = false;
-  _prompt_for_new_planet_sight = false;
+  // _prompt_for_new_star_sight = false;
+  //_prompt_for_new_planet_sight = false;
+  clear_prompts();
   width_ = INPUT_VIEW_DEFAULT_WIDTH;
   position = 0;
   saved_cr = dsc_controller::get_character_reciever();
@@ -580,7 +581,7 @@ void Alignment_Sights_View::scroll_down(){
 
 void Alignment_Sights_View::delete_with_confirm(){
   bool confirmed = false;
-
+  _delete_item_with_confirm = true;
   if( confirmed ){
     delete_without_confirm();
   }
@@ -598,6 +599,7 @@ void Alignment_Sights_View::select_char_action(){
 void Alignment_Sights_View::clear_prompts(){
   _prompt_for_new_planet_sight = false;
   _prompt_for_new_star_sight = false;
+  _delete_item_with_confirm = false;
 }
 
 void Alignment_Sights_View::return_char_action(){
@@ -907,6 +909,9 @@ void NGC_Details_View::setup( int num ){
     sexagesimal::Sexagesimal Dec = ngc_objects::get_Dec_i(index);
     RA_Dec.X = RA.to_double();
     RA_Dec.Y = Dec.to_double();
+    /* @TODO perform precesion transformation. */
+
+
   }else{
     magnitude = 0.0;
     dimension_a = 0.0;

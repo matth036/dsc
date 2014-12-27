@@ -181,6 +181,9 @@ class Alignment_Sights_View:public Character_Reciever{
   inline bool prompt_for_new_planet_sight(){
     return _prompt_for_new_planet_sight;
   }
+  inline bool delete_item_with_confirm(){
+    return _delete_item_with_confirm;
+  }
   void clear_prompts();
  private:
    std::unique_ptr < CharLCD_STM32F > write_date_line(std::unique_ptr <
@@ -205,6 +208,7 @@ class Alignment_Sights_View:public Character_Reciever{
    bool finished;
    bool _prompt_for_new_star_sight;
    bool _prompt_for_new_planet_sight;
+   bool _delete_item_with_confirm;
 };
 
 
