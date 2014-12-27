@@ -19,7 +19,7 @@ extern "C"  {
         uint32_t DEC_data;
         uint32_t NGC_number;
         float Vmag;
-        float dimesion_a;
+        float dimension_a;
         float dimension_b;
     }ngc_data;
 

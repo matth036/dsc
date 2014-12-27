@@ -284,7 +284,7 @@ sub print_ngc_typedef{
 
     print $tab;
     print $tab;
-    print "float dimesion_a;";
+    print "float dimension_a;";
     print "\n";
 
     print $tab;
