@@ -230,7 +230,7 @@ class Planetary_Details_View:Character_Reciever {
   double JD;
   std::string body_name;
   CAA2DCoordinate RA_Dec;
-
+  double distance;
   //  Simple_Altazimuth_Scope* telescope;
   Character_Reciever* saved_cr;
   int32_t width_;

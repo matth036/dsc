@@ -792,11 +792,13 @@ std::unique_ptr < CharLCD_STM32F > Planetary_Details_View::write_first_line(std:
     CAA3DCoordinate RA_Dec_Dist = solar_system::calculate_moon_RA_Dec_Dist(JD);
     RA_Dec.X = RA_Dec_Dist.X;
     RA_Dec.Y = RA_Dec_Dist.Y;
+    distance = RA_Dec_Dist.Y; // KM
   } else {
     CAAEllipticalPlanetaryDetails details =
 	solar_system::calculate_details(body_name, JD);
     RA_Dec.X = details.ApparentGeocentricRA;
     RA_Dec.Y = details.ApparentGeocentricDeclination;
+    distance = details.ApparentGeocentricDistance; // A.U. 
   }
   int n = 0;
   int space = (width_ - body_name.size())/2;
@@ -814,7 +816,8 @@ std::unique_ptr < CharLCD_STM32F > Planetary_Details_View::write_second_line(std
 									      CharLCD_STM32F > lcd)
 {
   int n = 0;
-  n += lcd->print( "Line 2 here " );
+  n += lcd->print( " RA " );
+  n += lcd->print( sexagesimal::Sexagesimal(RA_Dec.X).to_string());
   while (n < width_) {
     n += lcd->print(' ');
   } 
@@ -825,7 +828,8 @@ std::unique_ptr < CharLCD_STM32F > Planetary_Details_View::write_third_line(std:
 									      CharLCD_STM32F > lcd)
 {
   int n = 0;
-  n += lcd->print( "Line 3 here " );
+  n += lcd->print( "DEC " );
+  n += lcd->print( sexagesimal::Sexagesimal(RA_Dec.Y).to_string());
   while (n < width_) {
     n += lcd->print(' ');
   } 
@@ -836,7 +840,13 @@ std::unique_ptr < CharLCD_STM32F > Planetary_Details_View::write_fourth_line(std
 									       CharLCD_STM32F > lcd)
 {
   int n = 0;
-  n += lcd->print( "Line 4 here " );
+  n += lcd->print( "Distance " );
+  n += lcd->print( distance, 3 );
+  if ( planet_num_ == 3) {
+    n += lcd->print( " km" );
+  }else{
+    n += lcd->print( " AU" );
+  }
   while (n < width_) {
     n += lcd->print(' ');
   } 

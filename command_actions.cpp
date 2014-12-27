@@ -654,17 +654,15 @@ void planetary_details_view_action( char* yytext, int yyleng ){
   std::unique_ptr< Planetary_Details_View > view = 
     std::unique_ptr<Planetary_Details_View >( new Planetary_Details_View( body_num ) );
   auto lcd = check_out_main_lcd();
-  {
-    while( !view->is_finished() ){
-      lcd->setCursor(0,0);
-      lcd = view->write_first_line(std::move(lcd));
-      lcd->setCursor(0,1);
-      lcd = view->write_second_line(std::move(lcd));
-      lcd->setCursor(0,2);
-      lcd = view->write_third_line(std::move(lcd));
-      lcd->setCursor(0,3);
-      lcd = view->write_fourth_line(std::move(lcd));
-    }
+  while( !view->is_finished() ){
+    lcd->setCursor(0,0);
+    lcd = view->write_first_line(std::move(lcd));
+    lcd->setCursor(0,1);
+    lcd = view->write_second_line(std::move(lcd));
+    lcd->setCursor(0,2);
+    lcd = view->write_third_line(std::move(lcd));
+    lcd->setCursor(0,3);
+    lcd = view->write_fourth_line(std::move(lcd));
   }
   check_in_main_lcd(std::move(lcd));
 }
