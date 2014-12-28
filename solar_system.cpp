@@ -296,7 +296,7 @@ CAA3DCoordinate solar_system::calculate_moon_RA_Dec_Dist(double JD)
   double L = CAAMoon::EclipticLongitude(JD);
   double B = CAAMoon::EclipticLatitude(JD);
   double R = CAAMoon::RadiusVector(JD);
-
+  /* Something is wrong, probably here. */
   double NutationInLongitude = CAANutation::NutationInLongitude(JD);
   double Epsilon = CAANutation::TrueObliquityOfEcliptic(JD);
   L += CAACoordinateTransformation::DMSToDegrees(0, 0, NutationInLongitude);
