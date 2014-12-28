@@ -34,6 +34,10 @@ class Simple_Altazimuth_Scope {
   const double altitude_degrees();
   const double azimuth_degrees(uint32_t encoder_value);
   const double altitude_degrees(uint32_t encoder_value);
+  const double azimuth_encoder_value( double azimuth_degrees );
+  const double altitude_encoder_value( double altitude_degrees );
+
+
   const double get_altitude_offset();
   const double get_azimuth_offset();
 
@@ -61,6 +65,8 @@ class Simple_Altazimuth_Scope {
   CAA3DCoordinate tele_to_topo(CAA3DCoordinate);
   CAA2DCoordinate current_topocentric_Azi_and_Alt();
   CAA2DCoordinate topocentric_Azi_and_Alt(Alt_Azi_Snapshot_t);
+  CAA2DCoordinate encoder_Azi_and_Alt(CAA2DCoordinate topocentric_azi_alt);
+
 
   CAA2DCoordinate current_RA_and_Dec();
 
@@ -68,6 +74,11 @@ class Simple_Altazimuth_Scope {
 
   CAA2DCoordinate RA_and_Dec(Alt_Azi_Snapshot_t snapshot, double JD,
 			     float temperature, float pressure);
+
+
+  CAA2DCoordinate Encoder_Alt_Azi(CAA2DCoordinate RA_and_Dec, double JD,
+			     float temperature, float pressure);
+
 
   Alt_Azi_Snapshot_t Target_Snapshot(CAA2DCoordinate RA_and_Dec, double JD,
 			     float temperature, float pressure);
