@@ -6,6 +6,7 @@
 #include "AARefraction.h"
 #include "AACoordinateTransformation.h"
 #include "binary_tidbits.h"
+#include "refraction_temperature_pressure.h"
 #include "horizontal_equatorial.h"
 
 
@@ -17,8 +18,9 @@ using std::endl;
  *
  */
 int main( int argc, char **argv){
-  double temperature = 10;
-  double pressure = 0;  /* 1010 is the default.  Use zero to turn off refraction. */
+  double temperature = DEFAULT_TEMPERATURE;
+  /* 1010 is the operational default pressure.  Use zero to turn off refraction. */
+  double pressure = DEFAULT_PRESSURE;
   cout << "   pressure = " << pressure << endl;
   cout << "temperature = " << temperature << endl;
   sexagesimal::Sexagesimal longitude{ 93, 6, 6, 0 };
