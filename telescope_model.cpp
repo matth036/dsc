@@ -11,6 +11,7 @@
 #include "sexagesimal.h"
 #include "build_date.h"
 #include "horizontal_equatorial.h"
+#include "lbr_and_xyz.h"
 
 Simple_Altazimuth_Scope::Simple_Altazimuth_Scope( std::unique_ptr<Quadrature_Decoder> azi, 
 						  std::unique_ptr<Quadrature_Decoder> alt)
@@ -79,18 +80,13 @@ const CAA3DCoordinate Simple_Altazimuth_Scope::calculate_unit_vector( Alt_Azi_Sn
   return LBR_to_XYZ(uv);
 }
 
-Alt_Azi_Snapshot_t Simple_Altazimuth_Scope::calculate_target_snapshot(CAA3Dfloat uv ){
+Alt_Azi_Snapshot_t Simple_Altazimuth_Scope::calculate_target_snapshot(CAA3DCoordinate uv ){
   Alt_Azi_Snapshot_t encoder_target;  
-  CAA3Dfloat lbr = XYZ_to_LBR( uv ); /* How well has this been tested?  */
+  CAA3DCoordinate lbr = XYZ_to_LBR( uv ); /* How well has this been tested?  */
   lbr.X = -lbr.X;
   encoder_target.azi_value = static_cast<int>(floor( lbr.X*azimuth_hardware->get_ticks_per_revolution()/360.0 + .5 ));
   encoder_target.alt_value = static_cast<int>(floor( lbr.Y*altitude_hardware->get_ticks_per_revolution()/360.0 + .5 ));
   return encoder_target;
-}
-
-Alt_Azi_Snapshot_t Simple_Altazimuth_Scope::calculate_target_snapshot(CAA3DCoordinate uv ){
-  CAA3Dfloat uv_float{uv};
-  return calculate_target_snapshot( uv_float );
 }
 
 const double Simple_Altazimuth_Scope::altitude_degrees( ){
@@ -174,28 +170,16 @@ const bool Simple_Altazimuth_Scope::azimuth_direction_is_reversed(){
 }
 
 void Simple_Altazimuth_Scope::set_top_to_tel_matrix( double* src ){
-  /* Time seems right to abandon the pretense that double precision had meaning. */
   for(uint32_t i=0; i<9; ++i ){
-    topocentric_to_telescope_matrix[i] = static_cast<float>(src[i]);
-  }
-}
-
-void Simple_Altazimuth_Scope::set_top_to_tel_matrix( float* src ){
-  /* Time seems right to abandon the pretense that double precision had meaning. */
-  for(uint32_t i=0; i<9; ++i ){
-    topocentric_to_telescope_matrix[i] = static_cast<float>(src[i]);
+    topocentric_to_telescope_matrix[i] = src[i];
   }
 }
 
 void Simple_Altazimuth_Scope::set_determinant( double d ){
-  determinant = static_cast<float>(d);
-}
-
-void Simple_Altazimuth_Scope::set_determinant( float d ){
   determinant = d;
 }
 
-float Simple_Altazimuth_Scope::get_determinant( ){
+double Simple_Altazimuth_Scope::get_determinant( ){
   return determinant;
 }
 
@@ -225,17 +209,17 @@ int32_t Simple_Altazimuth_Scope::get_altitude_ticks_per_revolution(){
 
 
 
-CAA2Dfloat Simple_Altazimuth_Scope::topocentric_Azi_and_Alt(Alt_Azi_Snapshot_t snapshot){
+CAA2DCoordinate Simple_Altazimuth_Scope::topocentric_Azi_and_Alt(Alt_Azi_Snapshot_t snapshot){
   // FUCK ALERT
   
-  CAA3Dfloat lbr;
+  CAA3DCoordinate lbr;
   lbr.X = azimuth_degrees( snapshot.azi_value );
   
   lbr.Y = altitude_degrees( snapshot.alt_value );
   
   lbr.Z = 1.0;
   
-  CAA3Dfloat xyz = LBR_to_XYZ( lbr );
+  CAA3DCoordinate xyz = LBR_to_XYZ( lbr );
   /* 
    * This transformation of xyz is unlikely to cause gross errors since the matrix
    * is close to the identity matrix.
@@ -244,7 +228,7 @@ CAA2Dfloat Simple_Altazimuth_Scope::topocentric_Azi_and_Alt(Alt_Azi_Snapshot_t s
   
   lbr = XYZ_to_LBR( xyz );
   
-  CAA2Dfloat azi_and_alt;
+  CAA2DCoordinate azi_and_alt;
 
   azi_and_alt.X = lbr.X;
   azi_and_alt.Y = lbr.Y;
@@ -252,7 +236,7 @@ CAA2Dfloat Simple_Altazimuth_Scope::topocentric_Azi_and_Alt(Alt_Azi_Snapshot_t s
   return azi_and_alt;
 }
 
-CAA2Dfloat Simple_Altazimuth_Scope::current_topocentric_Azi_and_Alt(){
+CAA2DCoordinate Simple_Altazimuth_Scope::current_topocentric_Azi_and_Alt(){
   Alt_Azi_Snapshot_t snapshot = get_snapshot();
   return topocentric_Azi_and_Alt( snapshot );
 }
@@ -273,7 +257,7 @@ CAA2DCoordinate Simple_Altazimuth_Scope::RA_and_Dec(Alt_Azi_Snapshot_t snapshot,
   double longitude = get_backup_domain_longitude().to_double();
   double latitude = get_backup_domain_latitude().to_double();
 
-  CAA2Dfloat azi_alt = topocentric_Azi_and_Alt( snapshot );
+  CAA2DCoordinate azi_alt = topocentric_Azi_and_Alt( snapshot );
   double azimuth = azi_alt.X;
   double altitude = azi_alt.Y;
 
@@ -286,21 +270,21 @@ CAA2DCoordinate Simple_Altazimuth_Scope::RA_and_Dec(Alt_Azi_Snapshot_t snapshot,
   return ra_and_dec;
 }
 
-CAA3Dfloat Simple_Altazimuth_Scope::topo_to_tele( CAA3Dfloat temp ){
+CAA3DCoordinate Simple_Altazimuth_Scope::topo_to_tele( CAA3DCoordinate temp ){
   from_topocentric_transform( temp.X, temp.Y, temp.Z ); 
   return temp;
 }
 
-CAA3Dfloat Simple_Altazimuth_Scope::tele_to_topo( CAA3Dfloat temp ){
+CAA3DCoordinate Simple_Altazimuth_Scope::tele_to_topo( CAA3DCoordinate temp ){
   to_topocentric_transform( temp.X, temp.Y, temp.Z ); 
   return temp;
 }
 
-void Simple_Altazimuth_Scope::from_topocentric_transform(float& x,float& y,float& z){
+void Simple_Altazimuth_Scope::from_topocentric_transform(double& x,double& y,double& z){
   /* This ugly code is the price paid for uncoupling the linear algebra package. */
-  float X = x;
-  float Y = y;
-  float Z = z;
+  double X = x;
+  double Y = y;
+  double Z = z;
   x = topocentric_to_telescope_matrix[0]*X +
     topocentric_to_telescope_matrix[1]*Y +
     topocentric_to_telescope_matrix[2]*Z;
@@ -314,11 +298,11 @@ void Simple_Altazimuth_Scope::from_topocentric_transform(float& x,float& y,float
     topocentric_to_telescope_matrix[8]*Z;
 }
 
-void Simple_Altazimuth_Scope::to_topocentric_transform(float& x,float& y,float& z){
+void Simple_Altazimuth_Scope::to_topocentric_transform(double& x,double& y,double& z){
   /* This ugly code is the price paid for uncoupling the linear algebra package. */
-  float X = x;
-  float Y = y;
-  float Z = z;
+  double X = x;
+  double Y = y;
+  double Z = z;
   x = topocentric_to_telescope_matrix[0]*X +
     topocentric_to_telescope_matrix[3]*Y +
     topocentric_to_telescope_matrix[6]*Z;

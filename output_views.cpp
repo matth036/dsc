@@ -16,7 +16,7 @@
 #include "starlist_access.h"
 #include "extra_solar_transforms.h"
 #include "keypad_layout.h"
-
+#include "AACoordinateTransformation.h"
 /*********************************************
  *
  * Information_View
@@ -425,8 +425,8 @@ std::unique_ptr < CharLCD_STM32F >
 							       JD, 
 							       pressure, 
 							       temperature );
-  CAA3Dfloat uv_h{uv_topo};  /* _h for horizontal coordinates. */
-  CAA3Dfloat uv_t = telescope->topo_to_tele( uv_h );
+  CAA3DCoordinate uv_h{uv_topo};  /* _h for horizontal coordinates. */
+  CAA3DCoordinate uv_t = telescope->topo_to_tele( uv_h );
   target = telescope->calculate_target_snapshot( uv_t );
   current = telescope->get_snapshot();
  
@@ -467,11 +467,11 @@ std::unique_ptr < CharLCD_STM32F >
 							       JD, 
 							       pressure, 
 							       temperature );
-  CAA3Dfloat uv_h{uv_topo};  /* _h for horizontal coordinates. */
-  CAA3Dfloat uv_t = telescope->topo_to_tele( uv_h );
+  CAA3DCoordinate uv_h{uv_topo};  /* _h for horizontal coordinates. */
+  CAA3DCoordinate uv_t = telescope->topo_to_tele( uv_h );
   Alt_Azi_Snapshot_t current_snapshot = telescope->get_snapshot();
   CAA3DCoordinate uv_current = telescope->calculate_unit_vector( current_snapshot );
-  CAA3Dfloat diff;
+  CAA3DCoordinate diff;
   diff.X = uv_current.X - uv_t.X;
   diff.Y = uv_current.Y - uv_t.Y;
   diff.Z = uv_current.Z - uv_t.Z;

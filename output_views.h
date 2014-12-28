@@ -99,10 +99,10 @@ class Angular_Coordinates_View:Character_Reciever {
     return finished;
   }
  private:
-  CAA2Dfloat RA_and_Dec;
+  CAA2DCoordinate RA_and_Dec;
   std::string RA_str;
   std::string Dec_str;
-  CAA2Dfloat Azi_and_Alt;
+  CAA2DCoordinate Azi_and_Alt;
   //std::string Azi_str;
   //std::string Alt_str;
 

@@ -17,41 +17,9 @@
 // #include "AAFK5.h"
 #include "AANutation.h"
 #include "AAMoon.h"
+#include "lbr_and_xyz.h"
+
 // #include "main.h"
-
-/* Spherical to rectangular coordinate transformation. */
-CAA3DCoordinate LBR_to_XYZ(CAA3DCoordinate lbr)
-{
-  double L = CAACoordinateTransformation::DegreesToRadians(lbr.X);
-  double B = CAACoordinateTransformation::DegreesToRadians(lbr.Y);
-  double R = lbr.Z;
-  CAA3DCoordinate xyz;
-  double cosB = cos(B);
-  double sinB = sin(B);
-  double cosL = cos(L);
-  double sinL = sin(L);
-  xyz.X = R * cosB * cosL;
-  xyz.Y = R * cosB * sinL;
-  xyz.Z = R * sinB;
-  return xyz;
-}
-
-/* Reverse transformation. */
-CAA3DCoordinate XYZ_to_LBR(CAA3DCoordinate xyz)
-{
-  CAA3DCoordinate lbr;
-  double x2 = xyz.X * xyz.X;
-  double y2 = xyz.Y * xyz.Y;
-  double z2 = xyz.Z * xyz.Z;
-  lbr.X = atan2(xyz.Y, xyz.X);
-  lbr.X = CAACoordinateTransformation::RadiansToDegrees(lbr.X);
-  lbr.X = CAACoordinateTransformation::MapTo0To360Range(lbr.X);
-  lbr.Y = atan2(xyz.Z, sqrt(x2 + y2));
-  lbr.Y = CAACoordinateTransformation::RadiansToDegrees(lbr.Y);
-  lbr.Z = sqrt(x2 + y2 + z2);
-  return lbr;
-}
-
 /*
  * Earth velocity determined by numerical differentiation of position.
  * Don't make dt too small.  Because forward and backward evaluation
