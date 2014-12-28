@@ -27,10 +27,11 @@ int main( int argc, char **argv){
   cout << "latitude  = " << latitude.to_dms_string() << endl;
   sexagesimal::Sexagesimal azimuth{ 289,46,27, 0 };
   sexagesimal::Sexagesimal altitude { 55, 57, 3, 0 };
-  cout << "azimuth  = " << azimuth.to_dms_string() << endl;
+  cout << " azimuth = " << azimuth.to_dms_string() << endl;
   cout << "altitude =  " << altitude.to_dms_string() << endl;
-  cout << "azimuth  = " << azimuth.to_double() << endl;
-  cout << "altitude =  " << altitude.to_double() << endl;
+  printf( "                  azimuth = %18.8lf\n", azimuth.to_double() );
+  printf( "                 altitude = %18.8lf\n", altitude.to_double() );
+
   int year = 2014;
   int month = 12;
   double date = 18;
@@ -69,7 +70,9 @@ int main( int argc, char **argv){
 
 
 
-  cout << "azimuth  = " << azi_alt.X << endl;
-  cout << "altitude =  " << azi_alt.Y << endl;
+  cout << " azimuth = " << sexagesimal::Sexagesimal(azi_alt.X).to_string() << endl;
+  cout << "altitude = " << sexagesimal::Sexagesimal(azi_alt.Y).to_string() << endl;
+  printf( "                  azimuth = %18.8lf\n", azi_alt.X );
+  printf( "                 altitude = %18.8lf\n", azi_alt.Y );
   return 0;
 }

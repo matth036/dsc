@@ -1,6 +1,6 @@
 #TARGET:=demo
 TOOLCHAIN_PATH:=/usr/bin
-TOOLCHAIN_PREFIX:=""
+TOOLCHAIN_PREFIX:=
 OPTLVL:=0 # Optimization level, can be [0, 1, 2, 3, s, g].
 
 PROJECT_NAME:=$(notdir $(lastword $(CURDIR)))
@@ -37,6 +37,7 @@ CPPSRC+=AAFK5.cpp
 CPPSRC+=navigation_star.cpp
 CPPSRC+=solar_system.cpp
 CPPSRC+=horizontal_equatorial.cpp
+CPPSRC+=lbr_and_xyz.cpp
 
 
 #

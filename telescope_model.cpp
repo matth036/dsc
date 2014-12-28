@@ -183,18 +183,18 @@ double Simple_Altazimuth_Scope::get_determinant( ){
   return determinant;
 }
 
-void Simple_Altazimuth_Scope::set_align_error_mean( float e ){
+void Simple_Altazimuth_Scope::set_align_error_mean( double e ){
   align_error_mean = e;
 }
 
-void Simple_Altazimuth_Scope::set_align_error_max( float e ){
+void Simple_Altazimuth_Scope::set_align_error_max( double e ){
   align_error_max = e;
 }
 
-float Simple_Altazimuth_Scope::get_align_error_mean(){
+double Simple_Altazimuth_Scope::get_align_error_mean(){
   return align_error_mean;
 }
-float Simple_Altazimuth_Scope::get_align_error_max(){
+double Simple_Altazimuth_Scope::get_align_error_max(){
   return align_error_max;
 }
 
@@ -212,26 +212,33 @@ int32_t Simple_Altazimuth_Scope::get_altitude_ticks_per_revolution(){
 CAA2DCoordinate Simple_Altazimuth_Scope::topocentric_Azi_and_Alt(Alt_Azi_Snapshot_t snapshot){
   // FUCK ALERT
   
-  CAA3DCoordinate lbr;
-  lbr.X = azimuth_degrees( snapshot.azi_value );
+  CAA3DCoordinate lbr_telescope;
+  lbr_telescope.X = azimuth_degrees( snapshot.azi_value );
   
-  lbr.Y = altitude_degrees( snapshot.alt_value );
+  lbr_telescope.Y = altitude_degrees( snapshot.alt_value );
   
-  lbr.Z = 1.0;
+  lbr_telescope.Z = 1.0;
   
-  CAA3DCoordinate xyz = LBR_to_XYZ( lbr );
+  CAA3DCoordinate xyz_telescope = LBR_to_XYZ( lbr_telescope );
   /* 
    * This transformation of xyz is unlikely to cause gross errors since the matrix
    * is close to the identity matrix.
    */
-  xyz = tele_to_topo( xyz );
+  CAA3DCoordinate xyz_topographic = tele_to_topo( xyz_telescope );
   
-  lbr = XYZ_to_LBR( xyz );
+  CAA3DCoordinate lbr_topographic = XYZ_to_LBR( xyz_topographic );
   
   CAA2DCoordinate azi_and_alt;
 
-  azi_and_alt.X = lbr.X;
-  azi_and_alt.Y = lbr.Y;
+  azi_and_alt.X = lbr_topographic.X;
+  azi_and_alt.Y = lbr_topographic.Y;
+
+  CAA3DCoordinate check = LBR_to_XYZ( lbr_topographic );
+  check = topo_to_tele( check );
+  check = XYZ_to_LBR( check );
+
+
+
 
   return azi_and_alt;
 }

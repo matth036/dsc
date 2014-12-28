@@ -53,20 +53,28 @@ class Simple_Altazimuth_Scope {
      */
     singular_values = svs;
   } 
-  float get_align_error_mean();
-  float get_align_error_max();
-  void set_align_error_mean(float);
-  void set_align_error_max(float);
+  double get_align_error_mean();
+  double get_align_error_max();
+  void set_align_error_mean(double);
+  void set_align_error_max(double);
   CAA3DCoordinate topo_to_tele(CAA3DCoordinate);
   CAA3DCoordinate tele_to_topo(CAA3DCoordinate);
   CAA2DCoordinate current_topocentric_Azi_and_Alt();
   CAA2DCoordinate topocentric_Azi_and_Alt(Alt_Azi_Snapshot_t);
-  //   CAA2DCoordinate current_RA_and_Dec_not_bad();
+
   CAA2DCoordinate current_RA_and_Dec();
-//  CAA2Dfloat RA_and_Dec(Alt_Azi_Snapshot_t);
+
+
 
   CAA2DCoordinate RA_and_Dec(Alt_Azi_Snapshot_t snapshot, double JD,
 			     float temperature, float pressure);
+
+  Alt_Azi_Snapshot_t Target_Snapshot(CAA2DCoordinate RA_and_Dec, double JD,
+			     float temperature, float pressure);
+
+
+
+
 //  CAA2DCoordinate RA_and_Dec(Alt_Azi_Snapshot_t snapshot, float pressure, float temperature, double JD);
   int32_t get_azimuth_ticks_per_revolution();
   int32_t get_altitude_ticks_per_revolution();

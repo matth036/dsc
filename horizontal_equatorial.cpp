@@ -9,12 +9,13 @@
 #include "binary_tidbits.h"
 #include <math.h>
 
+#define MEMOIZE_SIDEREAL_TIME 0
 CAA2DCoordinate horizontal_equatorial::RA_and_Dec( double azimuth, double altitude, double longitude, double latitude,  double JD, float temperature, float pressure )
 {
-#if 0
-  double sidereal_time_0 = CAASidereal::ApparentGreenwichSiderealTime( JD );
-#else
+#if MEMOIZE_SIDEREAL_TIME
   double sidereal_time_0 = horizontal_equatorial::memoized_ApparentGreenwichSiderealTime( JD );
+#else
+  double sidereal_time_0 = CAASidereal::ApparentGreenwichSiderealTime( JD );
 #endif
   double R = CAARefraction::RefractionFromApparent( altitude, pressure, temperature  );
   altitude -= R;
@@ -43,8 +44,12 @@ CAA2DCoordinate horizontal_equatorial::RA_and_Dec( double azimuth, double altitu
 
 
 CAA2DCoordinate horizontal_equatorial::Azi_and_Alt( double RA, double declination, double longitude, double latitude,  double JD, float temperature, float pressure ){
-  CAA2DCoordinate Azimuth_and_Altitude;
+#if MEMOIZE_SIDEREAL_TIME
+  double sidereal_time_0 = horizontal_equatorial::memoized_ApparentGreenwichSiderealTime( JD );
+#else
   double sidereal_time_0 = CAASidereal::ApparentGreenwichSiderealTime( JD );
+#endif
+  CAA2DCoordinate Azimuth_and_Altitude;
   double H;
   if( binary_tidbits::west_longitude_is_positive() ){
     H = sidereal_time_0 - longitude/15.0 - RA;
