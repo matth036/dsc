@@ -33,8 +33,8 @@ void debug_action(){
   double degrees;
   double echo_value;
   for( value = -4010; value<=4010; ++value ){
-    degrees = scope->azimuth_degrees( value );
-    echo_value = scope->azimuth_encoder_value( degrees );
+    degrees = scope->altitude_degrees( value );
+    echo_value = scope->altitude_encoder_value( degrees );
     double check_value = (static_cast<double>(value) - echo_value);
     while( check_value <  0.0 ){
       check_value += 4000.0;
