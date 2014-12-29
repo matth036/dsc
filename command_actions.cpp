@@ -13,6 +13,7 @@
 #include "ngc_list.h"
 #include "starlist_access.h"
 #include "extra_solar_transforms.h"
+#include "telescope_model.h"
 
 #include "AADynamicalTime.h"
 
@@ -25,6 +26,32 @@ void scan_for_action(std::string command)
   yylex();
   yy_delete_buffer(buffer_state);
 }
+
+void debug_action(){
+  Simple_Altazimuth_Scope* scope = get_main_simple_telescope();
+  int32_t value;
+  double degrees;
+  double echo_value;
+  for( value = -4010; value<=4010; ++value ){
+    degrees = scope->azimuth_degrees( value );
+    echo_value = scope->azimuth_encoder_value( degrees );
+    double check_value = (static_cast<double>(value) - echo_value);
+    while( check_value <  0.0 ){
+      check_value += 4000.0;
+    }
+    while( check_value > 4000. ){
+      check_value -= 4000.;
+    }
+    if( check_value > 3999.999 ){
+      check_value -= 4000.;
+    }
+    if( check_value > .001 || check_value < -.001){
+      for(;;){}
+    }
+  }
+}
+
+
 
 void ngc_point_to_action(char *yytext, int yyleng)
 {

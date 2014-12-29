@@ -105,7 +105,7 @@ const double Simple_Altazimuth_Scope::azimuth_degrees( ){
   DO NOT TAMPER WITH THIS FUNCTION  UNTIL THE EQUATORIAL COORDINATE VIEW HAS BEEN DEGUGGED.  dan -Dec 2014
   As the scope is wired, this returns about zero near the horizon and about 90 near the zenith.
  */
-const double Simple_Altazimuth_Scope::altitude_degrees( uint32_t encoder_value ){
+const double Simple_Altazimuth_Scope::altitude_degrees( int32_t encoder_value ){
   double altitude;
   if( reverse_altitude_direction ){
     altitude = -static_cast<double>(encoder_value);
@@ -142,7 +142,7 @@ const double Simple_Altazimuth_Scope::altitude_encoder_value( double altitude_de
   DO NOT TAMPER WITH THIS FUNCTION  UNTIL THE EQUATORIAL COORDINATE VIEW HAS BEEN DEGUGGED.  dan -Dec 2014
   As the scope is wired, this returns near zero sligly west of north, near 90 to the west.
  */
-const double Simple_Altazimuth_Scope::azimuth_degrees( uint32_t encoder_value ){
+const double Simple_Altazimuth_Scope::azimuth_degrees( int32_t encoder_value ){
   double azimuth;
   if( reverse_azimuth_direction ){
     azimuth = -static_cast<double>(encoder_value);
@@ -160,9 +160,9 @@ const double Simple_Altazimuth_Scope::azimuth_degrees( uint32_t encoder_value ){
 const double Simple_Altazimuth_Scope::azimuth_encoder_value( double azimuth_degrees ){
   azimuth_degrees = CAACoordinateTransformation::MapTo0To360Range( azimuth_degrees );
   azimuth_degrees += azimuth_offset;
-  double encoder_value = azimuth_degrees * azimuth_hardware->get_ticks_per_revolution() / 360 ;
+  double encoder_value = azimuth_degrees * azimuth_hardware->get_ticks_per_revolution() / 360.0;
   if( reverse_azimuth_direction ){
-    encoder_value = - encoder_value;
+    encoder_value = -encoder_value;
   }else{
     // do nothing
   }
@@ -244,6 +244,7 @@ int32_t Simple_Altazimuth_Scope::get_altitude_ticks_per_revolution(){
 
 
 CAA2DCoordinate Simple_Altazimuth_Scope::topocentric_Azi_and_Alt(Alt_Azi_Snapshot_t snapshot){
+  CAA2DCoordinate azi_and_alt;
   // FUCK ALERT
   CAA3DCoordinate lbr_telescope;
   lbr_telescope.X = azimuth_degrees( snapshot.azi_value );
@@ -256,17 +257,26 @@ CAA2DCoordinate Simple_Altazimuth_Scope::topocentric_Azi_and_Alt(Alt_Azi_Snapsho
    */
   CAA3DCoordinate xyz_topocentric = tele_to_topo( xyz_telescope );
   CAA3DCoordinate lbr_topocentric = XYZ_to_LBR( xyz_topocentric );
-  CAA2DCoordinate azi_and_alt;
   azi_and_alt.X = lbr_topocentric.X;
   azi_and_alt.Y = lbr_topocentric.Y;
 
-  CAA3DCoordinate check = LBR_to_XYZ( lbr_topocentric );
-  check = topo_to_tele( check );
-  check = XYZ_to_LBR( check );
-
+  CAA2DCoordinate snapshot_check = encoder_Azi_and_Alt( azi_and_alt );
+  bool problem = false;
+  problem = snapshot_check.X > static_cast<double>(snapshot.azi_value) + .00001;
+  if( problem ){
+    snapshot_check = encoder_Azi_and_Alt( azi_and_alt );
+    return azi_and_alt;
+  }
+  snapshot_check = encoder_Azi_and_Alt( azi_and_alt ); // Not reached if there is not a problem.
   return azi_and_alt;
 }
-
+/*
+ * This is intended to be a testable inversion of
+ * CAA2DCoordinate Simple_Altazimuth_Scope::topocentric_Azi_and_Alt(Alt_Azi_Snapshot_t snapshot)
+ *  Notice that all of the coordinate transformations take place here
+ *  at the bottom the atmosphere so refraction, pressure, and temperature are not
+ *  parameters.  
+*/
 CAA2DCoordinate Simple_Altazimuth_Scope::encoder_Azi_and_Alt(CAA2DCoordinate topocentric_azi_alt){
   CAA2DCoordinate encoder_azi_alt;
 
@@ -282,7 +292,7 @@ CAA2DCoordinate Simple_Altazimuth_Scope::encoder_Azi_and_Alt(CAA2DCoordinate top
   /* If debugging, check that lbr_telescope.Z is approximately 1.0 */
 
   encoder_azi_alt.X = azimuth_encoder_value( azimuth_degrees );
-  encoder_azi_alt.Y = azimuth_encoder_value( altitude_degrees );
+  encoder_azi_alt.Y = altitude_encoder_value( altitude_degrees );
   return encoder_azi_alt;
 }
 

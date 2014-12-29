@@ -68,6 +68,8 @@ AAA456                       make_optimized_solution_test();
 AAA789                       pre_fab_example_test();
 AAA987                       clear_sight_data();
 
+AAA8686                      debug_action();
+
 .*                           return 0;
 %%
 

@@ -32,8 +32,8 @@ class Simple_Altazimuth_Scope {
   const CAA3DCoordinate azimuth_forward_backward_difference(Alt_Azi_Snapshot_t);
   const double azimuth_degrees();
   const double altitude_degrees();
-  const double azimuth_degrees(uint32_t encoder_value);
-  const double altitude_degrees(uint32_t encoder_value);
+  const double azimuth_degrees(int32_t encoder_value);
+  const double altitude_degrees(int32_t encoder_value);
   const double azimuth_encoder_value( double azimuth_degrees );
   const double altitude_encoder_value( double altitude_degrees );
 
@@ -67,6 +67,7 @@ class Simple_Altazimuth_Scope {
   CAA2DCoordinate topocentric_Azi_and_Alt(Alt_Azi_Snapshot_t);
   CAA2DCoordinate encoder_Azi_and_Alt(CAA2DCoordinate topocentric_azi_alt);
 
+  void coordinate_debug();
 
   CAA2DCoordinate current_RA_and_Dec();
 

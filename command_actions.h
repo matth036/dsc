@@ -26,6 +26,7 @@ void subtract_seconds_dialog();
 void long_lat_dialog();
 void countdown_to_Saint_Patricks_Day();
 
+void debug_action();
 
 
 
