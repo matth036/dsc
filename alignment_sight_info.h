@@ -81,7 +81,7 @@ class Alignment_Data_Set{
   Simple_Altazimuth_Scope* telescope;
   sexagesimal::Sexagesimal longitude;
   sexagesimal::Sexagesimal latitude;
-  // float topocentric_altitude; /* Meters above sea level.  */
+
   double solution_topocentric_to_mount_matrix[9];
   double solution_max_err;
   bool _has_long_and_lat;

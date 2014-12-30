@@ -10,6 +10,8 @@
 #include "AASidereal.h"
 #include "AARefraction.h"
 #include "refraction_temperature_pressure.h"
+
+#include "horizontal_equatorial.h"
  
 /***********
 template<uint32_t N_axis> struct Encoder_Data_Set{
@@ -107,6 +109,10 @@ CAA2DCoordinate calulate_RA_and_Dec(std::string object, double JD, bool& success
     }
   }
   if( object == "Moon" ){
+    /* MOON STUFF.  The handling of the moon is botched in other parts of
+       this project.  Test to see if this is correct.  
+       Test against Kstars. December 2014.
+     */
     CAA3DCoordinate RA_Dec_Dist = solar_system::calculate_moon_RA_Dec_Dist(JD);
     RA_and_DEC.X = RA_Dec_Dist.X;
     RA_and_DEC.Y = RA_Dec_Dist.Y;
@@ -237,8 +243,25 @@ const CAA2DCoordinate Alignment_Data_Set::azimuth_altitude( CAA2DCoordinate RA_a
 						      float pressure, 
 						      float temperature )
 {
+  CAA2DCoordinate new_answer;
+  bool use_new_answer = false;
   double latitude = get_latitude();
   double longitude = get_longitude();
+
+  new_answer = horizontal_equatorial::Azi_and_Alt( RA_and_Dec.X,
+						   RA_and_Dec.Y,
+						   longitude,
+						   latitude,
+						   jd,
+						   temperature, pressure );
+
+
+
+
+
+#if 1
+  /* @TODO Fix this. This is spagetti code. Use calls to testable small units.  */
+
   double sidereal_time = CAASidereal::ApparentGreenwichSiderealTime( jd );
   double GHA_Aries = sidereal_time * 15.0;   /* Greenwhich Hour Angle of Aries. */
   /* 
@@ -270,7 +293,13 @@ const CAA2DCoordinate Alignment_Data_Set::azimuth_altitude( CAA2DCoordinate RA_a
   */
   double R = CAARefraction::RefractionFromTrue( Azi_Alt.Y, DEFAULT_PRESSURE, DEFAULT_TEMPERATURE  );
   Azi_Alt.Y += R;
-  return Azi_Alt;
+
+#endif
+  if( use_new_answer ){
+    return new_answer;
+  }else{
+    return Azi_Alt;
+  }
 }
 
 /* Return a unit vector representing the topocentric direction to object n. 
@@ -299,6 +328,12 @@ const CAA3DCoordinate Alignment_Data_Set::topocentric_unit_vector( CAA2DCoordina
 					      jd, 
 					      pressure, 
 					      temperature );
+
+
+
+
+/*  OLD CODE */ 					      
+#if 1 
   /* convert to radians. */
   Azi_Alt.X = CAACoordinateTransformation::DegreesToRadians( Azi_Alt.X );
   Azi_Alt.Y = CAACoordinateTransformation::DegreesToRadians( Azi_Alt.Y );
@@ -315,5 +350,6 @@ const CAA3DCoordinate Alignment_Data_Set::topocentric_unit_vector( CAA2DCoordina
     uv_xyz.Y = - c * sin( Azi_Alt.X );   /* Component toward East.  */
   }
   return uv_xyz;
+#endif
 }
 
