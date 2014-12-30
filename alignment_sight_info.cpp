@@ -9,7 +9,7 @@
 #include "binary_tidbits.h"
 #include "AASidereal.h"
 #include "AARefraction.h"
-
+#include "refraction_temperature_pressure.h"
  
 /***********
 template<uint32_t N_axis> struct Encoder_Data_Set{
@@ -36,6 +36,8 @@ uint32_t& template<uint32_t N>Encoder_Snapshot::operator[](size_t i){
 }
 **/
 
+
+/* @TODO when funnction calls for temperature and pressure are available, use them. */
 Alignment_Sight_Item::Alignment_Sight_Item(std::string object){
   object_name = object;
   temperature = DEFAULT_TEMPERATURE;
@@ -266,7 +268,7 @@ const CAA2DCoordinate Alignment_Data_Set::azimuth_altitude( CAA2DCoordinate RA_a
     RefractionFromTrue(double Altitude, double Pressure = 1010, double Temperature = 10);
     This value is in degrees and the apparent position is higher than the true position.
   */
-  double R = CAARefraction::RefractionFromTrue( Azi_Alt.Y, pressure, temperature  );
+  double R = CAARefraction::RefractionFromTrue( Azi_Alt.Y, DEFAULT_PRESSURE, DEFAULT_TEMPERATURE  );
   Azi_Alt.Y += R;
   return Azi_Alt;
 }

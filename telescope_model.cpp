@@ -250,9 +250,9 @@ CAA2DCoordinate Simple_Altazimuth_Scope::topocentric_Azi_and_Alt(Alt_Azi_Snapsho
   CAA2DCoordinate azi_and_alt;
   // FUCK ALERT
   CAA3DCoordinate lbr_telescope;
-  lbr_telescope.X = 360.0 - azimuth_degrees( snapshot.azi_value );
+  lbr_telescope.X = azimuth_degrees( snapshot.azi_value );
   lbr_telescope.Y = altitude_degrees( snapshot.alt_value );
-  lbr_telescope.Z = 1.0; /* unit vector. */
+  lbr_telescope.Z = -1.0; /* unit vector. */
   CAA3DCoordinate xyz_telescope = LBR_to_XYZ( lbr_telescope );
   /* 
    * This transformation of xyz is unlikely to cause gross errors since the matrix
@@ -260,8 +260,8 @@ CAA2DCoordinate Simple_Altazimuth_Scope::topocentric_Azi_and_Alt(Alt_Azi_Snapsho
    */
   CAA3DCoordinate xyz_topocentric = tele_to_topo( xyz_telescope );
   CAA3DCoordinate lbr_topocentric = XYZ_to_LBR( xyz_topocentric );
-  azi_and_alt.X = 360.0 - lbr_topocentric.X;
-  azi_and_alt.Y = lbr_topocentric.Y;
+  azi_and_alt.X = 180. + lbr_topocentric.X;
+  azi_and_alt.Y = -lbr_topocentric.Y;
 
   CAA2DCoordinate snapshot_check = encoder_Azi_and_Alt( azi_and_alt );
   bool problem = false;
@@ -286,14 +286,14 @@ CAA2DCoordinate Simple_Altazimuth_Scope::encoder_Azi_and_Alt(CAA2DCoordinate top
   CAA2DCoordinate encoder_azi_alt;
 
   CAA3DCoordinate lbr_topocentric;
-  lbr_topocentric.X = 360.0 - topocentric_azi_alt.X;
+  lbr_topocentric.X = topocentric_azi_alt.X;
   lbr_topocentric.Y = topocentric_azi_alt.Y;
-  lbr_topocentric.Z = 1.0; /* unit vector. */
+  lbr_topocentric.Z = -1.0; /* unit vector. */
   CAA3DCoordinate xyz_topocentric = LBR_to_XYZ( lbr_topocentric );
   CAA3DCoordinate xyz_telescope = topo_to_tele( xyz_topocentric );
   CAA3DCoordinate lbr_telescope = XYZ_to_LBR( xyz_telescope );
-  double azimuth_degrees = 360.0 - lbr_telescope.X;
-  double altitude_degrees = lbr_telescope.Y;
+  double azimuth_degrees = 180.0 + lbr_telescope.X;
+  double altitude_degrees = -lbr_telescope.Y;
   /* If debugging, check that lbr_telescope.Z is approximately 1.0 */
 
   encoder_azi_alt.X = azimuth_encoder_value( azimuth_degrees );
