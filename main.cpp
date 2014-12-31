@@ -256,7 +256,7 @@ int main(void)
     lcd->setCursor( 0, 1);
     n = 0;
     n += lcd->print( data.azi_value );
-    while (n < 10) {
+    while (n < 10) {  // TODO USE 
       n += lcd->print(' ');
     }
     n += lcd->print( data.alt_value );

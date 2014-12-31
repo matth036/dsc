@@ -64,22 +64,17 @@ const CAA3DCoordinate Simple_Altazimuth_Scope::altitude_forward_backward_differe
   return diff;
 }
 
+/* This is in the telescope body frame.   
+ * We use the same funtion call, AziAltR_to_XYZ( temp ) 
+ * that was used to create a unit vector in the topocentric frame.
+*/
 const CAA3DCoordinate Simple_Altazimuth_Scope::calculate_unit_vector( Alt_Azi_Snapshot_t aa ){
-  CAA3DCoordinate uv;
-  uv.X = -azimuth_degrees( aa.azi_value );  /*  DETERMINANT REVERSE REVERSING ACTION  */
-  /* Check zero_azimuth_is_north. */
-  if( binary_tidbits::zero_azimuth_is_north() ){
-
-  }else{
-    uv.X += 180.0;
-    assert_param( false ); /* This code not tested. */
-  }
-  uv.Y = altitude_degrees( aa.alt_value ) ;
-  /* d(azimuth), d(altitude), d(R) is left handed. 
-   * d(azimuth), d(altitude), d(-R) is right handed. 
-   */
-  uv.Z = 1.0;   /*  DETERMINANT REVERSE REVERSING ACTION  */
-  return LBR_to_XYZ(uv);
+  CAA3DCoordinate temp;
+  temp.X = azimuth_degrees( aa.azi_value );
+  temp.Y = altitude_degrees( aa.alt_value );
+  temp.Z = 1.0;
+  temp = AziAltR_to_XYZ( temp );
+  return  temp;
 }
 
 
@@ -90,8 +85,9 @@ Alt_Azi_Snapshot_t Simple_Altazimuth_Scope::calculate_target_snapshot(CAA3DCoord
   lbr.X = -lbr.X;
   encoder_target.azi_value = static_cast<int>(floor( lbr.X*azimuth_hardware->get_ticks_per_revolution()/360.0 + .5 ));
   encoder_target.alt_value = static_cast<int>(floor( lbr.Y*altitude_hardware->get_ticks_per_revolution()/360.0 + .5 ));
-
-
+  for( ;; ){
+    /* This code is suspect... */
+  }
   return encoder_target;
 }
 
@@ -308,8 +304,8 @@ CAA2DCoordinate Simple_Altazimuth_Scope::current_topocentric_Azi_and_Alt(){
 
 CAA2DCoordinate Simple_Altazimuth_Scope::current_RA_and_Dec(){
   /* @TODO replace these constants with globally available function call retrieving user setable values. */
-  float pressure = DEFAULT_PRESSURE;
-  float temperature = DEFAULT_TEMPERATURE;
+  float pressure = refraction_temperature_pressure::DEFAULT_PRESSURE;
+  float temperature = refraction_temperature_pressure::DEFAULT_TEMPERATURE;
 
   Alt_Azi_Snapshot_t snapshot = get_snapshot();
   double JD = JD_timestamp_pretty_good_000();

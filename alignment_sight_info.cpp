@@ -43,10 +43,8 @@ uint32_t& template<uint32_t N>Encoder_Snapshot::operator[](size_t i){
 /* @TODO when funnction calls for temperature and pressure are available, use them. */
 Alignment_Sight_Item::Alignment_Sight_Item(std::string object){
   object_name = object;
-  temperature = DEFAULT_TEMPERATURE;
-  pressure = DEFAULT_PRESSURE;
-  // object_set = true;
-  // pointing_set = false;
+  temperature = refraction_temperature_pressure::DEFAULT_TEMPERATURE;
+  pressure = refraction_temperature_pressure::DEFAULT_PRESSURE;
 }
 
 /* alignment_prompt (scope=0x2001ff28, object=<incomplete type>) at controller.cpp:417 */
@@ -246,13 +244,20 @@ const CAA2DCoordinate Alignment_Data_Set::azimuth_altitude( CAA2DCoordinate RA_a
 {
   double latitude = get_latitude();
   double longitude = get_longitude();
+  CAA2DCoordinate azimuth_and_altitude;
+  azimuth_and_altitude = horizontal_equatorial::Azi_and_Alt( RA_and_Dec.X,
+							     RA_and_Dec.Y,
+							     longitude,
+							     latitude,
+							     jd,
+							     temperature, pressure );
 
-  return horizontal_equatorial::Azi_and_Alt( RA_and_Dec.X,
-					     RA_and_Dec.Y,
-					     longitude,
-					     latitude,
-					     jd,
-					     temperature, pressure );
+  if( binary_tidbits::zero_azimuth_is_north()  ){
+    // Empty
+  }else{
+    // Also Empty! 
+  }
+  return azimuth_and_altitude;
 }
 
 /* Return a unit vector representing the topocentric direction to object n. 
@@ -272,12 +277,11 @@ const CAA2DCoordinate Alignment_Data_Set::azimuth_altitude( CAA2DCoordinate RA_a
  **/
 const CAA3DCoordinate Alignment_Data_Set::topocentric_unit_vector( CAA2DCoordinate RA_and_Dec, 
 							     double jd, 
-							     float pressure=Alignment_Sight_Item::DEFAULT_PRESSURE, 
-							     float temperature=Alignment_Sight_Item::DEFAULT_TEMPERATURE
+								   float pressure=refraction_temperature_pressure::DEFAULT_PRESSURE,
+							     float temperature=refraction_temperature_pressure::DEFAULT_TEMPERATURE
 							     )
 {
   CAA3DCoordinate uv_xyz;
-  bool use_new_answer = false;
 
   CAA2DCoordinate Azi_Alt = azimuth_altitude( RA_and_Dec, 
 					      jd, 
@@ -287,32 +291,7 @@ const CAA3DCoordinate Alignment_Data_Set::topocentric_unit_vector( CAA2DCoordina
   Az_Alt_R.X = Azi_Alt.X;
   Az_Alt_R.Y = Azi_Alt.Y;
   Az_Alt_R.Z = 1.0;
-  CAA3DCoordinate uv_xyz_new = AziAltR_to_XYZ( Az_Alt_R );
-
-
-/*  OLD CODE */ 					      
-#if 1 
-  /* convert to radians. */
-  Azi_Alt.X = CAACoordinateTransformation::DegreesToRadians( Azi_Alt.X );
-  Azi_Alt.Y = CAACoordinateTransformation::DegreesToRadians( Azi_Alt.Y );
-  /* Only the comments differ in this conditional.  */
-  if( binary_tidbits::zero_azimuth_is_north() ){
-    uv_xyz.Z = sin( Azi_Alt.Y );         /* Component toward the zenith. */
-    double c = cos( Azi_Alt.Y );
-    uv_xyz.X = c * cos( Azi_Alt.X );     /* Component toward North. */
-    uv_xyz.Y = - c * sin( Azi_Alt.X );   /* Component toward West.  */
-  }else{
-    uv_xyz.Z = sin( Azi_Alt.Y );         /* Component toward the zenith. */
-    double c = cos( Azi_Alt.Y );
-    uv_xyz.X = c * cos( Azi_Alt.X );     /* Component toward South. */
-    uv_xyz.Y = - c * sin( Azi_Alt.X );   /* Component toward East.  */
-  }
-#endif
-  if( use_new_answer ){
-    return uv_xyz_new;
-  }else{
-    return uv_xyz;
-  }
-
+  uv_xyz = AziAltR_to_XYZ( Az_Alt_R );
+  return uv_xyz;
 }
 

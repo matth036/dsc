@@ -6,6 +6,7 @@
 #include "sexagesimal.h"
 #include "AA2DCoordinate.h"
 #include "AA3DCoordinate.h"
+#include "refraction_temperature_pressure.h"
 #include "telescope_model.h"
 #include "linear_algebra_facilities.h"
 
@@ -35,8 +36,9 @@ class Alignment_Sight_Item{
   const float get_pressure();
   const std::string get_object_name();
   const Alt_Azi_Snapshot_t get_encoder_data();
-  static constexpr float DEFAULT_PRESSURE = 1010.0;
-  static constexpr float DEFAULT_TEMPERATURE = 10.0;
+  // MOVED TO refraction_temperature_pressure.h
+  // static constexpr float DEFAULT_PRESSURE = 
+  // static constexpr float DEFAULT_TEMPERATURE = 10.0;
   const inline bool object_is_set(){
     return object_name.size() > 0;
   }

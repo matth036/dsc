@@ -8,7 +8,7 @@
 #include "output_views.h"
 #include "menu_views.h"
 #include "input_views.h"
-
+#include "refraction_temperature_pressure.h"
 
  /* @TODO put in an annoying confirm dialog. */
 void clear_sight_data(){
@@ -42,16 +42,6 @@ void pre_fab_example_test(){
   Alignment_Data_Set*  data_set =  get_main_sight_data();
   data_set->set_longitude_and_latitude( get_backup_domain_longitude(),
 					get_backup_domain_latitude() );
-
-#if 0
-  double longitude = data_set->get_longitude();
-  lcd->setCursor(0,1);
-  lcd->print( longitude,2);
-
-  double latitude = data_set->get_latitude();
-  lcd->setCursor(0,2);
-  lcd->print( latitude,2);
-#endif
 
   Alt_Azi_Snapshot_t data_0{3990,498};
   Alignment_Sight_Item polaris( navigation_star::get_navigation_star_name(0) );
@@ -97,6 +87,12 @@ void pre_fab_example_test(){
   lcd->setCursor(0,2);
   lcd->print( "Mean Error: " );
   lcd->print( scope->get_align_error_mean(), 6 );
+  lcd->setCursor(0,3);
+  lcd->print( "Off: " );
+  lcd->print( scope->get_altitude_offset(), 1 );
+
+  lcd->print( "D:" );
+  lcd->print( scope->get_determinant(), 1 );
 
   MicroSecondDelay::millisecond_delay(9000);  
 
@@ -184,8 +180,8 @@ void navigation_star_menu(){
     CAA2DCoordinate RA_and_Dec = calulate_RA_and_Dec(star_name, JD, success );
     if( success ){
       CAA2DCoordinate azi_alt = data_set->azimuth_altitude( RA_and_Dec, JD, 
-							   Alignment_Sight_Item::DEFAULT_PRESSURE,
-							   Alignment_Sight_Item::DEFAULT_TEMPERATURE);
+							   refraction_temperature_pressure::DEFAULT_PRESSURE,
+							   refraction_temperature_pressure::DEFAULT_TEMPERATURE);
       if( azi_alt.Y>0 ){
 	star_menu->insert_menu_item( num, star_name );
       }
@@ -234,8 +230,10 @@ void solar_system_menu(){
     CAA2DCoordinate RA_and_Dec = calulate_RA_and_Dec(bodies[num], JD, success );
     if( success ){
       CAA2DCoordinate azi_alt = data_set->azimuth_altitude( RA_and_Dec, JD,
-							    Alignment_Sight_Item::DEFAULT_PRESSURE,
-							    Alignment_Sight_Item::DEFAULT_TEMPERATURE);
+							   refraction_temperature_pressure::DEFAULT_PRESSURE,
+							   refraction_temperature_pressure::DEFAULT_TEMPERATURE);
+
+
       if( azi_alt.Y > 0 ){
 	ss_menu->insert_menu_item( num, bodies[num] );
       }else{

@@ -17,6 +17,7 @@
 #include "extra_solar_transforms.h"
 #include "keypad_layout.h"
 #include "AACoordinateTransformation.h"
+#include "refraction_temperature_pressure.h"
 /*********************************************
  *
  * Information_View
@@ -374,8 +375,8 @@ Pushto_Output_View::Pushto_Output_View(  CAA2DCoordinate RA_and_Dec  ){
   width_ = INPUT_VIEW_DEFAULT_WIDTH;
   label_1 = "Push To";
   label_2 = "Not set";
-  pressure = Alignment_Sight_Item::DEFAULT_PRESSURE;
-  temperature = Alignment_Sight_Item::DEFAULT_TEMPERATURE;
+  pressure = refraction_temperature_pressure::DEFAULT_PRESSURE;
+  temperature = refraction_temperature_pressure::DEFAULT_TEMPERATURE;
   data_set = get_main_sight_data();  
   telescope = get_main_simple_telescope();
 
