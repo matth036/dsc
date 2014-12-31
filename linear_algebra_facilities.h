@@ -37,4 +37,4 @@ void simple_svd_test();
 
 #endif				/* USE_EIGEN_FOR_LINEAR_ALGEBRA */
 
-#endif
+#endif   /* LINEAR_ALGEBRA_FACILIITIES */

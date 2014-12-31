@@ -244,62 +244,15 @@ const CAA2DCoordinate Alignment_Data_Set::azimuth_altitude( CAA2DCoordinate RA_a
 						      float pressure, 
 						      float temperature )
 {
-  CAA2DCoordinate new_answer;
-  bool use_new_answer = false;
   double latitude = get_latitude();
   double longitude = get_longitude();
 
-  new_answer = horizontal_equatorial::Azi_and_Alt( RA_and_Dec.X,
-						   RA_and_Dec.Y,
-						   longitude,
-						   latitude,
-						   jd,
-						   temperature, pressure );
-
-
-
-
-
-#if 1
-  /* @TODO Fix this. This is spagetti code. Use calls to testable small units.  */
-  double sidereal_time = CAASidereal::ApparentGreenwichSiderealTime( jd );
-  double GHA_Aries = sidereal_time * 15.0;   /* Greenwhich Hour Angle of Aries. */
-  /* 
-   * alpha (Meeus ch.13) == SHA, Siderial Hour Angle for navigators.
-   *   double RA = (360 - SHA_object)/15.0;
-   */
-  double SHA_object = 360.0 - RA_and_Dec.X * 15.0; /* Hours to Degrees conversion, direction reversed. */
-  double GHA_object = GHA_Aries + SHA_object;
-  double LHA; /* Local Hour Angle.  H in Meeus. */
-  if( binary_tidbits::west_longitude_is_positive() ){
-    LHA = GHA_object - longitude;
-  }else{
-    LHA = GHA_object + longitude;
-  }
-
-  double delta = RA_and_Dec.Y;
-  //  static CAA2DCoordinate Equatorial2Horizontal(double LocalHourAngle, double Delta, double Latitude);
-  CAA2DCoordinate Azi_Alt = CAACoordinateTransformation::Equatorial2Horizontal( LHA/15.0, delta, latitude );
-  /* See text after equations 13.5 and 13.6 Meeus pp.93. */
-  if( binary_tidbits::zero_azimuth_is_north() ){
-    Azi_Alt.X += 180.0;
-  }else{
-
-  }
-  /*
-    Apply atmospheric refraction to the altitude at this point of the calculation.
-    RefractionFromTrue(double Altitude, double Pressure = 1010, double Temperature = 10);
-    This value is in degrees and the apparent position is higher than the true position.
-  */
-  double R = CAARefraction::RefractionFromTrue( Azi_Alt.Y, DEFAULT_PRESSURE, DEFAULT_TEMPERATURE  );
-  Azi_Alt.Y += R;
-
-#endif
-  if( use_new_answer ){
-    return new_answer;
-  }else{
-    return Azi_Alt;
-  }
+  return horizontal_equatorial::Azi_and_Alt( RA_and_Dec.X,
+					     RA_and_Dec.Y,
+					     longitude,
+					     latitude,
+					     jd,
+					     temperature, pressure );
 }
 
 /* Return a unit vector representing the topocentric direction to object n. 
