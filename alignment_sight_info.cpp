@@ -12,7 +12,8 @@
 #include "refraction_temperature_pressure.h"
 
 #include "horizontal_equatorial.h"
- 
+#include "lbr_and_xyz.h" 
+
 /***********
 template<uint32_t N_axis> struct Encoder_Data_Set{
 public:
@@ -261,7 +262,6 @@ const CAA2DCoordinate Alignment_Data_Set::azimuth_altitude( CAA2DCoordinate RA_a
 
 #if 1
   /* @TODO Fix this. This is spagetti code. Use calls to testable small units.  */
-
   double sidereal_time = CAASidereal::ApparentGreenwichSiderealTime( jd );
   double GHA_Aries = sidereal_time * 15.0;   /* Greenwhich Hour Angle of Aries. */
   /* 
@@ -324,12 +324,17 @@ const CAA3DCoordinate Alignment_Data_Set::topocentric_unit_vector( CAA2DCoordina
 							     )
 {
   CAA3DCoordinate uv_xyz;
+  bool use_new_answer = false;
+
   CAA2DCoordinate Azi_Alt = azimuth_altitude( RA_and_Dec, 
 					      jd, 
 					      pressure, 
 					      temperature );
-
-
+  CAA3DCoordinate Az_Alt_R;
+  Az_Alt_R.X = Azi_Alt.X;
+  Az_Alt_R.Y = Azi_Alt.Y;
+  Az_Alt_R.Z = 1.0;
+  CAA3DCoordinate uv_xyz_new = AziAltR_to_XYZ( Az_Alt_R );
 
 
 /*  OLD CODE */ 					      
@@ -349,7 +354,12 @@ const CAA3DCoordinate Alignment_Data_Set::topocentric_unit_vector( CAA2DCoordina
     uv_xyz.X = c * cos( Azi_Alt.X );     /* Component toward South. */
     uv_xyz.Y = - c * sin( Azi_Alt.X );   /* Component toward East.  */
   }
-  return uv_xyz;
 #endif
+  if( use_new_answer ){
+    return uv_xyz_new;
+  }else{
+    return uv_xyz;
+  }
+
 }
 
