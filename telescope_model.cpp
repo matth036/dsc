@@ -12,6 +12,7 @@
 #include "build_date.h"
 #include "horizontal_equatorial.h"
 #include "lbr_and_xyz.h"
+#include "topocentric_unit_vectors.h"
 #include "refraction_temperature_pressure.h"
 
 Simple_Altazimuth_Scope::Simple_Altazimuth_Scope( std::unique_ptr<Quadrature_Decoder> azi, 
@@ -72,12 +73,10 @@ const CAA3DCoordinate Simple_Altazimuth_Scope::altitude_forward_backward_differe
  * that was used to create a unit vector in the topocentric frame.
 */
 const CAA3DCoordinate Simple_Altazimuth_Scope::calculate_unit_vector( Alt_Azi_Snapshot_t aa ){
-  CAA3DCoordinate temp;
+  CAA2DCoordinate temp;
   temp.X = azimuth_degrees( aa.azi_value );
   temp.Y = altitude_degrees( aa.alt_value );
-  temp.Z = 1.0;
-  temp = AziAltR_to_XYZ( temp );
-  return  temp;
+  return  topocentric_unit_vectors::AziAlt_to_UV(temp);
 }
 
 
