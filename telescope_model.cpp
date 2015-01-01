@@ -43,7 +43,10 @@ Alt_Azi_Snapshot_t Simple_Altazimuth_Scope::get_snapshot(){
   return d;
 }
 
-/* When attempting a more abstact telescope model, this seemed important. */
+/*
+ * This is used in the solution optimization algorithm.
+ * When attempting a more abstact telescope model, this seemed important. 
+ */
 const CAA3DCoordinate Simple_Altazimuth_Scope::altitude_forward_backward_difference( Alt_Azi_Snapshot_t aa ){
   Alt_Azi_Snapshot_t temp;
   uint32_t modulus = altitude_hardware->get_ticks_per_revolution();

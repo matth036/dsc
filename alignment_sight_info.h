@@ -36,9 +36,6 @@ class Alignment_Sight_Item{
   const float get_pressure();
   const std::string get_object_name();
   const Alt_Azi_Snapshot_t get_encoder_data();
-  // MOVED TO refraction_temperature_pressure.h
-  // static constexpr float DEFAULT_PRESSURE = 
-  // static constexpr float DEFAULT_TEMPERATURE = 10.0;
   const inline bool object_is_set(){
     return object_name.size() > 0;
   }

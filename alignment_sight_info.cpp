@@ -237,28 +237,6 @@ const float Alignment_Data_Set::get_temperature( uint32_t item ){
   return sights[item].get_temperature();
 }
 
-const CAA2DCoordinate Alignment_Data_Set::azimuth_altitude( CAA2DCoordinate RA_and_Dec, 
-						      double jd, 
-						      float pressure, 
-						      float temperature )
-{
-  double latitude = get_latitude();
-  double longitude = get_longitude();
-  CAA2DCoordinate azimuth_and_altitude;
-  azimuth_and_altitude = horizontal_equatorial::Azi_and_Alt( RA_and_Dec.X,
-							     RA_and_Dec.Y,
-							     longitude,
-							     latitude,
-							     jd,
-							     temperature, pressure );
-
-  if( binary_tidbits::zero_azimuth_is_north()  ){
-    // Empty
-  }else{
-    // Also Empty! 
-  }
-  return azimuth_and_altitude;
-}
 
 /* Return a unit vector representing the topocentric direction to object n. 
  *
@@ -283,10 +261,17 @@ const CAA3DCoordinate Alignment_Data_Set::topocentric_unit_vector( CAA2DCoordina
 {
   CAA3DCoordinate uv_xyz;
   /* What Function? */ 
+  for(;;){
+    /* Find and eliminate this function call. */ 
+  }
   CAA2DCoordinate Azi_Alt = azimuth_altitude( RA_and_Dec, 
 					      jd, 
 					      pressure, 
 					      temperature );
+
+
+
+
   CAA3DCoordinate Az_Alt_R;
   Az_Alt_R.X = Azi_Alt.X;
   Az_Alt_R.Y = Azi_Alt.Y;
@@ -294,4 +279,33 @@ const CAA3DCoordinate Alignment_Data_Set::topocentric_unit_vector( CAA2DCoordina
   uv_xyz = AziAltR_to_XYZ( Az_Alt_R );
   return uv_xyz;
 }
+
+const CAA2DCoordinate Alignment_Data_Set::azimuth_altitude( CAA2DCoordinate RA_and_Dec, 
+						      double jd, 
+						      float pressure, 
+						      float temperature )
+{
+  /* 
+  *  The this-> constuct ephasizes that we are using the locally stored
+  *  longitude and latitude. 
+  */
+  double latitude = this->get_latitude();
+  double longitude = this->get_longitude();
+  CAA2DCoordinate azimuth_and_altitude;
+  azimuth_and_altitude = horizontal_equatorial::Azi_and_Alt( RA_and_Dec.X,
+							     RA_and_Dec.Y,
+							     longitude,
+							     latitude,
+							     jd,
+							     temperature, pressure );
+
+  /* The adjustment for 
+   * binary_tidbits::zero_azimuth_is_north() 
+   * has already been make in 
+   * horizontal_equatorial::Azi_and_Alt( ... );
+   */
+  return azimuth_and_altitude;
+}
+
+
 
