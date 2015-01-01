@@ -224,7 +224,7 @@ const Alt_Azi_Snapshot_t Alignment_Data_Set::get_encoder_data( uint32_t item ){
 
 const CAA3DCoordinate Alignment_Data_Set::telescope_frame_unit_vector( uint32_t item ){
   Alt_Azi_Snapshot_t data = get_encoder_data( item );
-  return telescope->calculate_unit_vector( data );
+  return telescope->calculate_mount_frame_unit_vector( data );
 }
 
 const float Alignment_Data_Set::get_pressure( uint32_t item ){

@@ -481,7 +481,7 @@ std::unique_ptr < CharLCD_STM32F >
   CAA3DCoordinate uv_h{uv_topo};  /* _h for horizontal coordinates. */
   CAA3DCoordinate uv_t = telescope->topo_to_tele( uv_h );
   Alt_Azi_Snapshot_t current_snapshot = telescope->get_snapshot();
-  CAA3DCoordinate uv_current = telescope->calculate_unit_vector( current_snapshot );
+  CAA3DCoordinate uv_current = telescope->calculate_mount_frame_unit_vector( current_snapshot );
   CAA3DCoordinate diff;
   diff.X = uv_current.X - uv_t.X;
   diff.Y = uv_current.Y - uv_t.Y;

@@ -28,7 +28,7 @@ class Simple_Altazimuth_Scope {
   Simple_Altazimuth_Scope(std::unique_ptr < Quadrature_Decoder > azi,
 			  std::unique_ptr < Quadrature_Decoder > alt);
   Alt_Azi_Snapshot_t get_snapshot();
-  const CAA3DCoordinate calculate_unit_vector(Alt_Azi_Snapshot_t);
+  const CAA3DCoordinate calculate_mount_frame_unit_vector(Alt_Azi_Snapshot_t);
   Alt_Azi_Snapshot_t calculate_target_snapshot(CAA3DCoordinate target);
   const CAA3DCoordinate
       altitude_forward_backward_difference(Alt_Azi_Snapshot_t);

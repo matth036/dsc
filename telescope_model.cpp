@@ -12,7 +12,6 @@
 #include "build_date.h"
 #include "horizontal_equatorial.h"
 #include "lbr_and_xyz.h"
-#include "topocentric_unit_vectors.h"
 #include "refraction_temperature_pressure.h"
 
 Simple_Altazimuth_Scope::Simple_Altazimuth_Scope( std::unique_ptr<Quadrature_Decoder> azi, 
@@ -44,23 +43,20 @@ Alt_Azi_Snapshot_t Simple_Altazimuth_Scope::get_snapshot(){
   return d;
 }
 
-/*
- * This is used in the solution optimization algorithm.
- * When attempting a more abstact telescope model, this seemed important. 
- */
+/* When attempting a more abstact telescope model, this seemed important. */
 const CAA3DCoordinate Simple_Altazimuth_Scope::altitude_forward_backward_difference( Alt_Azi_Snapshot_t aa ){
   Alt_Azi_Snapshot_t temp;
   uint32_t modulus = altitude_hardware->get_ticks_per_revolution();
   temp.alt_value = aa.alt_value + 1;
   temp.azi_value = aa.azi_value;
-  CAA3DCoordinate forward = calculate_unit_vector( temp );
+  CAA3DCoordinate forward = calculate_mount_frame_unit_vector( temp );
   if( aa.alt_value > 0 ){
     temp.alt_value = aa.alt_value - 1;
   }else{
     temp.alt_value = modulus - 1;
   }
   temp.azi_value = aa.azi_value;
-  CAA3DCoordinate aftward = calculate_unit_vector( temp );
+  CAA3DCoordinate aftward = calculate_mount_frame_unit_vector( temp );
   CAA3DCoordinate diff;
   diff.X = forward.X - aftward.X;
   diff.Y = forward.Y - aftward.Y;
@@ -68,15 +64,17 @@ const CAA3DCoordinate Simple_Altazimuth_Scope::altitude_forward_backward_differe
   return diff;
 }
 
-/* This is in the telescope mount body frame.   
- * We use the same funtion call, AziAltR_to_XYZ( temp ) 
+/* This is in the telescope body frame.   
+ * W use the same funtion call, AziAltR_to_XYZ( temp ) 
  * that was used to create a unit vector in the topocentric frame.
 */
-const CAA3DCoordinate Simple_Altazimuth_Scope::calculate_unit_vector( Alt_Azi_Snapshot_t aa ){
-  CAA2DCoordinate temp;
+const CAA3DCoordinate Simple_Altazimuth_Scope::calculate_mount_frame_unit_vector( Alt_Azi_Snapshot_t aa ){
+  CAA3DCoordinate temp;
   temp.X = azimuth_degrees( aa.azi_value );
   temp.Y = altitude_degrees( aa.alt_value );
-  return  topocentric_unit_vectors::AziAlt_to_UV(temp);
+  temp.Z = 1.0;
+  temp = AziAltR_to_XYZ( temp );
+  return  temp;
 }
 
 
@@ -84,14 +82,12 @@ const CAA3DCoordinate Simple_Altazimuth_Scope::calculate_unit_vector( Alt_Azi_Sn
 Alt_Azi_Snapshot_t Simple_Altazimuth_Scope::calculate_target_snapshot(CAA3DCoordinate uv ){
   Alt_Azi_Snapshot_t encoder_target;  
   CAA3DCoordinate lbr = XYZ_to_LBR( uv ); /* How well has this been tested?  */
-  // lbr.X = -lbr.X;
+  lbr.X = -lbr.X;
   encoder_target.azi_value = static_cast<int>(floor( lbr.X*azimuth_hardware->get_ticks_per_revolution()/360.0 + .5 ));
   encoder_target.alt_value = static_cast<int>(floor( lbr.Y*altitude_hardware->get_ticks_per_revolution()/360.0 + .5 ));
-#if 0
   for( ;; ){
     /* This code is suspect... */
   }
-#endif 
   return encoder_target;
 }
 

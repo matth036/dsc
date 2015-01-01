@@ -61,7 +61,7 @@ void simple_altazimuth_optimize_altitude_offset_iteration(Alignment_Data_Set *
     r[s] = temporary;
 
     Alt_Azi_Snapshot_t encoder_data = data_set->get_encoder_data(s);
-    temporary = telescope->calculate_unit_vector( encoder_data );
+    temporary = telescope->calculate_mount_frame_unit_vector( encoder_data );
     b[s] = temporary;
     temporary = telescope->altitude_forward_backward_difference(encoder_data);
     c[s] = temporary;
