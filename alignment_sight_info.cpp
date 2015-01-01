@@ -276,13 +276,13 @@ const CAA2DCoordinate Alignment_Data_Set::azimuth_altitude( CAA2DCoordinate RA_a
  * @NOTA_BENE To turn off refraction, set pressure to zero. (See the astronomical algorithims code.)
  **/
 const CAA3DCoordinate Alignment_Data_Set::topocentric_unit_vector( CAA2DCoordinate RA_and_Dec, 
-							     double jd, 
+								   double jd, 
 								   float pressure=refraction_temperature_pressure::DEFAULT_PRESSURE,
-							     float temperature=refraction_temperature_pressure::DEFAULT_TEMPERATURE
-							     )
+								   float temperature=refraction_temperature_pressure::DEFAULT_TEMPERATURE
+								   )
 {
   CAA3DCoordinate uv_xyz;
-
+  /* What Function? */ 
   CAA2DCoordinate Azi_Alt = azimuth_altitude( RA_and_Dec, 
 					      jd, 
 					      pressure, 

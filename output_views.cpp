@@ -422,6 +422,16 @@ std::unique_ptr < CharLCD_STM32F >
     Pushto_Output_View::write_second_line(std::unique_ptr < CharLCD_STM32F > lcd)
 {
   double JD = JD_timestamp_pretty_good_000();
+  /* 
+  * Q.  Why call upon Alignment_Data_Set data_set for the topocentic unit vector? 
+  * A.  Because the conversion from equatorial coordinates needs longitude and latitude information.
+  *     A data set has one copy of longitude and latitude data which is probably but not necessarily
+  *     the same as that provide by
+  *     sexagesimal::Sexagesimal get_backup_domain_longitude();
+  *     sexagesimal::Sexagesimal get_backup_domain_latitude();
+  *     
+  *
+  **/
   CAA3DCoordinate uv_topo = data_set->topocentric_unit_vector( RA_Dec, 
 							       JD, 
 							       pressure, 
@@ -430,9 +440,9 @@ std::unique_ptr < CharLCD_STM32F >
   CAA3DCoordinate uv_t = telescope->topo_to_tele( uv_h );
   target = telescope->calculate_target_snapshot( uv_t );
   current = telescope->get_snapshot();
- 
+  /* Check Temperature.  */
   /* Assumes the lcd position is at the start of the line. */
-  int n = 0;
+  int n = 0;   
   int32_t diff = current.azi_value - target.azi_value;
   int32_t modulus = telescope->get_azimuth_ticks_per_revolution();
   while( diff > modulus/2 ){

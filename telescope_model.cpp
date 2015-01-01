@@ -64,7 +64,7 @@ const CAA3DCoordinate Simple_Altazimuth_Scope::altitude_forward_backward_differe
   return diff;
 }
 
-/* This is in the telescope body frame.   
+/* This is in the telescope mount body frame.   
  * We use the same funtion call, AziAltR_to_XYZ( temp ) 
  * that was used to create a unit vector in the topocentric frame.
 */
@@ -82,12 +82,14 @@ const CAA3DCoordinate Simple_Altazimuth_Scope::calculate_unit_vector( Alt_Azi_Sn
 Alt_Azi_Snapshot_t Simple_Altazimuth_Scope::calculate_target_snapshot(CAA3DCoordinate uv ){
   Alt_Azi_Snapshot_t encoder_target;  
   CAA3DCoordinate lbr = XYZ_to_LBR( uv ); /* How well has this been tested?  */
-  lbr.X = -lbr.X;
+  // lbr.X = -lbr.X;
   encoder_target.azi_value = static_cast<int>(floor( lbr.X*azimuth_hardware->get_ticks_per_revolution()/360.0 + .5 ));
   encoder_target.alt_value = static_cast<int>(floor( lbr.Y*altitude_hardware->get_ticks_per_revolution()/360.0 + .5 ));
+#if 0
   for( ;; ){
     /* This code is suspect... */
   }
+#endif 
   return encoder_target;
 }
 

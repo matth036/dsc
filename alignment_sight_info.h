@@ -63,8 +63,11 @@ class Alignment_Data_Set{
   const double get_longitude();
   const double get_latitude();
   void set_longitude_and_latitude( sexagesimal::Sexagesimal lo, sexagesimal::Sexagesimal la );
+
   const CAA3DCoordinate topocentric_unit_vector( CAA2DCoordinate RA_and_Dec, double JD, float pressure, float temperature );
+
   const CAA2DCoordinate azimuth_altitude( CAA2DCoordinate RA_and_Dec, double JD, float pressure, float temperature );
+
   void set_telescope_model( Simple_Altazimuth_Scope* t );
   Simple_Altazimuth_Scope* get_telescope_model();
   const size_t size();

@@ -52,6 +52,7 @@ extern "C" {
 #endif
 /* Functions using classes that are unsuitable for C. */
 #ifdef __cplusplus
+
 sexagesimal::Sexagesimal get_backup_domain_longitude();
 sexagesimal::Sexagesimal get_backup_domain_latitude();
 void save_backup_domain_longitude(sexagesimal::Sexagesimal longitude);

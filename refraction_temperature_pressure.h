@@ -2,15 +2,26 @@
 #define  _REFRACTION_TEMPERATURE_PRESSURE_H
 
 /*
-  These are changed sproadically to test that the 
-  values propogate through the project.
+ * These are changed sproadically to test that the 
+ * values assigned here propogate through the project.
+ * Setting the pressure to zero effectively turns off 
+ * atmospheric refraction.
+ * 
+ * The canonical values are:
+ * DEFAULT_PRESSURE = 1010.;
+ * DEFAULT_TEMPERATURE = 10.;
  */
 
 namespace refraction_temperature_pressure{
 
-// const float DEFAULT_PRESSURE = 1010.0;   /* mb (millibars) */
-const float DEFAULT_PRESSURE = 0.0;   /* mb (millibars) */
-const float DEFAULT_TEMPERATURE = 11.1;  /* Celsius        */
+  inline double F_to_C( double F ){
+    return (F - 32.0)*5.0/9.0;
+  }
+
+const float DEFAULT_PRESSURE = 1014.4;   /* mb (millibars) */
+//const float DEFAULT_TEMPERATURE = 10;  /* Celsius        */
+const  float  DEFAULT_TEMPERATURE = F_to_C( 9.0 );
+
 
 }
 

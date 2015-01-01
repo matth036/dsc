@@ -88,6 +88,7 @@ void simple_altazimuth_optimize_altitude_offset_iteration(Alignment_Data_Set *
     ************************/
   }
   det_A = A.determinant();
+  telescope->set_determinant( det_A );
   auto would_be_nice_to_know = svd.singularValues();
   /* The return type is Matrix<double,3,1> */
   svs.X = would_be_nice_to_know[0];
@@ -125,10 +126,10 @@ void simple_altazimuth_optimize_altitude_offset_iteration(Alignment_Data_Set *
       CAACoordinateTransformation::RadiansToDegrees(lambda_radians);
   double new_offset;
   if( telescope->altitude_direction_is_reversed() ){
-    /* Altitude decreases with encoder value */
+    /* Altitude decreases with encoder value increasing. */
     new_offset = old_offset + lambda_degrees;
   }else{
-    /* Altitude increases with encoder value. */
+    /* Altitude increases with encoder value increasing. */
     new_offset = old_offset - lambda_degrees;
   }
   telescope->set_altitude_offset(new_offset);
@@ -146,6 +147,7 @@ void simple_altazimuth_optimize_altitude_offset_iteration(Alignment_Data_Set *
   Matrix_A_data[6] = A(2,0);
   Matrix_A_data[7] = A(2,1);
   Matrix_A_data[8] = A(2,2);
+  /* */
   telescope->set_top_to_tel_matrix(Matrix_A_data); /* n.b. These will be converted from double to float. */
   /* Some math fuzz is involved here. (Small angle approximation, chord vs. arc.) */
   /* With two alignment sights, the error goes to zero! */

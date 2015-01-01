@@ -66,7 +66,7 @@ void pre_fab_example_test(){
   double least_error = std::numeric_limits<double>::max();
   double most_error = std::numeric_limits<double>::min();
   double best_offset = 0;
-  for( double offset=0; offset<=360.0; offset += 12.0 ){
+  for( double offset=-60; offset<=60.0; offset += 15.0 ){
     scope->set_altitude_offset( offset );
     double error = compare_pair_by_pair(  data_set, 4 );
     if( error < least_error ){
@@ -91,7 +91,7 @@ void pre_fab_example_test(){
   lcd->print( "Off: " );
   lcd->print( scope->get_altitude_offset(), 1 );
 
-  lcd->print( "D:" );
+  lcd->print( " D:" );
   lcd->print( scope->get_determinant(), 1 );
 
   MicroSecondDelay::millisecond_delay(9000);  

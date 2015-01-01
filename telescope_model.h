@@ -11,10 +11,13 @@
 class Quadrature_Decoder;
 
 /* 
+ * While encoder data is born as unsigned integers it is 
+ * better to work with signed integers to avoid special code
+ * for the wrap around near the maximum value and zero.
  *
+ * Use signed integer types for encoder data.
  *
- * March 22 2014 changed from uint32_t to int32_t.  No effect noted. 
-*/
+ */
 typedef struct {
   int32_t azi_value;
   int32_t alt_value;
@@ -71,23 +74,15 @@ class Simple_Altazimuth_Scope {
 
   CAA2DCoordinate current_RA_and_Dec();
 
-
-
   CAA2DCoordinate RA_and_Dec(Alt_Azi_Snapshot_t snapshot, double JD,
 			     float temperature, float pressure);
-
 
   CAA2DCoordinate Encoder_Alt_Azi(CAA2DCoordinate RA_and_Dec, double JD,
 			     float temperature, float pressure);
 
-
   Alt_Azi_Snapshot_t Target_Snapshot(CAA2DCoordinate RA_and_Dec, double JD,
 			     float temperature, float pressure);
 
-
-
-
-//  CAA2DCoordinate RA_and_Dec(Alt_Azi_Snapshot_t snapshot, float pressure, float temperature, double JD);
   int32_t get_azimuth_ticks_per_revolution();
   int32_t get_altitude_ticks_per_revolution();
  private:
