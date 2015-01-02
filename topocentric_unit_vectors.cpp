@@ -29,6 +29,8 @@ CAA2DCoordinate topocentric_unit_vectors::UV_to_AziAlt(CAA3DCoordinate topocentr
  * Used for transforming 
  *    {Azimuth,Altitude,1.0}   <--[to|from]-->  unit vector {x,y,z}
  * in the topocentic coordinate system.
+  
+
  * The z coordinate of corresponding to an object above the horizon will be negative.
  * Think of the unit vector as representing the direction of an incoming photon.
  *
@@ -38,11 +40,15 @@ CAA2DCoordinate topocentric_unit_vectors::UV_to_AziAlt(CAA3DCoordinate topocentr
  * The Jacobian of this transformation is positive.
  */
 CAA3DCoordinate topocentric_unit_vectors::XYZ_to_AziAltR(CAA3DCoordinate xyz){
-  /* Negate Y and Z, (which is a 180 degree rotation about X) */
+  /* Reflect thorugh the origin  */
+  xyz.X = -xyz.X;
   xyz.Y = -xyz.Y;
   xyz.Z = -xyz.Z;
   /* Use a well tested rectangular -> spherical conversion. */
   CAA3DCoordinate temp = XYZ_to_LBR( xyz );
+  /* Reflect thorugh the origin in spherical coordinates.  */
+  temp.X += 180.0;
+  temp.Y = - temp.Y;
   return temp;
 }
 
@@ -51,13 +57,11 @@ CAA3DCoordinate topocentric_unit_vectors::XYZ_to_AziAltR(CAA3DCoordinate xyz){
  * The Jacobian of this transformation is positive IF R > 0.
  */
 CAA3DCoordinate topocentric_unit_vectors::AziAltR_to_XYZ(CAA3DCoordinate azi_alt_r){
-  CAA3DCoordinate temp;
-  if( azi_alt_r.Z < 0 ){
-    for(;;){
-      // Spin for ever.
-    }
-  }
-  temp = LBR_to_XYZ( azi_alt_r );
+
+  azi_alt_r.X -= 180;
+  azi_alt_r.Y = -azi_alt_r.Y;
+  CAA3DCoordinate temp = LBR_to_XYZ( azi_alt_r );  
+  temp.X = -temp.X;
   temp.Y = -temp.Y;
   temp.Z = -temp.Z;
   return temp;
