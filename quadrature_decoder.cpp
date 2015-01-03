@@ -460,10 +460,4 @@ void Fake_Decoder::set_count( uint32_t value ){
   ticks_per_revolution = value; 
 }
 
-
-
-
-
-
-
-// eof
+// EOF

@@ -38,7 +38,8 @@ class Simple_Altazimuth_Scope {
   const double altitude_degrees(int32_t encoder_value);
   const double azimuth_encoder_value( double azimuth_degrees );
   const double altitude_encoder_value( double altitude_degrees );
-
+  void increment_azimuth_encoder();
+  void decrement_azimuth_encoder();
 
   const double get_altitude_offset();
   const double get_azimuth_offset();

@@ -869,107 +869,107 @@ bsc_point_to_action( yytext, yyleng );
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 42 "flex_lexer.l"
+#line 43 "flex_lexer.l"
 bsc_details_view_action( yytext, yyleng );
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 45 "flex_lexer.l"
+#line 46 "flex_lexer.l"
 solar_system_point_to_action(  yytext, yyleng );
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 46 "flex_lexer.l"
+#line 47 "flex_lexer.l"
 planetary_details_view_action( yytext, yyleng );
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 48 "flex_lexer.l"
+#line 49 "flex_lexer.l"
 almanac_star_point_to_action( yytext, yyleng );
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 50 "flex_lexer.l"
+#line 51 "flex_lexer.l"
 RA_and_Declination_dialog();
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 51 "flex_lexer.l"
+#line 52 "flex_lexer.l"
 Burnham_Handbook_Point_To();
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 53 "flex_lexer.l"
+#line 54 "flex_lexer.l"
 display_current_time_view();
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 54 "flex_lexer.l"
+#line 55 "flex_lexer.l"
 add_seconds_dialog();
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 55 "flex_lexer.l"
+#line 56 "flex_lexer.l"
 subtract_seconds_dialog();
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 57 "flex_lexer.l"
+#line 58 "flex_lexer.l"
 angular_coordinate_view();
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 59 "flex_lexer.l"
+#line 60 "flex_lexer.l"
 navigation_star_menu_test();
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 60 "flex_lexer.l"
+#line 61 "flex_lexer.l"
 sexagesimal_test_dialog();
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 62 "flex_lexer.l"
+#line 63 "flex_lexer.l"
 long_lat_dialog();
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 63 "flex_lexer.l"
+#line 64 "flex_lexer.l"
 countdown_to_Saint_Patricks_Day();
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 65 "flex_lexer.l"
+#line 66 "flex_lexer.l"
 alignment_sight_test();
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 66 "flex_lexer.l"
+#line 67 "flex_lexer.l"
 make_optimized_solution_test();
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 68 "flex_lexer.l"
+#line 69 "flex_lexer.l"
 pre_fab_example_test();
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 69 "flex_lexer.l"
+#line 70 "flex_lexer.l"
 clear_sight_data();
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 71 "flex_lexer.l"
+#line 72 "flex_lexer.l"
 debug_action();
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 73 "flex_lexer.l"
+#line 74 "flex_lexer.l"
 return 0;
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 74 "flex_lexer.l"
+#line 75 "flex_lexer.l"
 ECHO;
 	YY_BREAK
 #line 976 "flex_lexer.cpp"
@@ -1967,7 +1967,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 74 "flex_lexer.l"
+#line 75 "flex_lexer.l"
 
 
 

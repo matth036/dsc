@@ -1,5 +1,9 @@
 Make sure build works with all -O optimization levels. Ship withh -Og.
 
+Fix the Moon point to routine
+
+Change the JD_timestamp function name.
+
 Sanitize the code for F-bombs.
 
 Make sure the linkerscript hack works and remains necessary.

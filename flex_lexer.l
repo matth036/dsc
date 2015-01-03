@@ -39,6 +39,7 @@ CA{DIGIT}{1,4}               ngc_point_to_action( yytext, yyleng );
 ACA{DIGIT}{1,4}              ngc_details_view_action( yytext, yyleng );
 
 B{STAR}C{DIGIT}{1,4}         bsc_point_to_action( yytext, yyleng );
+
 AB{STAR}C{DIGIT}{1,4}        bsc_details_view_action( yytext, yyleng );
 
 

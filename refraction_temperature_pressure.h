@@ -18,9 +18,9 @@ namespace refraction_temperature_pressure{
     return (F - 32.0)*5.0/9.0;
   }
 
-const float DEFAULT_PRESSURE = 1019.7;   /* mb (millibars) */
-//const float DEFAULT_TEMPERATURE = 10;  /* Celsius        */
-const  float  DEFAULT_TEMPERATURE = F_to_C( 19.0 );
+constexpr float DEFAULT_PRESSURE = 1010.;   /* mb (millibars) */
+constexpr float DEFAULT_TEMPERATURE = 10;  /* Celsius        */
+//constexpr  float  DEFAULT_TEMPERATURE = F_to_C( 19.0 );
 
 
 }

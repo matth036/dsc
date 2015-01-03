@@ -54,8 +54,6 @@ void Integer_Input_View::put_char(char c)
 
 void Integer_Input_View::enter_char_action()
 {
-  /* Presently rely on the destructor to restore the character_reciever */
-  // dsc_controller::set_character_reciever(nullptr);
   finished = true;
 }
 

@@ -132,6 +132,10 @@ class Pushto_Output_View: public Character_Reciever {
   void put_char(char);
   void set_label_1(std::string);
   void set_label_2(std::string);
+  int32_t width_;
+  std::string label_1;
+  std::string label_2;
+  Simple_Altazimuth_Scope* get_telescope();
  private:
   CAA2DCoordinate RA_Dec;
   Alignment_Data_Set* data_set;
@@ -141,14 +145,27 @@ class Pushto_Output_View: public Character_Reciever {
   Character_Reciever* saved_cr;
   float pressure;
   float temperature;
-  int32_t width_;
+
   float degrees_up;   /* Negative if down  */
   float degrees_left; /* Negative if right */
   float epsilon_degrees;
-  std::string label_1;
-  std::string label_2;
+
   bool finished;
 };
+
+
+class Pushto_Output_View_DANGEROUSLY: public Pushto_Output_View{
+ public:
+  void put_char(char);
+  std::unique_ptr < CharLCD_STM32F > write_fourth_line(std::unique_ptr <
+						       CharLCD_STM32F >);
+ private:
+  void dangerous_increment_azimuth_encoder();
+  void dangerous_decrement_azimuth_encoder();
+};
+
+
+
 
 class Countdown_View:Character_Reciever {
  public:

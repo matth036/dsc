@@ -396,6 +396,10 @@ void Pushto_Output_View::set_label_2(std::string text){
   label_2 = text;
 }
 
+Simple_Altazimuth_Scope* Pushto_Output_View::get_telescope(){
+  return telescope;
+}
+
 void Pushto_Output_View::put_char(char c){
   if( c == keypad_return_char ){
     finished = true;
@@ -430,7 +434,9 @@ std::unique_ptr < CharLCD_STM32F >
   *     sexagesimal::Sexagesimal get_backup_domain_longitude();
   *     sexagesimal::Sexagesimal get_backup_domain_latitude();
   *     
-  *
+  *     I should proably change this to use the RTC backup domain longitude and latitude.
+  *     This is because if we set up to save and restore the pointing information, we will
+  *     not have an Alignment_Data_Set at all.  (Or do we have an empty one?)
   **/
   CAA3DCoordinate uv_topo = data_set->topocentric_unit_vector( RA_Dec, 
 							       JD, 
@@ -511,6 +517,44 @@ std::unique_ptr < CharLCD_STM32F >
     n += lcd->print(' ');
   }
   return std::move(lcd);
+}
+/********************************************************************/
+
+std::unique_ptr < CharLCD_STM32F >
+    Pushto_Output_View_DANGEROUSLY::write_fourth_line(std::unique_ptr < CharLCD_STM32F > lcd)
+{
+  int n = 0;
+  Alt_Azi_Snapshot_t data = Pushto_Output_View::get_telescope()->get_snapshot();
+  lcd->setCursor( 0, 1);
+  n = 0;
+  n += lcd->print( data.azi_value );
+  while (n < 10) { 
+    n += lcd->print(' ');
+  }
+  n += lcd->print( data.alt_value );
+  while (n < 20) {
+    n += lcd->print(' ');
+  }
+  return std::move(lcd);
+}
+
+void Pushto_Output_View_DANGEROUSLY::put_char(char c){
+  if( c == scroll_up_char ){  /* 'A' */
+    dangerous_increment_azimuth_encoder();
+  }else if( c == scroll_down_char ){ /* 'C' */
+    dangerous_decrement_azimuth_encoder();
+  }else{
+    Pushto_Output_View::put_char(c);
+  }
+}
+
+
+void Pushto_Output_View_DANGEROUSLY::dangerous_increment_azimuth_encoder(){
+  Pushto_Output_View::get_telescope()->increment_azimuth_encoder();
+}
+
+void Pushto_Output_View_DANGEROUSLY::dangerous_decrement_azimuth_encoder(){
+  Pushto_Output_View::get_telescope()->decrement_azimuth_encoder();
 }
 
 

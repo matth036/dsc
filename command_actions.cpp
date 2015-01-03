@@ -188,6 +188,73 @@ void bsc_point_to_action(char *yytext, int yyleng)
   check_in_main_lcd(std::move(lcd));
 }
 
+/*****************************************************************************
+ *   Experimental software hack to workaround an unreliable azimuth encoder.
+ *   The encoder misses counts some how.  
+ ******************************************************************************/
+
+void bsc_point_to_action_dangerously(char *yytext, int yyleng)
+{
+  int bsc_num;
+  int n = sscanf( yytext+3, "%d", &bsc_num);
+  if( n != 1 ){
+    return;
+  }
+  CAA2DCoordinate RA_Dec;
+  int index = starlist_access::get_index( bsc_num );
+  if( index < 0 ){
+    auto lcd = check_out_main_lcd();
+    lcd->setCursor(0,0);
+    n = 0;
+    n += lcd->print( "B*C star " );
+    n += lcd->print( bsc_num );
+    while (n < 20) {
+      n += lcd->print(" ");
+    }
+    lcd->setCursor(0,1);
+    n = 0;
+    n += lcd->print( "not onboard" );
+    while (n < 20) {
+      n += lcd->print(" ");
+    }
+    MicroSecondDelay::millisecond_delay(9000);
+    check_in_main_lcd(std::move(lcd));
+    return;
+  }
+  double JD = JD_timestamp_pretty_good_000();
+  RA_Dec = starlist_access::proper_motion_adjusted_position( index, JD);
+  double deltaT = CAADynamicalTime::DeltaT( JD );
+  RA_Dec = apply_aberration( RA_Dec, JD + deltaT/86400.0 );
+  RA_Dec = precession_and_nutation_correct_from_mean_eqinox( RA_Dec, JD );
+
+  auto lcd = check_out_main_lcd();
+  lcd->clear();
+  lcd->noDisplay();
+  MicroSecondDelay::millisecond_delay(1);
+  lcd->display();
+  lcd->home();
+  lcd->setCursor(0,0);
+  n = 0;
+  n += lcd->print( " DANGEROUS bsc " );
+  n += lcd->print( bsc_num );
+  while (n < 20) {
+    n += lcd->print(" ");
+  }
+  std::unique_ptr< Pushto_Output_View > view = 
+    std::unique_ptr<Pushto_Output_View >( new Pushto_Output_View( RA_Dec ) );
+  while( !view->is_finished() ){
+    lcd->setCursor(0,1);
+    lcd = view->write_first_line(std::move(lcd));
+    lcd->setCursor(0,2);
+    lcd = view->write_second_line(std::move(lcd));
+    lcd->setCursor(0,3);
+    lcd = view->write_third_line(std::move(lcd));
+    lcd->setCursor(0,3);
+    lcd = view->write_fourth_line(std::move(lcd));
+  }
+  check_in_main_lcd(std::move(lcd));
+}
+
 void bsc_details_view_action( char *yytext, int yyleng ){
   uint32_t bsc_num;
   int n = sscanf( yytext+4, "%lu", &bsc_num);

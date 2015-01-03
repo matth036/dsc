@@ -5,6 +5,9 @@
 void ngc_point_to_action( char* yytext, int yyleng );
 void bsc_point_to_action( char* yytext, int yyleng );
 void bsc_details_view_action( char* yytext, int yyleng );
+
+void bsc_point_to_action_dangerously(char *yytext, int yyleng);
+
 void solar_system_point_to_action( char* yytext, int yyleng );
 void almanac_star_point_to_action( char* yytext, int yyleng );
 void planetary_details_view_action( char* yytext, int yyleng );
