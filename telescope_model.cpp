@@ -90,8 +90,8 @@ calculate_target_snapshot(CAA3DCoordinate uv)
   /* Again, we are not in the topcentric frame, but the geometry is ths same. */
   CAA2DCoordinate azi_alt = topocentric_unit_vectors::UV_to_AziAlt(uv);
 
-  double altitude_tics = this->altitude_encoder_value(azi_alt.X);
-  double azimuth_tics = this->azimuth_encoder_value(azi_alt.Y);
+  double altitude_tics = this->altitude_encoder_value(azi_alt.Y);
+  double azimuth_tics = this->azimuth_encoder_value(azi_alt.X);
 
   encoder_target.azi_value = static_cast < int >(round(azimuth_tics));
   encoder_target.alt_value = static_cast < int >(round(altitude_tics));
@@ -125,7 +125,7 @@ const double Simple_Altazimuth_Scope::altitude_degrees(int32_t encoder_value)
 }
 
 /* 
- * Except the return value is a  double, this is the inverse of 
+ * Except that the return value is a  double, this is the inverse of 
  * Simple_Altazimuth_Scope::altitude_degrees( uint32_t encoder_value )
  * 
  */
