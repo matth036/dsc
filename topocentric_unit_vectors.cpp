@@ -3,6 +3,7 @@
 
 #include "binary_tidbits.h"
 #include "lbr_and_xyz.h"
+#include "AACoordinateTransformation.h"
 
 CAA3DCoordinate topocentric_unit_vectors::AziAlt_to_UV(CAA2DCoordinate azi_alt){
   CAA3DCoordinate Azi_Alt_R;
@@ -16,7 +17,7 @@ CAA3DCoordinate topocentric_unit_vectors::AziAlt_to_UV(CAA2DCoordinate azi_alt){
 CAA2DCoordinate topocentric_unit_vectors::UV_to_AziAlt(CAA3DCoordinate topocentric_uv ){
   CAA3DCoordinate Azi_Alt_R = topocentric_unit_vectors::XYZ_to_AziAltR( topocentric_uv );
   CAA2DCoordinate azi_alt;
-  azi_alt.X = Azi_Alt_R.X;
+  azi_alt.X = CAACoordinateTransformation::MapTo0To360Range(Azi_Alt_R.X);
   azi_alt.Y = Azi_Alt_R.Y;
   return azi_alt;
 }

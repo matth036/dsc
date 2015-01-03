@@ -30,8 +30,7 @@ class Simple_Altazimuth_Scope {
   Alt_Azi_Snapshot_t get_snapshot();
   const CAA3DCoordinate calculate_mount_frame_unit_vector(Alt_Azi_Snapshot_t);
   Alt_Azi_Snapshot_t calculate_target_snapshot(CAA3DCoordinate target);
-  const CAA3DCoordinate
-      altitude_forward_backward_difference(Alt_Azi_Snapshot_t);
+  const CAA3DCoordinate altitude_forward_backward_difference(Alt_Azi_Snapshot_t);
   const CAA3DCoordinate azimuth_forward_backward_difference(Alt_Azi_Snapshot_t);
   const double azimuth_degrees();
   const double altitude_degrees();
@@ -68,16 +67,14 @@ class Simple_Altazimuth_Scope {
   CAA3DCoordinate tele_to_topo(CAA3DCoordinate);
   CAA2DCoordinate current_topocentric_Azi_and_Alt();
   CAA2DCoordinate topocentric_Azi_and_Alt(Alt_Azi_Snapshot_t);
-  CAA2DCoordinate encoder_Azi_and_Alt(CAA2DCoordinate topocentric_azi_alt);
+  // Eliminate this stinker. 
+  // CAA2DCoordinate encoder_Azi_and_Alt(CAA2DCoordinate topocentric_azi_alt);
 
   void coordinate_debug();
 
   CAA2DCoordinate current_RA_and_Dec();
 
   CAA2DCoordinate RA_and_Dec(Alt_Azi_Snapshot_t snapshot, double JD,
-			     float temperature, float pressure);
-
-  CAA2DCoordinate Encoder_Alt_Azi(CAA2DCoordinate RA_and_Dec, double JD,
 			     float temperature, float pressure);
 
   Alt_Azi_Snapshot_t Target_Snapshot(CAA2DCoordinate RA_and_Dec, double JD,

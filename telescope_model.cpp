@@ -125,9 +125,9 @@ const double Simple_Altazimuth_Scope::altitude_degrees(int32_t encoder_value)
 }
 
 /* 
- * Inverse of 
+ * Except the return value is a  double, this is the inverse of 
  * Simple_Altazimuth_Scope::altitude_degrees( uint32_t encoder_value )
- * except the return value is a  double.
+ * 
  */
 const double Simple_Altazimuth_Scope::
 altitude_encoder_value(double altitude_degrees)
@@ -186,6 +186,67 @@ azimuth_encoder_value(double azimuth_degrees)
   }
   return encoder_value;
 }
+
+/********** Only Use 
+const CAA3DCoordinate Simple_Altazimuth_Scope::calculate_mount_frame_unit_vector( Alt_Azi_Snapshot_t aa )
+******************************************/
+
+CAA2DCoordinate Simple_Altazimuth_Scope::topocentric_Azi_and_Alt(Alt_Azi_Snapshot_t snapshot)
+{
+
+  CAA3DCoordinate xyz_telescope = calculate_mount_frame_unit_vector(snapshot);
+  CAA3DCoordinate xyz_topocentric = tele_to_topo(xyz_telescope);
+  return topocentric_unit_vectors::UV_to_AziAlt(xyz_topocentric);
+}
+
+CAA2DCoordinate Simple_Altazimuth_Scope::current_topocentric_Azi_and_Alt()
+{
+  Alt_Azi_Snapshot_t snapshot = get_snapshot();
+  return topocentric_Azi_and_Alt(snapshot);
+}
+
+CAA2DCoordinate Simple_Altazimuth_Scope::current_RA_and_Dec()
+{
+  /* @TODO replace these constants with globally available function call retrieving user setable values. */
+  float pressure = refraction_temperature_pressure::DEFAULT_PRESSURE;
+  float temperature = refraction_temperature_pressure::DEFAULT_TEMPERATURE;
+
+  Alt_Azi_Snapshot_t snapshot = get_snapshot();
+  double JD = JD_timestamp_pretty_good_000();
+
+  return RA_and_Dec(snapshot, JD, temperature, pressure);
+}
+
+/********** Only Use 
+const CAA3DCoordinate Simple_Altazimuth_Scope::calculate_mount_frame_unit_vector( Alt_Azi_Snapshot_t aa )
+******************************************/
+
+CAA2DCoordinate Simple_Altazimuth_Scope::RA_and_Dec(Alt_Azi_Snapshot_t snapshot,
+						    double JD,
+						    float temperature,
+						    float pressure)
+{
+  CAA2DCoordinate ra_and_dec;
+  double longitude = get_backup_domain_longitude().to_double();
+  double latitude = get_backup_domain_latitude().to_double();
+
+  CAA2DCoordinate azi_alt = topocentric_Azi_and_Alt(snapshot);
+  double azimuth = azi_alt.X;
+  double altitude = azi_alt.Y;
+
+  ra_and_dec = horizontal_equatorial::RA_and_Dec(azimuth,
+						 altitude,
+						 longitude,
+						 latitude,
+						 JD, temperature, pressure);
+  return ra_and_dec;
+}
+
+
+/******************************
+ * Boring setters and getters
+ ****************************/
+
 
 const double Simple_Altazimuth_Scope::get_altitude_offset()
 {
@@ -275,104 +336,11 @@ int32_t Simple_Altazimuth_Scope::get_altitude_ticks_per_revolution()
   return altitude_hardware->get_ticks_per_revolution();
 }
 
-/********** Only Use 
-const CAA3DCoordinate Simple_Altazimuth_Scope::calculate_mount_frame_unit_vector( Alt_Azi_Snapshot_t aa )
-******************************************/
+/*****************************
+ *  Transfomation between topocentric frame and telescope mount frame.
+ *  Implementation is matrix multiplication.
+ ******************************/
 
-CAA2DCoordinate Simple_Altazimuth_Scope::
-topocentric_Azi_and_Alt(Alt_Azi_Snapshot_t snapshot)
-{
-
-  CAA3DCoordinate xyz_telescope = calculate_mount_frame_unit_vector(snapshot);
-  CAA3DCoordinate xyz_topocentric = tele_to_topo(xyz_telescope);
-  return topocentric_unit_vectors::UV_to_AziAlt(xyz_topocentric);
-}
-
-/*
- * This is intended to be a testable inversion of
- * CAA2DCoordinate Simple_Altazimuth_Scope::topocentric_Azi_and_Alt(Alt_Azi_Snapshot_t snapshot)
- *  Notice that all of the coordinate transformations take place here
- *  at the bottom the atmosphere so refraction, pressure, and temperature are not
- *  parameters.  
-*/
-
-#if 1
-CAA2DCoordinate Simple_Altazimuth_Scope::
-encoder_Azi_and_Alt(CAA2DCoordinate topocentric_azi_alt)
-{
-  CAA2DCoordinate encoder_azi_alt;
-  //   for(;;){}
-
-  CAA3DCoordinate lbr_topocentric;
-  lbr_topocentric.X = topocentric_azi_alt.X;
-  lbr_topocentric.Y = topocentric_azi_alt.Y;
-  lbr_topocentric.Z = -1.0;	/* unit vector. */
-  CAA3DCoordinate xyz_topocentric = LBR_to_XYZ(lbr_topocentric);
-  CAA3DCoordinate xyz_telescope = topo_to_tele(xyz_topocentric);
-  CAA3DCoordinate lbr_telescope = XYZ_to_LBR(xyz_telescope);
-  double azimuth_degrees = 180.0 + lbr_telescope.X;
-  double altitude_degrees = -lbr_telescope.Y;
-  /* If debugging, check that lbr_telescope.Z is approximately 1.0 */
-
-  encoder_azi_alt.X = azimuth_encoder_value(azimuth_degrees);
-  encoder_azi_alt.Y = altitude_encoder_value(altitude_degrees);
-
-  return encoder_azi_alt;
-}
-#endif
-
-CAA2DCoordinate Simple_Altazimuth_Scope::current_topocentric_Azi_and_Alt()
-{
-  Alt_Azi_Snapshot_t snapshot = get_snapshot();
-  return topocentric_Azi_and_Alt(snapshot);
-}
-
-CAA2DCoordinate Simple_Altazimuth_Scope::current_RA_and_Dec()
-{
-  /* @TODO replace these constants with globally available function call retrieving user setable values. */
-  float pressure = refraction_temperature_pressure::DEFAULT_PRESSURE;
-  float temperature = refraction_temperature_pressure::DEFAULT_TEMPERATURE;
-
-  Alt_Azi_Snapshot_t snapshot = get_snapshot();
-  double JD = JD_timestamp_pretty_good_000();
-
-  return RA_and_Dec(snapshot, JD, temperature, pressure);
-}
-
-/********** Only Use 
-const CAA3DCoordinate Simple_Altazimuth_Scope::calculate_mount_frame_unit_vector( Alt_Azi_Snapshot_t aa )
-******************************************/
-
-CAA2DCoordinate Simple_Altazimuth_Scope::RA_and_Dec(Alt_Azi_Snapshot_t snapshot,
-						    double JD,
-						    float temperature,
-						    float pressure)
-{
-  CAA2DCoordinate ra_and_dec;
-  double longitude = get_backup_domain_longitude().to_double();
-  double latitude = get_backup_domain_latitude().to_double();
-
-  CAA2DCoordinate azi_alt = topocentric_Azi_and_Alt(snapshot);
-  double azimuth = azi_alt.X;
-  double altitude = azi_alt.Y;
-
-  ra_and_dec = horizontal_equatorial::RA_and_Dec(azimuth,
-						 altitude,
-						 longitude,
-						 latitude,
-						 JD, temperature, pressure);
-
-  return ra_and_dec;
-}
-
-CAA2DCoordinate Simple_Altazimuth_Scope::
-Encoder_Alt_Azi(CAA2DCoordinate RA_and_Dec, double JD, float temperature,
-		float pressure)
-{
-  CAA2DCoordinate alt_and_azi;
-
-  return alt_and_azi;
-}
 
 CAA3DCoordinate Simple_Altazimuth_Scope::topo_to_tele(CAA3DCoordinate temp)
 {
