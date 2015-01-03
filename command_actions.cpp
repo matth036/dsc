@@ -245,14 +245,16 @@ void bsc_point_to_dangerously(char *yytext, int yyleng)
   std::unique_ptr< Pushto_Output_View_DANGEROUSLY > view = 
     std::unique_ptr< Pushto_Output_View_DANGEROUSLY >( new Pushto_Output_View_DANGEROUSLY( RA_Dec ) );
   while( !view->is_finished() ){
+    //    lcd->clear();
     lcd->setCursor(0,1);
-    lcd = view->write_first_line(std::move(lcd));
+    // lcd = view->write_first_line(std::move(lcd));
     lcd->setCursor(0,2);
     lcd = view->write_second_line(std::move(lcd));
     lcd->setCursor(0,3);
     lcd = view->write_third_line(std::move(lcd));
-    lcd->setCursor(0,3);
-    lcd = view->write_fourth_line(std::move(lcd));
+    //lcd = ((std::unique_ptr< Pushto_Output_View_DANGEROUSLY >)(view))->write_third_line(std::move(lcd));
+    //    lcd =((Pushto_Output_View_DANGEROUSLY*)view)->write_third_line(std::move(lcd));
+      //    
   }
   check_in_main_lcd(std::move(lcd));
 }

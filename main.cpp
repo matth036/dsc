@@ -255,11 +255,11 @@ int main(void)
     Alt_Azi_Snapshot_t data = main_simple_telescope->get_snapshot();
     lcd->setCursor( 0, 1);
     n = 0;
-    n += lcd->print( data.azi_value );
+    n += lcd->print( data.alt_value );
     while (n < 10) {  // TODO USE 
       n += lcd->print(' ');
     }
-    n += lcd->print( data.alt_value );
+    n += lcd->print( data.azi_value );
     while (n < 20) {
       n += lcd->print(' ');
     }

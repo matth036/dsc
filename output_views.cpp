@@ -449,8 +449,9 @@ std::unique_ptr < CharLCD_STM32F >
   /* Check Temperature.  */
   /* Assumes the lcd position is at the start of the line. */
   int n = 0;   
-  int32_t diff = current.azi_value - target.azi_value;
   int32_t modulus = telescope->get_azimuth_ticks_per_revolution();
+  int32_t diff = current.alt_value - target.alt_value;
+
   while( diff > modulus/2 ){
     diff -= modulus;
   }
@@ -458,10 +459,14 @@ std::unique_ptr < CharLCD_STM32F >
     diff += modulus;
   }
   n += lcd->print( diff );
+
+
   while (n < width_ / 2) {
     n += lcd->print(' ');
   }
-  diff = current.alt_value - target.alt_value;
+
+
+  diff = current.azi_value - target.azi_value;
   modulus = telescope->get_altitude_ticks_per_revolution();
   while( diff > modulus/2 ){
     diff -= modulus;
@@ -469,6 +474,8 @@ std::unique_ptr < CharLCD_STM32F >
   while( diff < -modulus/2 ){
     diff += modulus;
   }
+
+
   n += lcd->print( diff );
   while (n < width_) {
     n += lcd->print(' ');
@@ -521,17 +528,17 @@ std::unique_ptr < CharLCD_STM32F >
 /********************************************************************/
 
 std::unique_ptr < CharLCD_STM32F >
-    Pushto_Output_View_DANGEROUSLY::write_fourth_line(std::unique_ptr < CharLCD_STM32F > lcd)
+    Pushto_Output_View_DANGEROUSLY::write_third_line(std::unique_ptr < CharLCD_STM32F > lcd)
 {
   int n = 0;
   Alt_Azi_Snapshot_t data = Pushto_Output_View::get_telescope()->get_snapshot();
   lcd->setCursor( 0, 1);
   n = 0;
-  n += lcd->print( data.azi_value );
+  n += lcd->print( data.alt_value );
   while (n < 10) { 
     n += lcd->print(' ');
   }
-  n += lcd->print( data.alt_value );
+  n += lcd->print( data.azi_value );
   while (n < 20) {
     n += lcd->print(' ');
   }
