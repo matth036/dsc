@@ -100,7 +100,7 @@ void simple_altazimuth_optimize_altitude_offset_iteration(Alignment_Data_Set *
   double numerator = 0.0;
   double denominator = 0.0;
   double sum_error = 0.0;
-  double max_error = -1E99;
+  double max_error = std::numeric_limits<double>::min();
   int count = 0;
   double sum_lengths = 0.0;
   for (uint32_t s = 0; s < size; ++s) {
@@ -115,7 +115,7 @@ void simple_altazimuth_optimize_altitude_offset_iteration(Alignment_Data_Set *
     ++count;
     double error = (bb - A * rr).norm();
     sum_error += error;
-    if( error > max_error ){
+    if( error >= max_error ){
       max_error = error;
     }
   }
@@ -127,6 +127,7 @@ void simple_altazimuth_optimize_altitude_offset_iteration(Alignment_Data_Set *
   double new_offset;
   if( telescope->altitude_direction_is_reversed() ){
     /* Altitude decreases with encoder value increasing. */
+    for(;;){/* NOT TESTETD */}
     new_offset = old_offset + lambda_degrees;
   }else{
     /* Altitude increases with encoder value increasing. */
@@ -148,15 +149,12 @@ void simple_altazimuth_optimize_altitude_offset_iteration(Alignment_Data_Set *
   Matrix_A_data[7] = A(2,1);
   Matrix_A_data[8] = A(2,2);
   /* */
-  telescope->set_top_to_tel_matrix(Matrix_A_data); /* n.b. These will be converted from double to float. */
+  telescope->set_top_to_tel_matrix(Matrix_A_data);
   /* Some math fuzz is involved here. (Small angle approximation, chord vs. arc.) */
   /* With two alignment sights, the error goes to zero! */
   double mean_error = sum_error/count;
   telescope->set_align_error_max( static_cast<float>(CAACoordinateTransformation::RadiansToDegrees(max_error) ) );
   telescope->set_align_error_mean( static_cast<float>(CAACoordinateTransformation::RadiansToDegrees( mean_error ) ) );
-
-  //telescope->set_align_error_max( static_cast<float>(CAACoordinateTransformation::RadiansToDegrees(max_error) ) );
-  //telescope->set_align_error_mean( static_cast<float>(CAACoordinateTransformation::RadiansToDegrees( sum_error/count ) ) );
 }
 
 void linear_algebra_facilities::

@@ -66,7 +66,7 @@ void pre_fab_example_test(){
   double least_error = std::numeric_limits<double>::max();
   double most_error = std::numeric_limits<double>::min();
   double best_offset = 0;
-  for( double offset=-60; offset<=60.0; offset += 15.0 ){
+  for( double offset=-60; offset<=360.0; offset += 5.0 ){
     scope->set_altitude_offset( offset );
     double error = compare_pair_by_pair(  data_set, 4 );
     if( error < least_error ){
@@ -78,8 +78,13 @@ void pre_fab_example_test(){
     }
   }
   scope->set_altitude_offset( best_offset );
+  scope->set_altitude_offset( 1.5 );
 
   linear_algebra_interface::simple_altazimuth_optimize_altitude_offset(data_set,scope);
+
+  if( scope->get_determinant() < 0 ){
+    
+  }
 
   lcd->setCursor(0,1);
   lcd->print( " Max Error: ");

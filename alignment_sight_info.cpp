@@ -12,6 +12,7 @@
 #include "refraction_temperature_pressure.h"
 
 #include "horizontal_equatorial.h"
+#include "topocentric_unit_vectors.h"
 #include "lbr_and_xyz.h" 
 
 /***********
@@ -92,7 +93,6 @@ const Alt_Azi_Snapshot_t Alignment_Sight_Item::get_encoder_data(){
  * computational functions employed in 
  * ./test/nautical_almanac.cpp. 
  * 
- * Fly what you test, test what you fly.
  **/
 CAA2DCoordinate calulate_RA_and_Dec(std::string object, double JD, bool& success){
   success = false;
@@ -261,23 +261,13 @@ const CAA3DCoordinate Alignment_Data_Set::topocentric_unit_vector( CAA2DCoordina
 {
   CAA3DCoordinate uv_xyz;
   /* What Function? */ 
-  for(;;){
-    /* Find and eliminate this function call. */ 
-  }
+  /* These coordinates are in the topocentric frame  */
   CAA2DCoordinate Azi_Alt = azimuth_altitude( RA_and_Dec, 
 					      jd, 
 					      pressure, 
 					      temperature );
 
-
-
-
-  CAA3DCoordinate Az_Alt_R;
-  Az_Alt_R.X = Azi_Alt.X;
-  Az_Alt_R.Y = Azi_Alt.Y;
-  Az_Alt_R.Z = 1.0;
-  uv_xyz = AziAltR_to_XYZ( Az_Alt_R );
-  return uv_xyz;
+  return topocentric_unit_vectors::AziAlt_to_UV(Azi_Alt);
 }
 
 const CAA2DCoordinate Alignment_Data_Set::azimuth_altitude( CAA2DCoordinate RA_and_Dec, 
