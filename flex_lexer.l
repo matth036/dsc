@@ -35,6 +35,8 @@ WORD            {ALPAH}+
 
 %%
 
+
+
 CA{DIGIT}{1,4}               ngc_point_to_action( yytext, yyleng );
 ACA{DIGIT}{1,4}              ngc_details_view_action( yytext, yyleng );
 
@@ -42,6 +44,7 @@ B{STAR}C{DIGIT}{1,4}         bsc_point_to_action( yytext, yyleng );
 
 AB{STAR}C{DIGIT}{1,4}        bsc_details_view_action( yytext, yyleng );
 
+CACA{DIGIT}{1,4}             bsc_point_to_dangerously( yytext, yyleng); 
 
 B{DIGIT}{1}                  solar_system_point_to_action(  yytext, yyleng );
 AB{DIGIT}{1}                 planetary_details_view_action( yytext, yyleng );
@@ -70,6 +73,8 @@ AAA789                       pre_fab_example_test();
 AAA987                       clear_sight_data();
 
 AAA8686                      debug_action();
+
+
 
 .*                           return 0;
 %%

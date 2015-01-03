@@ -156,6 +156,10 @@ class Pushto_Output_View: public Character_Reciever {
 
 class Pushto_Output_View_DANGEROUSLY: public Pushto_Output_View{
  public:
+ Pushto_Output_View_DANGEROUSLY(   CAA2DCoordinate RA_and_Dec ) : Pushto_Output_View(  RA_and_Dec ) {
+    //    Pushto_Output_View::Pushto_Output_View(  RA_and_Dec );
+  }
+  // ~Pushto_Output_View_DANGEROUSLY( );
   void put_char(char);
   std::unique_ptr < CharLCD_STM32F > write_fourth_line(std::unique_ptr <
 						       CharLCD_STM32F >);

@@ -193,10 +193,10 @@ void bsc_point_to_action(char *yytext, int yyleng)
  *   The encoder misses counts some how.  
  ******************************************************************************/
 
-void bsc_point_to_action_dangerously(char *yytext, int yyleng)
+void bsc_point_to_dangerously(char *yytext, int yyleng)
 {
   int bsc_num;
-  int n = sscanf( yytext+3, "%d", &bsc_num);
+  int n = sscanf( yytext+4, "%d", &bsc_num);  /* Prefix text is "CACA" */
   if( n != 1 ){
     return;
   }
@@ -240,8 +240,10 @@ void bsc_point_to_action_dangerously(char *yytext, int yyleng)
   while (n < 20) {
     n += lcd->print(" ");
   }
-  std::unique_ptr< Pushto_Output_View > view = 
-    std::unique_ptr<Pushto_Output_View >( new Pushto_Output_View( RA_Dec ) );
+
+  //Pushto_Output_View_DANGEROUSLY
+  std::unique_ptr< Pushto_Output_View_DANGEROUSLY > view = 
+    std::unique_ptr< Pushto_Output_View_DANGEROUSLY >( new Pushto_Output_View_DANGEROUSLY( RA_Dec ) );
   while( !view->is_finished() ){
     lcd->setCursor(0,1);
     lcd = view->write_first_line(std::move(lcd));
