@@ -68,6 +68,7 @@ AAA0317                      countdown_to_Saint_Patricks_Day();
 
 AAA234                       alignment_sight_test();
 AAA456                       make_optimized_solution_test();
+BBB456                       shift_180_then_optimize_solution();
 
 AAA789                       pre_fab_example_test();
 AAA987                       clear_sight_data();

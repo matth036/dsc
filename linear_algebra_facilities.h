@@ -24,7 +24,7 @@ namespace linear_algebra_facilities {
 
 Matrix3d B_Matrix_from_Alignment_Data_Set(Alignment_Data_Set &);
 /* I have changed the return value to a triple of the singualr values. 
- * @TODO rename this function so the name is not missleading.
+ * @TODO rename this function so the name is not misleading.
  **/
 double compare_pair_by_pair(Alignment_Data_Set *, uint32_t max_size );
 

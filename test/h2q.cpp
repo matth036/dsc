@@ -13,7 +13,8 @@ using std::cout;
 using std::endl;
 
 /* 
- * Julian date from command line input arguments year,month,day.
+ * Julian date from system unix time.
+ * Altitude and azimuth from comand line arguments. (Somewhat clumsy) 
  *
  */
 int main( int argc, char **argv){
@@ -42,7 +43,7 @@ int main( int argc, char **argv){
     sscanf( argv[5], "%d", &alti_mm );
     sscanf( argv[6], "%f", &alti_ss );
   }else{
-    printf( "usage: %s dd mm ss.xxx dd mm ss.xxx       where the azimuth is the first triple and the altitude is the second triple is the azimuth.\n", argv[0] ); 
+    printf( "usage: %s dd mm ss.xxx dd mm ss.xxx       where the azimuth is the first triple and the altitude is the second triple.\n", argv[0] ); 
     return -1;
   }
   /* Normally everything should be non-negative. */

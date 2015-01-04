@@ -91,7 +91,7 @@ CXXFLAGS=$(CFLAGS)
 
 all: example_23b example_33a nautical_almanac astronomical_almanac jd nutation_data \
  memoized_mean_sidereal memoized_apparent_sidereal burnham_test horizontal2equatorial \
- h2q
+ h2q intercept_azimuth
 
 #	$(CC) -o $(TARGET) $(LDFLAGS) $(OBJ)	$(LDLIBS)
 
@@ -163,6 +163,12 @@ h2q.o: h2q.cpp
 	$(CXX) $(CXXFLAGS) -c -o h2q.o $(INCLUDE) h2q.cpp
 
 
+intercept_azimuth: $(OBJ) intercept_azimuth.o
+	$(CC) -o intercept_azimuth  $(LDFLAGS) $(OBJ) intercept_azimuth.o $(LDLIBS) 
+
+intercept_azimuth.o: intercept_azimuth.cpp
+	$(CXX) $(CXXFLAGS) -c -o intercept_azimuth.o $(INCLUDE) intercept_azimuth.cpp
+
 
 .PHONY: clean
 
@@ -178,4 +184,5 @@ clean:
 	rm -f nutation_data nutation_data.o
 	rm -f horizontal2equatorial horizontal2equatorial.o
 	rm -f h2q h2q.o
+	rm -f intercept_azimuth intercept_azimuth.o
 	rm -f jd jd.o

@@ -27,5 +27,7 @@ void delete_sight_item_without_confirm( Alignment_Data_Set* data_set, uint32_t p
 void alignment_prompt(Simple_Altazimuth_Scope* scope, std::string object );
 
 void make_optimized_solution_test();
+void shift_180_then_optimize_solution();
+void optimize_from_current_offset();
 
 #endif  /*   _SIGHT_DATA_COMMAND_ACTIONS_H  */

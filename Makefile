@@ -167,7 +167,8 @@ CDEFS+=-DEIGEN_MPL2_ONLY
 MCUFLAGS=-mthumb -mcpu=cortex-m4 
 
 # COMMONFLAGS=-O$(OPTLVL)  -ggdb3 -Werror -Wall -fno-omit-frame-pointer 
-COMMONFLAGS=-O$(OPTLVL) -ggdb3 -Werror -Wall -Wno-unused-local-typedefs -Wno-sign-compare -Wno-unused-function  -flto -fno-omit-frame-pointer
+# COMMONFLAGS=-O$(OPTLVL) -ggdb3 -Werror -Wall -Wno-unused-local-typedefs -Wno-unused-function  -flto -fno-omit-frame-pointer
+COMMONFLAGS=-O$(OPTLVL) -ggdb3 -Werror -Wall -Wno-unused-local-typedefs -flto -fno-omit-frame-pointer
 # COMMONFLAGS=-O$(OPTLVL) -ggdb3 -Werror -flto -fno-omit-frame-pointer
 # COMMONFLAGS=-O$(OPTLVL)   -g -Werror -Wall -fno-omit-frame-pointer 
 
@@ -222,6 +223,25 @@ starlist.h:     make_star_list catalog
 	rm -f starlist.h
 	./make_star_list > starlist.h;    indent  starlist.h
 
+FLEX_LEXER_ADDITIONAL_COMPILE_FLAG=-Wno-unused-function -Wno-sign-compare
+# flex_lexer.cpp contains unused functions and won't compile under -Werror -Wall
+# Ideally I should find the right flex flags to eliminate the unused functions.
+flex_lexer.o: flex_lexer.cpp flex_lexer.h 
+	$(CXX) $(CXXFLAGS) $(FLEX_LEXER_ADDITIONAL_COMPILE_FLAG) -c -o flex_lexer.o flex_lexer.cpp
+
+
+#
+#  This didn't work so well.  To many files #include "main.h"
+#
+#LINEAR_ALGEBRA_INTERFACE_ADDITIONAL_COMPILE_FLAGS=-Wno-unused-local-typedefs 
+#linear_algebra_interface.o: linear_algebra_interface.cpp linear_algebra_interface.h 
+#	$(CXX) $(CXXFLAGS) $(LINEAR_ALGEBRA_INTERFACE_ADDITIONAL_COMPILE_FLAGS) -c -o linear_algebra_interface.o linear_algebra_interface.cpp
+#
+#main.o: main.cpp
+#	$(CXX) $(CXXFLAGS) $(LINEAR_ALGEBRA_INTERFACE_ADDITIONAL_COMPILE_FLAGS) -c -o main.o main.cpp
+
+
+
 catalog:
 	cp YaleStarCatalog/catalog.gz  .
 	gunzip catalog.gz
@@ -272,3 +292,4 @@ clean:
 	rm -Rf $(AA_SRCDIR)
 	rm -f DPublic_HCNGC.txt Public_HCNGC.txt Public_HCNGC.xls
 	rm -f sex_to_hex
+	rm -f flex_lexer.cpp flex_lexer.h

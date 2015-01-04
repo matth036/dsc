@@ -346,7 +346,16 @@ void make_optimized_solution_test(){
   double least_error = std::numeric_limits<double>::max();
   double most_error = std::numeric_limits<double>::min();
   double best_offset = 0;
-  for( double offset=0; offset<=360.0; offset += 12.0 ){
+  /* We generally arrange for the offset to be near zero. Here five uniformly 
+   * spaced values including zero are examined and the offset among these five 
+   * with the least error is used as a starting point for iterative improvement.
+   **/
+  uint32_t N = 5;
+  double step = 360.0/N;
+  double start = -step * (N/2); /* Intentional integer arithmetic for (N/2) */
+  double offset;
+  uint32_t n;
+  for( offset=start,n=0; n<N; ++n,offset+=step ){
     scope->set_altitude_offset( offset );
     double error = compare_pair_by_pair(  data_set, 4 );
     if( error < least_error ){
@@ -358,6 +367,45 @@ void make_optimized_solution_test(){
     }
   }
   scope->set_altitude_offset( best_offset );
+  check_in_main_lcd(std::move(lcd));
+
+  optimize_from_current_offset();
+}
+
+
+void shift_180_then_optimize_solution(){
+  Simple_Altazimuth_Scope* scope = get_main_simple_telescope();  
+  double offset = scope->get_altitude_offset();
+  double offset_plus = offset + 180.0;
+  double offset_minus = offset - 180.0;
+  /* 
+   * Adding or subtracting 180 are equivilent.  
+   * For asthetic reasons (values nearer to zero 
+   * are more natural to think about) use the 
+   * alternative with the smaller in absolute value. 
+   */
+  if( abs( offset_plus) < abs( offset_minus ) ){
+    scope->set_altitude_offset( offset_plus );
+  }else{
+    scope->set_altitude_offset( offset_minus );
+  }
+  optimize_from_current_offset();
+}
+
+
+void optimize_from_current_offset(){
+  auto lcd = check_out_main_lcd();
+
+  Simple_Altazimuth_Scope* scope = get_main_simple_telescope();
+  Alignment_Data_Set*  data_set =  get_main_sight_data();
+
+  lcd->clear();
+  lcd->noDisplay();
+  MicroSecondDelay::millisecond_delay(1);
+  lcd->display();
+  lcd->home();
+  lcd->setCursor(0,0);
+  lcd->print( "Polishing Solution" );
 
   linear_algebra_interface::simple_altazimuth_optimize_altitude_offset(data_set,scope);
 
@@ -367,7 +415,13 @@ void make_optimized_solution_test(){
   lcd->setCursor(0,2);
   lcd->print( "Mean Error: " );
   lcd->print( scope->get_align_error_mean(), 6 );
+  lcd->setCursor(0,3);
+  lcd->print( "Off: " );
+  lcd->print( scope->get_altitude_offset(), 1 );
+  lcd->print( " D:" );
+  lcd->print( scope->get_determinant(), 1 );
 
   MicroSecondDelay::millisecond_delay(9000);  
   check_in_main_lcd(std::move(lcd));
+
 }

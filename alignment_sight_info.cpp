@@ -3,7 +3,9 @@
 // For some reason, navigation_star::nav_star_RA_Dec(int,double) is declared here:
 #include "extra_solar_transforms.h"
 #include "solar_system.h"
-#include "stm32f4xx.h" /* For assert_param() */
+
+#include "re_assert.h"
+// #include "stm32f4xx.h" /* For assert_param() */
 #include "AACoordinateTransformation.h"
 #include <cmath>
 #include "binary_tidbits.h"
@@ -99,7 +101,6 @@ CAA2DCoordinate calulate_RA_and_Dec(std::string object, double JD, bool& success
   CAA2DCoordinate RA_and_DEC;
   RA_and_DEC.X = 0;
   RA_and_DEC.Y = 0;
-
   for( uint32_t num = 0; num<=navigation_star::NAVIGATION_LIST_MAX; ++num ){
     if( object == navigation_star::get_navigation_star_name(num) ){
       RA_and_DEC = navigation_star::nav_star_RA_Dec(num, JD);
@@ -111,6 +112,8 @@ CAA2DCoordinate calulate_RA_and_Dec(std::string object, double JD, bool& success
     /* MOON STUFF.  The handling of the moon is botched in other parts of
        this project.  Test to see if this is correct.  
        Test against Kstars. December 2014.
+
+       I have made no correction for horizontal parallax.
      */
     CAA3DCoordinate RA_Dec_Dist = solar_system::calculate_moon_RA_Dec_Dist(JD);
     RA_and_DEC.X = RA_Dec_Dist.X;
