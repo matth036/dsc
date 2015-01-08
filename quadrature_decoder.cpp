@@ -79,10 +79,19 @@ void Quadrature_Decoder::pin_initiate(uint16_t pin, GPIO_TypeDef * port)
   GPIO_InitTypeDef GPIO_InitStructure;
 
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
-  // GPIO_PuPd_NOPULL may be what is best.
-  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+  /*
+   * After some cold night flakey behavior I figure it is best to pull DOWN or UP, 
+   * Avoid NOPULL.  Moreover, since the encoders are 5V why not pull down since the
+   * encoder sends an emphatic up state.  
+   * 
+   * A quick indoor experiment reveals that pull up results in the nice behavior that
+   * the unconnected counter does not drifting.  
+   * fuck FUCK fuck FUCK THIS sHiTt.
+   */
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_DOWN;
+  //   GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
   GPIO_InitStructure.GPIO_Pin = pin;
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_25MHz;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
   // probably irrelevant. Valid values are GPIO_OType_OD, GPIO_OType_PP
   GPIO_InitStructure.GPIO_OType = GPIO_OType_OD;
 

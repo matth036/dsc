@@ -2,7 +2,7 @@
 #define MATRIX_KEYPAD_H
 
 /* @TODO Remove this board specific include. (If necesary, use a chip specific include.) */
-// #include "stm32f4_discovery.h"
+
 #include "stm32f4xx.h"
 
 #ifdef __cplusplus
