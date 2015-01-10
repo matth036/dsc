@@ -92,12 +92,7 @@ class Quadrature_Decoder : public Decoder_Interface {
   upp_ptr port_pin_A;
   upp_ptr port_pin_B;
   std::pair < GPIO_TypeDef *, uint16_t > *port_pin_I;
-  //uint16_t Channel_A_pin; 
-  //uint16_t Channel_B_pin;
-  //uint16_t Channel_I_pin;
-  //GPIO_TypeDef * Channel_A_port;
-  //GPIO_TypeDef * Channel_B_port;
-  //GPIO_TypeDef * Channel_I_port;
+
 };
 
 

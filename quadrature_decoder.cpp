@@ -1,4 +1,6 @@
 #include "quadrature_decoder.h"
+#include "rtc_management.h"
+#include "microsecond_delay.h"
 #include <stm32f4xx_gpio.h>
 #include <stm32f4xx_rcc.h>
 #include "stm32f4xx_conf.h"
@@ -275,6 +277,8 @@ uint8_t Quadrature_Decoder::getTimerNumber()
 
 const uint32_t Quadrature_Decoder::get_count()
 {
+  /* Fuck! Counter Fuck!  */
+  // MicroSecondDelay::millisecond_delay(60);
   return TIM_GetCounter(_TIMx);
 }
 

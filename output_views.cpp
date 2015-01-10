@@ -526,13 +526,36 @@ std::unique_ptr < CharLCD_STM32F >
   return std::move(lcd);
 }
 /********************************************************************/
+std::unique_ptr < CharLCD_STM32F >
+    Pushto_Output_View_DANGEROUSLY::write_second_line(std::unique_ptr < CharLCD_STM32F > lcd)
+{
+  int n = 0;
+  n += lcd->print( num_ticks_alt );
+  while (n < 10) { 
+    n += lcd->print(' ');
+  }
+  n += lcd->print( num_ticks_azi );
+  while (n < 20) {
+    n += lcd->print(' ');
+  }
+  return std::move(lcd);
+}
 
 std::unique_ptr < CharLCD_STM32F >
     Pushto_Output_View_DANGEROUSLY::write_third_line(std::unique_ptr < CharLCD_STM32F > lcd)
 {
+  return std::move(
+		   Pushto_Output_View::write_second_line(std::move( lcd ) )
+		   );
+}
+
+
+
+std::unique_ptr < CharLCD_STM32F >
+    Pushto_Output_View_DANGEROUSLY::write_fourth_line(std::unique_ptr < CharLCD_STM32F > lcd)
+{
   int n = 0;
   Alt_Azi_Snapshot_t data = Pushto_Output_View::get_telescope()->get_snapshot();
-  lcd->setCursor( 0, 1);
   n = 0;
   n += lcd->print( data.alt_value );
   while (n < 10) { 
@@ -545,23 +568,65 @@ std::unique_ptr < CharLCD_STM32F >
   return std::move(lcd);
 }
 
+
+
 void Pushto_Output_View_DANGEROUSLY::put_char(char c){
   if( c == scroll_up_char ){  /* 'A' */
-    dangerous_increment_azimuth_encoder();
+    dangerous_increment_encoder();
   }else if( c == scroll_down_char ){ /* 'C' */
-    dangerous_decrement_azimuth_encoder();
+    dangerous_decrement_encoder();
+  }else if( c == 'B' ){
+    reverse_cycle_num_ticks();
   }else{
     Pushto_Output_View::put_char(c);
   }
 }
 
+/* Cycle (1,0) (10,0) (100,0), (1000,0) (0,1) (0,10) (0,100), (0,1000) (1,0) ... */
 
-void Pushto_Output_View_DANGEROUSLY::dangerous_increment_azimuth_encoder(){
-  Pushto_Output_View::get_telescope()->increment_azimuth_encoder();
+void Pushto_Output_View_DANGEROUSLY::cycle_num_ticks(){
+  if( num_ticks_azi >= 1000 ){
+    num_ticks_azi = 0;
+    num_ticks_alt = 1;
+    return;
+  }else{
+    num_ticks_azi *= 10;
+  }
+  if( num_ticks_alt >= 1000 ){
+    num_ticks_alt = 0;
+    num_ticks_azi = 1;
+    return;
+  }else{
+    num_ticks_alt *= 10;
+  }
 }
 
-void Pushto_Output_View_DANGEROUSLY::dangerous_decrement_azimuth_encoder(){
-  Pushto_Output_View::get_telescope()->decrement_azimuth_encoder();
+/*  Seven steps forward equals one step backward. */
+void Pushto_Output_View_DANGEROUSLY::reverse_cycle_num_ticks(){
+  for( int n=0; n<7; ++n ){
+    cycle_num_ticks();
+  }
+}
+
+
+
+void Pushto_Output_View_DANGEROUSLY::dangerous_increment_encoder(){
+  for( int n=0; n<num_ticks_azi; ++n ){
+    Pushto_Output_View::get_telescope()->increment_azimuth_encoder();
+  }
+  for( int n=0; n<num_ticks_alt; ++n ){
+    Pushto_Output_View::get_telescope()->increment_altitude_encoder();
+  }
+}
+
+void Pushto_Output_View_DANGEROUSLY::dangerous_decrement_encoder(){
+  for( int n=0; n<num_ticks_azi; ++n ){
+    Pushto_Output_View::get_telescope()->decrement_azimuth_encoder();
+  }
+  for( int n=0; n<num_ticks_alt; ++n ){
+    Pushto_Output_View::get_telescope()->decrement_altitude_encoder();
+  }
+
 }
 
 

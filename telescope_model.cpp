@@ -259,6 +259,21 @@ void Simple_Altazimuth_Scope::decrement_azimuth_encoder(){
   azimuth_hardware->set_count( count );
 }
 
+
+void Simple_Altazimuth_Scope::increment_altitude_encoder(){
+  uint32_t modulus = altitude_hardware->get_ticks_per_revolution();
+  int32_t count = altitude_hardware->get_count();
+  count = (count + 1) % modulus;
+  altitude_hardware->set_count( count );
+}
+
+void Simple_Altazimuth_Scope::decrement_altitude_encoder(){
+  uint32_t modulus = altitude_hardware->get_ticks_per_revolution();
+  int32_t count = altitude_hardware->get_count();
+  count = (count - 1) % modulus;
+  altitude_hardware->set_count( count );
+}
+
 /******************************
  * Boring setters and getters
  ****************************/
