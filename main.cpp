@@ -139,18 +139,20 @@ int main(void)
   lcd->display();
   /* Shaft decoders, hardware on telescope mount. */
 
+  // Azimuth
  Quadrature_Decoder decoder_0{GPIOD,GPIO_Pin_13,
       GPIOD,GPIO_Pin_12,
       AZIMUTH_DECODER_TIMER_TO_USE,
      specificities::azimuth_ticks_per_revolution};
 
+ // Altitude
   Quadrature_Decoder decoder_1{GPIOE,GPIO_Pin_9,
       GPIOE,GPIO_Pin_11,
       ALTITUDE_DECODER_TIMER_TO_USE,
       specificities::altitude_ticks_per_revolution};
 
-  decoder_0.set_count( 0 );   // Azimuth
-  decoder_1.set_count( 500 ); // Altitude
+  decoder_0.set_count( specificities::azimuth_startup_count );   // Azimuth
+  decoder_1.set_count( specificities::altitude_startup_count ); // Altitude
 
   main_simple_telescope = new Simple_Altazimuth_Scope{ std::unique_ptr<Quadrature_Decoder>(&decoder_0), 
       std::unique_ptr<Quadrature_Decoder>(&decoder_1) };
