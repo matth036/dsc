@@ -13,6 +13,7 @@
 
 #include "controller.h"
 #include "flex_lexer_declare.h"
+#include "specificities.h"
 #include <memory>
 
 ///////////////////////////////////////
@@ -141,12 +142,12 @@ int main(void)
  Quadrature_Decoder decoder_0{GPIOD,GPIO_Pin_13,
       GPIOD,GPIO_Pin_12,
       AZIMUTH_DECODER_TIMER_TO_USE,
-      4000};
+     specificities::azimuth_ticks_per_revolution};
 
   Quadrature_Decoder decoder_1{GPIOE,GPIO_Pin_9,
       GPIOE,GPIO_Pin_11,
       ALTITUDE_DECODER_TIMER_TO_USE,
-      4000};
+      specificities::altitude_ticks_per_revolution};
 
   decoder_0.set_count( 0 );   // Azimuth
   decoder_1.set_count( 500 ); // Altitude
