@@ -366,6 +366,43 @@ const std::string sexagesimal::Sexagesimal::to_dms_string()
   return str;
 }
 
+/* Usefull for comparison with Astronimical Almanac. */
+const std::string sexagesimal::Sexagesimal::to_hms_string()
+{
+  std::string str;
+  std::string addon;
+  if (data.ui & 1 << 31) {
+    str = '-';
+  } else {
+    str = ' ';
+  }
+  str += sexagesimal::to_string_hack(msb());	// std::to_string( msb() );
+  while (str.size() < 4) {	// space padding
+    str = ' ' + str;
+  }
+  str += 'h';
+  addon = sexagesimal::to_string_hack(minutes());	// std::to_string( minutes() );
+  while (addon.size() < 2) {	// zero padding
+    addon = '0' + addon;
+  }
+  str += addon;
+  str += 'm';
+  addon = sexagesimal::to_string_hack(seconds());	// std::to_string( seconds() );
+  while (addon.size() < 2) {	// zero padding
+    addon = '0' + addon;
+  }
+  str += addon;
+  str += 's';
+  str += '.';
+  addon = sexagesimal::to_string_hack(millis());	// std::to_string( temp );
+  while (addon.size() < 3) {	// zero padding
+    addon = '0' + addon;
+  }
+  str += addon;
+  return str;
+}
+
+
 /* Usefull for comparison with Nautical Almanac. */
 const std::string sexagesimal::Sexagesimal::to_latitude_string()
 {

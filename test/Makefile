@@ -29,6 +29,9 @@ CPPSRC+=AAAberration.cpp
 CPPSRC+=AAPrecession.cpp
 CPPSRC+=AANutation.cpp
 CPPSRC+=AARefraction.cpp
+CPPSRC+=AAElliptical.cpp
+CPPSRC+=AAKepler.cpp
+CPPSRC+=AANearParabolic.cpp
 CPPSRC+=extra_solar_transforms.cpp
 CPPSRC+=sexagesimal.cpp
 CPPSRC+=AASun.cpp
@@ -91,7 +94,7 @@ CXXFLAGS=$(CFLAGS)
 
 all: example_23b example_33a nautical_almanac astronomical_almanac jd nutation_data \
  memoized_mean_sidereal memoized_apparent_sidereal burnham_test horizontal2equatorial \
- h2q intercept_azimuth
+ h2q intercept_azimuth near_parabolic
 
 #	$(CC) -o $(TARGET) $(LDFLAGS) $(OBJ)	$(LDLIBS)
 
@@ -169,6 +172,15 @@ intercept_azimuth: $(OBJ) intercept_azimuth.o
 intercept_azimuth.o: intercept_azimuth.cpp
 	$(CXX) $(CXXFLAGS) -c -o intercept_azimuth.o $(INCLUDE) intercept_azimuth.cpp
 
+near_parabolic: $(OBJ) near_parabolic.o
+	$(CC) -o near_parabolic  $(LDFLAGS) $(OBJ) near_parabolic.o $(LDLIBS) 
+
+near_parabolic.o: near_parabolic.cpp
+	$(CXX) $(CXXFLAGS) -c -o near_parabolic.o $(INCLUDE) near_parabolic.cpp
+
+
+
+
 
 .PHONY: clean
 
@@ -186,3 +198,4 @@ clean:
 	rm -f h2q h2q.o
 	rm -f intercept_azimuth intercept_azimuth.o
 	rm -f jd jd.o
+	rm -f near_parabolic near_parabolic.o

@@ -64,7 +64,6 @@ doUseThisLine (char *catalog_line)
   with no restriction on Vmag
   STARLIST_SIZE = 9108
   */
-  //return 1;
   return 0;
 }
 

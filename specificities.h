@@ -18,8 +18,8 @@ namespace specificities{
    * Working near 45 degress north latitude, these values ensure this if
    * the microcontroller is turned on while the telescope is pointed at Polaris.
    */
-  constexpr int32_t your_latitude = 45;
-  constexpr uint32_t altitude_startup_count = (altitude_ticks_per_revolution/4)*your_latitude/360;
+  constexpr int32_t my_latitude = 45;
+  constexpr uint32_t altitude_startup_count = (altitude_ticks_per_revolution/4)*my_latitude/360;
   constexpr uint32_t azimuth_startup_count = 0;
 
 
