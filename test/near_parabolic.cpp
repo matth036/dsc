@@ -3,6 +3,7 @@
 #include "AADate.h"
 #include "AANearParabolic.h"
 #include "sexagesimal.h"
+#include "solar_system.h"
 #include <cmath>
 
 using std::cout;
@@ -55,8 +56,9 @@ int main( int argc, char **argv){
 
   double JD_hour = round(24.0*timestamp.Julian())/24.0;
 
-  for( int h=-1; h<=12; ++h ){
+  for( int h=-1; h<=24; ++h ){
     CAADate hour_date = CAADate(JD_hour + static_cast<double>(h)/24.0, true );
+    lovejoy_2014_q2.JDEquinox = hour_date.Julian();
     details = CAANearParabolic::Calculate( hour_date.Julian(), lovejoy_2014_q2 );
     printf( "%li ", hour_date.Year() );
     printf( "%2li ", hour_date.Month() );
@@ -66,7 +68,14 @@ int main( int argc, char **argv){
     Dec = details.AstrometricGeocentricDeclination;
     cout << sexagesimal::double2sexagesimal(RA).to_hms_string() << "   ";
     cout << sexagesimal::double2sexagesimal(Dec).to_dms_string();
-
+    /* Same calculation, J2000 coordinate system. */
+    lovejoy_2014_q2.JDEquinox = solar_system::J2000_0;
+    details = CAANearParabolic::Calculate( hour_date.Julian(), lovejoy_2014_q2 );
+    RA = details.AstrometricGeocentricRA;
+    Dec = details.AstrometricGeocentricDeclination;
+    cout << "             J2000-> ";
+    cout << sexagesimal::double2sexagesimal(RA).to_hms_string() << "   ";
+    cout << sexagesimal::double2sexagesimal(Dec).to_dms_string();
     cout << endl;
   }
 
