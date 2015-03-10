@@ -100,17 +100,22 @@ int main(void)
 
   config_keypad_timer();
 
-  /* RS, R/W, E, DB0, DB1, DB2, DB3, DB4, DB5, DB6, DB7 */
+  /* 
+   * With 11 pins, the constructor arguments are the pins
+   * RS, R/W, E, DB0, DB1, DB2, DB3, DB4, DB5, DB6, DB7 
+   * in an intializer list,
+   * followed by the corresponding ports in another initializer list.
+   */
   main_lcd_ptr = unique_ptr < CharLCD_STM32F > ( new CharLCD_STM32F { {
 	GPIO_Pin_0,  /* RS  */
 	  GPIO_Pin_2, /* R/W */
-	  GPIO_Pin_4, /* E */
-	  GPIO_Pin_6, /* DB0 */
+	  specificities::char_lcd_E_pin,
+	  specificities::char_lcd_DB0_pin,
 	  GPIO_Pin_8, /* DB1 */
 	  GPIO_Pin_10, /* DB2 */
 	  GPIO_Pin_14, /* DB3 */
-	  GPIO_Pin_7,  /* DB4 */
-	  GPIO_Pin_9,  /* DB5 */
+	  specificities::char_lcd_DB4_pin,
+	  specificities::char_lcd_DB5_pin,
 	  GPIO_Pin_11, /* DB6 */
 	  GPIO_Pin_15, /* DB7 */
 	  }, 
