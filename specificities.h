@@ -22,8 +22,8 @@ namespace specificities{
    * Working near 45 degress north latitude, these values ensure this if
    * the microcontroller is turned on while the telescope is pointed at Polaris.
    */
-  constexpr int32_t my_latitude = 45;
-  constexpr uint32_t altitude_startup_count = (altitude_ticks_per_revolution/4)*my_latitude/360;
+  constexpr uint32_t my_latitude = 45;
+  constexpr uint32_t altitude_startup_count = (altitude_ticks_per_revolution*my_latitude)/360;
   constexpr uint32_t azimuth_startup_count = 0;
 
   /* MACROS such as GPIO_Pin_7 are defined in stm32f4xx_gpio.h */
