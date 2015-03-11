@@ -287,6 +287,7 @@ clean:
 	rm -f *.o
 	rm -f catalog
 	rm -f starlist.h starlist.h~
+	rm -f ngc_list.h ngc_list.h~
 	rm -f make_star_list
 	rm -Rf $(AA_SRCDIR)
 	rm -f DPublic_HCNGC.txt Public_HCNGC.txt Public_HCNGC.xls
