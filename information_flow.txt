@@ -1,0 +1,79 @@
+/*********************************************************************/
+
+
+Geographic Location.
+
+longitude
+and 
+latitude
+
+Data type is sexagesimal::Sexagesimal. (Or, the 32 bit data contained therein.)
+Value originates from user input from an input dialog.
+Value is preserved across restarts as long as rtc is kept alive.
+setters and getters are:
+sexagesimal::Sexagesimal get_backup_domain_longitude();
+sexagesimal::Sexagesimal get_backup_domain_latitude();
+void save_backup_domain_longitude(sexagesimal::Sexagesimal longitude);
+void save_backup_domain_latitude(sexagesimal::Sexagesimal latitude);
+
+Sign conventions about East/West longitude is expressed in
+binary_tidbits::west_longitude_is_positive();
+North Latitude is always positive, South Latitude is always negative.
+
+Consider implementing:
+	 Read value from GPS hardware.
+	 Originate value from a default value specified in a header file.
+	 Altitude information.
+
+Warning:
+	Longitude and Latitude are copied into an Alignment_Data_Set which will
+	be unaware outside changes.  This violates the "Don't repeat yourself" 
+	principle.  I hope to be able to serialize Alignment_Data_Set-s and 
+	when I do, the Longitude and Latitude will be usefull.
+
+/**********************************************************************/
+
+temperature and pressure (for atmospheric refraction calculation)
+Data type is float.
+Value originates from 
+refraction_temperature_pressure::DEFAULT_PRESSURE
+refraction_temperature_pressure::DEFAULT_TEMPERATURE
+
+Do Implement:
+	Saved values with setters and getters.
+	Input Dialog to set the gettable values.
+
+N.B.
+	Different alignment sights may have different tempatures and pressures.
+	Alignment sights are assumed to be from the same location, but they may
+	occur at widely different times.
+
+
+/************************************************************************/
+
+Star Positions Magnitude, Proper Motion.
+
+These are in a struc
+
+  typedef struct {
+    uint32_t RAdata;
+    uint32_t DECdata;
+    float RApm;
+    float DECpm;
+    float magnitude;
+    int32_t BSCnum;
+  } star_data;
+
+defined in star_data.h.  The actual data is contained in starlist.h
+starlist.h is created from the data in the Yale Bright Star Catalog.
+
+The size of stalist.h can be reduced by changing the cutoff magnitude 
+in make_starlist.c.  This project will probably always use this mechanism
+for the 57 navigational stars plus Polaris.  If input and output to a
+SD card is implemented, star data will probably be kept on the SD card.
+
+The data for a star is presently found by a lineaer search of field BSCnum,
+the Bright Star Catalog Number.  It may be worth while to implement
+a bisection search.
+
+/************************************************************************/

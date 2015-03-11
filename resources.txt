@@ -1,0 +1,44 @@
+Do this for info about timers:
+grep TIMER_TO_USE *.h | grep define
+
+If I want to use the onboard temperature sensor, I will need a timer for the analog to 
+digital conversion. 
+
+TIM1, TIM2, TIM3, TIM4, TIM5, TIM8 are viable for quadrature reading.
+The Olimex boards have pinouts for ports D,E,F,G.
+
+Also (in the arduino headers) 
+PA4
+PA5
+PA6
+PB5
+PC0 (Among the analog pins)
+
+TIM1 E9 E11
+TIM2 (no real options)   32-bit
+TIM3 (no real options)
+TIM4 D12 D13
+TIM5 (no real options)   32-bit
+TIM8 (no real options)
+
+Black  = Ground
+Green  = 5.0V
+Yellow = Channel B
+Red    = Channel A
+
+Yellow Green  Red    Blank   Black
+Black  Blank  Red    Green    Yellow
+
+Yellow Green  Red    Black
+Black  Red    Green  Yellow
+
+
+avoid PD2 it is used for SD_MMC
+
+gpio	C13	Onboard Green LED
+gpio	A0	Onboard User Push Button.
+
+Timer	TIM14	Microsecond Delay Timer
+Timer	TIM13	32768Hz timebase (This is a self-tutorial, not needed in the final product)
+Timer   TIM12   Used for keypad.
+

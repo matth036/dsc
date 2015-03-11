@@ -1,0 +1,20 @@
+(gdb) step
+2379    }
+(gdb) print STM32_E407_led_toggle()
+$22 = void
+(gdb) step
+timebase_32768Hz::timebase_32768Hz_configure () at timebase_32768Hz.cpp:62
+62        TIM_Cmd(timebase_32768Hz::timebase_32768Hz_timer, ENABLE);
+(gdb) print STM32_E407_led_toggle()
+$23 = void
+(gdb) step
+TIM_Cmd (TIMx=0x40000400, NewState=ENABLE)
+    at /opt/cross/microcontroller/arm/STM32F4-Discovery_FW_V1.1.0/Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_tim.c:592
+592       if (NewState != DISABLE)
+(gdb) print STM32_E407_led_toggle()
+$24 = void
+(gdb) step
+595         TIMx->CR1 |= TIM_CR1_CEN;
+(gdb) print STM32_E407_led_toggle()
+$25 = void
+(gdb) step

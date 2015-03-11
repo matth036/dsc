@@ -1,0 +1,31 @@
+AAA555 Display Time View
+
+AAA556 Add Seconds to RTC
+AAA554 Subtract seconds from RTC
+
+AAA720 Longitude and Latitude entry dialog.
+
+
+
+B[0-9]  Point to prompt for solar system body 0=Sun, 1=Mecury, 2=Venus, 3=Moon, 4=Mars ...
+
+CAdddd Point to prompt for N.G.C. object dddd. (New General Catalog)
+
+B*Cdddd B*C = Bright Star Catalog.  Point to prompt for Bright Star Catalog entry dddd
+
+AAA090  Angular Coordinates View.
+
+AAA789 A pre fabricated example for testing the alignment algorithm.
+
+AAA987 Clear all alignment sight information.
+
+AAA456 Solve for alignment sight fix. (Called a test in the code, it is thought to be functional.)
+
+AAA234 prompt for an alignment sight on Navigational Star or Solar System Body.
+
+AAA0317 Countdown to Saint Patrick's Day. (An easter egg.)
+
+AAA2490 RA and Declination point to directions. For pointing to known RA and Declination. (J2000 or Current?)
+
+AAA1950 Burnham's Celestial Handbook. (Uses Burnham's notation and does precesscion and nutation correction from 1950 to current epoch.)
+

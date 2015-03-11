@@ -1,0 +1,18 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252"><title>SAO TDC BSC5 Catalog Binary Header Format</title>
+</head><body><h2><a href="http://tdc-www.harvard.edu/catalogs/bsc5.html">Yale Bright Star Catalog 5 (BSC5) Catalog</a>
+<a href="http://tdc-www.harvard.edu/catalogs/catalogsb.html">Binary Header Format</a></h2>
+The first 28 bytes of both <i>BSC5</i> and <i>BSC5ra</i> contain the
+following information:
+<pre>Integer*4 STAR0=0	Subtract from star number to get sequence number
+Integer*4 STAR1=1	First star number in file
+Integer*4 STARN=9110  	Number of stars in file
+Integer*4 STNUM=1	0 if no star i.d. numbers are present
+			1 if star i.d. numbers are in catalog file
+			2 if star i.d. numbers are <region><nnnn> in file
+Logical*4 MPROP=1	1 if proper motion is included
+			0 if no proper motion is included
+Integer*4 NMAG=-1	Number of magnitudes present (-1=J2000 instead of B1950)
+Integer*4 NBENT=32	Number of bytes per star entry
+</nnnn></region></pre>
+</body></html>
