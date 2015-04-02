@@ -1,9 +1,6 @@
 TARGET:=$(notdir $(lastword $(CURDIR)))
 
-
-
-TOOLCHAIN_PATH:=/opt/cross/microcontroller/arm/4.8.4-release-candidate-2015-02-11_231639/bin
-# TOOLCHAIN_PATH:=/opt/cross/microcontroller/arm/4.8.3-release-candidate-2014-12-06_004950/bin
+TOOLCHAIN_PATH:=/opt/cross/microcontroller/arm/4.8.4-release-candidate-2015-03-28_114212/bin
 
 TOOLCHAIN_PREFIX:=arm-none-eabi
 
@@ -20,7 +17,7 @@ PROJECT_NAME:=$(notdir $(lastword $(CURDIR)))
 LINKER_SCRIPT=project_stm32_flash.ld
 
 #
-# $VENDOR_STM_SOURCE_DIR is the directory created by unziping stm32f4discovery_fw.zip
+# $VENDOR_STM_SOURCE_DIR is the directory created by unzip-ing stm32f4discovery_fw.zip
 # md5sum:
 # 6063f18dff8b5f1ddfafa77d1ab72ad9  stm32f4discovery_fw.zip
 #
@@ -43,7 +40,7 @@ INCLUDE+=-I$(VENDOR_STM_SOURCE_DIR)/Libraries/CMSIS/STM32F4xx/Include/
 INCLUDE+=-I$(VENDOR_STM_SOURCE_DIR)/Libraries/CMSIS/Include/
 INCLUDE+=-I$(VENDOR_STM_SOURCE_DIR)/Libraries/STM32F4xx_StdPeriph_Driver/inc/
 
-INCLUDE+=-I/usr/include/eigen3/
+INCLUDE+=-I/usr/local/include/eigen3/
 
 # INCLUDE+=-I$(VENDOR_STM_SOURCE_DIR)/Utilities/STM32F4-Discovery/
 INCLUDE+=-I./$(AA_SRCDIR)
