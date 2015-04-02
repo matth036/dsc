@@ -7,7 +7,7 @@ and roughly the pointing functionality of Orion's IntelliScope is achieved.
 
 * This is a C++11 project with a mix of C and C++ code.  You will need a capable toolchain.
 
-* PJ Nautghter's implementation of the algorithms found in "Astronomical Algorithms" by Jean Meeus are used.
+* PJ Naughter's implementation of the algorithms found in "Astronomical Algorithms" by Jean Meeus are used.
   See: http://www.naughter.com/aa.html
 
 * Star positions are extracted from version 5 of the Bright Star Catalog as found here:
