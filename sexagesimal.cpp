@@ -142,11 +142,17 @@ std::string sexagesimal::to_string_hack(int32_t val){
   }
 }
 
-/* The sort of low level stuff I should not need to implement myself. */
+/* 
+ * This is the sort of low level stuff I should not need to implement myself. 
+ * 
+ * The correct call is std::to_string( arg );
+ * This works for native compile to build machine archetecture.
+ * Doesn't work in my cross compile environment.
+ */
 std::string sexagesimal::to_string_hack(uint32_t val)
 {
 #if 0
-  bool hack_needed = true;
+  bool hack_needed = false;
   std::string lets_try_doing_it_right = "No Sucsess with gcc 4.8.3 and newlib 2.1";
   lets_try_doing_it_right = to_string( val );
   if( !hack_needed ){
