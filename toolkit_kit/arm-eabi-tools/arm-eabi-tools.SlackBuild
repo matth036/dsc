@@ -1,0 +1,463 @@
+#!/bin/sh
+# 
+# Modification of gcc and slackware/d source build scripts (written by volkerdi@slackware.com).
+#
+# Modified by and collated by Dan (matth036 [at] University of Minnesota [dot] edu).
+# Modification is for cross compile to arm-none-eabi and also 
+# builds binutils, newlib and gdb.
+#
+# Copyright 2003, 2004  Slackware Linux, Inc., Concord, California, USA
+# Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011  Patrick J. Volkerding, Sebeka, MN, USA
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+#  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO
+#  EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+#  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+#  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+#  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+#  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+#  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+#  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+# Modifications by dan for cross compile to arm-none-eabi
+#
+TARGET=arm-none-eabi
+# 
+#
+#
+if [ -z "$ARCH" ]; then
+  case "$( uname -m )" in
+    i?86) ARCH=i486 ;;
+    arm*) ARCH=arm ;;
+       *) ARCH=$( uname -m ) ;;
+  esac
+fi
+
+
+if [ "$ARCH" = "i386" ]; then
+  SLKCFLAGS="-O2 -march=i386 -mcpu=i686"
+  LIBDIRSUFFIX=""
+  LIB_ARCH=i386
+elif [ "$ARCH" = "i486" ]; then
+  SLKCFLAGS="-O2 -march=i486 -mtune=i686"
+  LIBDIRSUFFIX=""
+  LIB_ARCH=i386
+elif [ "$ARCH" = "i586" ]; then
+  SLKCFLAGS="-O2 -march=i586 -mtune=i686"
+  LIBDIRSUFFIX=""
+  LIB_ARCH=i386
+elif [ "$ARCH" = "i686" ]; then
+  SLKCFLAGS="-O2 -march=i686"
+  LIBDIRSUFFIX=""
+  LIB_ARCH=i386
+elif [ "$ARCH" = "s390" ]; then
+  SLKCFLAGS="-O2"
+  LIBDIRSUFFIX=""
+  LIB_ARCH=s390
+elif [ "$ARCH" = "x86_64" ]; then
+  SLKCFLAGS="-O2 -fPIC"
+  LIBDIRSUFFIX="64"
+  LIB_ARCH=amd64
+elif [ "$ARCH" = "armv7hl" ]; then
+  SLKCFLAGS="-O3 -march=armv7-a -mfpu=vfpv3-d16"
+  LIBDIRSUFFIX=""
+  LIB_ARCH=armv7hl
+else
+  SLKCFLAGS="-O2"
+  LIBDIRSUFFIX=""
+  LIB_ARCH=$ARCH
+fi
+
+# HOST_AND_BUILD  is what was called TARGET in official SlackBuild scripts. 
+case "$ARCH" in
+    arm*) HOST_AND_BUILD=$ARCH-slackware-linux-gnueabi ;;
+    *)    HOST_AND_BUILD=$ARCH-slackware-linux ;;
+esac
+
+#
+# The surest way to build a working toolchain is to 
+# not specify --host and --build and
+# omit -march=i486 -mtune=i686 from SLKCFLAGS.
+# To do this, uncomment these two lines:
+#
+unset HOST_AND_BUILD
+SLKCFLAGS="-O2"
+#
+
+
+PKGNAM=arm-eabi-tools-$ARCH
+
+ 
+GCC_VERSION=${GCC_VERSION:-$(echo gcc-*.tar.?z* | rev | cut -f 3- -d . | cut -f 1 -d - | rev)}
+BINUTILS_VERSION=${BINUTILS_VERSION:-$(echo binutils-*.tar.?z* | rev | cut -f 3- -d . | cut -f 1 -d - | rev)}
+# Replace:
+# NEWLIB_VERSION=${NEWLIB_VERSION:-$(echo newlib-*.tar.?z* | rev | cut -f 3- -d . | cut -f 1 -d - | rev)}
+# With:
+# NEWLIB_VERSION=${NEWLIB_VERSION:-$(echo newlib-*.tar.?z* | rev | cut -f 3- -d . | cut -f 1-2 -d - | rev)}
+# To handle (on a stictly ad hoc basis) the extra "-" in file name newlib-2.2.0-1.tar.gz
+# TODO Make this not so ad hoc.
+NEWLIB_VERSION=${NEWLIB_VERSION:-$(echo newlib-*.tar.?z* | rev | cut -f 3- -d . | cut -f 1-2 -d - | rev)}
+GDB_VERSION=${GDB_VERSION:-$(echo gdb-*.tar.?z* | rev | cut -f 3- -d . | cut -f 1 -d - | rev)}
+
+GMP_VERSION=${VERSION:-$(echo gmp-*.tar.xz | rev | cut -f 3- -d . | cut -f 1 -d - | rev)}
+MPFR_VERSION=${VERSION:-$(echo mpfr-*.tar.xz | rev | cut -f 3- -d . | cut -f 1 -d - | rev)}
+LIBMPC_VERSION=${VERSION:-$(echo mpc-*.tar.?z* | rev | cut -f 3- -d . | cut -f 1 -d - | rev)}
+CWD=$(pwd)
+#
+LANGUAGES_TO_ENABLE="c,c++"
+
+# How many jobs to run in parallel:
+NUMJOBS=" -j 1"
+
+TIME_STAMP=$(date "+%Y-%m-%d_%H%M%S")
+
+# This is the prefix (path) for all of the cross tookit gcc, binutils, newlib, gdb.
+# PREFIX="/opt/cross/microcontroller/arm/$GCC_VERSION"
+PREFIX="/opt/cross/microcontroller/arm/$GCC_VERSION-release-candidate-${TIME_STAMP}"
+
+
+# The source packages are expanded and the build is carried out in ${TMP}
+# Some users may want to build in a non temporary location.
+TMP=/usr/local/build/xxx-tools-$GCC_VERSION-$(mcookie)--$TIME_STAMP
+# TMP=/usr/local/build/xxx-tools-$GCC_VERSION-$(mcookie)-$TIME_STAMP-slackbuild
+# TMP=/tmp/xxx-tools-$GCC_VERSION-$(mcookie)-$TIME_STAMP--EXPERIMENTAL
+
+
+PKG00_BIG_GLOB=$TMP/package-big-glob
+
+CLONE_SCRIPT_DIRECTORY=$PKG00_BIG_GLOB/$PREFIX/share/slackbuild/arm-eabi-tools
+
+# Clear the build locations:
+if [ -d $TMP ]; then
+  rm -rf $TMP
+fi
+
+if [ -f /etc/slackware-version  ]; then
+  mkdir -p $PKG00_BIG_GLOB/install
+  cat $CWD/slack-desc | sed "s/arm-eabi-tools:/${PKGNAM}:/" >  $PKG00_BIG_GLOB/install/slack-desc
+  # Self document this build kit.
+  mkdir -p $CLONE_SCRIPT_DIRECTORY
+  cp $CWD/slack-desc $CLONE_SCRIPT_DIRECTORY
+  cp $CWD/$0 $CLONE_SCRIPT_DIRECTORY
+  cp $CWD/README $CLONE_SCRIPT_DIRECTORY
+  cp $CWD/arm-eabi-tools.info $CLONE_SCRIPT_DIRECTORY
+  md5sum  binutils-* gcc-* newlib-* gdb-* > $CLONE_SCRIPT_DIRECTORY/sources.md5sum
+  md5sum  gmp-* mpfr-* mpc-* >> $CLONE_SCRIPT_DIRECTORY/sources.md5sum
+else # An attempt to be portable to non-Slackware distributions.
+  mkdir -p $PKG00_BIG_GLOB/
+fi
+
+# exit 1
+#
+# The heavy lifting begins here.
+
+cd $TMP
+tar xvf $CWD/binutils-$BINUTILS_VERSION.tar.?z* || exit 1
+
+tar xvf $CWD/gcc-$GCC_VERSION.tar.?z*  || exit 1
+
+tar xvf $CWD/newlib-$NEWLIB_VERSION.tar.?z*  || exit 1
+
+tar xvf $CWD/gdb-$GDB_VERSION.tar.?z*  || exit 1
+
+tar xvf $CWD/gmp-$GMP_VERSION.tar.xz || exit 1
+
+tar xvf $CWD/mpfr-$MPFR_VERSION.tar.xz || exit 1
+
+tar xvf $CWD/mpc-$LIBMPC_VERSION.tar.?z* || exit 1
+
+# Link the gmp, mpfr and mpc sources to where the gcc build will find them.
+# This is probably not needed for the first build, but my read of the 
+# documentations indicates this is the right thing to do.
+( cd $TMP/gcc-$GCC_VERSION
+    ln -sf ../gmp-$GMP_VERSION      ./gmp
+    ln -sf ../mpfr-$MPFR_VERSION    ./mpfr
+    ln -sf ../mpc-$LIBMPC_VERSION   ./mpc
+)
+
+
+# Configure and build binutils in $TMP/binutils.build.lnx
+(cd $TMP
+  mkdir binutils.build.lnx
+  cd binutils.build.lnx
+  CFLAGS="$SLKCFLAGS" \
+  CXXFLAGS="$SLKCFLAGS" \
+  ../binutils-$BINUTILS_VERSION/configure \
+  --target=${TARGET} \
+  --host=${HOST_AND_BUILD} \
+  --build=${HOST_AND_BUILD} \
+  --prefix=${PREFIX} \
+  --enable-interwork \
+  --enable-multilib \
+  --disable-decimal-float \
+  --disable-nls \
+  --disable-libssp || exit 1
+  make ${NUMJOBS} all || exit 1
+  make install DESTDIR=$PKG00_BIG_GLOB
+) 2> $TMP/binutils.build.log.err | tee $TMP/binutils.build.log
+
+
+# Check build of binutils by existence of arm-none-eabi-ld  
+if [ -f ${PKG00_BIG_GLOB}${PREFIX}/bin/arm-none-eabi-ld ]; then
+  echo "blather: binutils build seems to be in place."
+  $PKG00_BIG_GLOB$PREFIX/bin/arm-none-eabi-ld --version
+else
+  echo "Sheesh! Something is wrong with binutils build."
+  echo "File $PKG00_BIG_GLOB$PREFIX/bin/arm-none-eabi-ld"
+  echo "does not exist"
+  echo "$0 exiting, failed to build binutils."
+  exit 1;
+fi
+
+# build gcc the first time
+cd $TMP
+( mkdir gcc1.build.lnx;
+  cd gcc1.build.lnx;
+  CFLAGS="$SLKCFLAGS" \
+  CXXFLAGS="$SLKCFLAGS" \
+  ../gcc-$GCC_VERSION/configure \
+  --target=${TARGET} \
+  --host=${HOST_AND_BUILD} \
+  --build=${HOST_AND_BUILD} \
+  --enable-multilib \
+  --enable-interwork \
+  --enable-languages=${LANGUAGES_TO_ENABLE}  \
+  --disable-decimal-float \
+  --disable-nls \
+  --disable-libssp \
+  --disable-oprofile \
+  --with-newlib \
+  --with-headers=../newlib-${NEWLIB_VERSION}/newlib/libc/include \
+  --with-cpu=cortex-m4 \
+  --with-mode=thumb \
+  --disable-libgomp \
+  --without-libffi \
+  --with-system-zlib \
+  --with-gnu-ld \
+  --prefix=${PREFIX} \
+  --verbose || exit 1
+  # The cleanup hides or deletes config.log. Make a copy.
+  if [ -f config.log ]; then
+    cp config.log ../gcc1-config.log.save
+  fi
+  make $NUMJOBS all-gcc || exit 1;
+  echo "blather Conclusion of make $NUMJOBS all-gcc"
+  make install DESTDIR=$PKG00_BIG_GLOB
+  echo "blather gcc round 1 make install finished."
+) 2> $TMP/gcc1.build.log.err | tee $TMP/gcc1.build.log
+#end of build gcc block, 
+
+# Check that it worked.
+if [ -f ${PKG00_BIG_GLOB}${PREFIX}/bin/arm-none-eabi-gcc ]; then
+  echo "blather: First gcc build seems to be in place."
+  # gcc -v message goes to stderr. Weird. Redirect to stdout.
+  $PKG00_BIG_GLOB$PREFIX/bin/arm-none-eabi-gcc -v 2>&1
+else
+  echo "Blech! Something is off."
+  echo "/bin/arm-none-eabi-gcc was not found where expected."
+  echo "PATH = $PATH"
+  echo "$0 exiting, failed first gcc build."
+  exit 1;
+fi
+
+# Directory $PKG00_BIG_GLOB$PREFIX/bin/ contains the newly created gcc and binutils tools.
+# This directory needs to be in $PATH for the build to proceed.
+
+echo "PATH=\"${PATH}\"" >> path.revert
+ORIGINAL_PATH=$PATH
+PATH="${PKG00_BIG_GLOB}${PREFIX}/bin:${PATH}"
+echo "PATH=\"${PATH}\"" >> path.revert
+echo "blather Now PATH = ... "
+echo "blather PATH = $PATH"
+
+# build newlib
+# Do not set:
+#   CFLAGS="$SLKCFLAGS" 
+#   CXXFLAGS="$SLKCFLAGS"
+# Some flags like -O2 are appropriate, but
+# flags like -march=i486 -mtune=i686 will not work.
+#
+# Also, it seems a bad policy to specify the --build and --host.
+#
+( cd $TMP
+  mkdir newlib.build.lnx
+  cd newlib.build.lnx
+  ../newlib-${NEWLIB_VERSION}/configure \
+  --target=${TARGET} \
+  --prefix=${PREFIX} \
+  --enable-multilib \
+  --enable-interwork \
+  --enable-languages=${LANGUAGES_TO_ENABLE}   \
+  --disable-nls \
+  --disable-decimal-float \
+  --disable-libssp \
+  --verbose  || exit 1
+  echo "blather configure of newlib worked, making all"
+  make ${NUMJOBS} all || exit 1
+  echo "blather make all worked (newlib)"
+  make install DESTDIR=$PKG00_BIG_GLOB
+)2> $TMP/newlib.build.log.err | tee $TMP/newlib.build.log || exit 2
+# Consider adding
+#  make install-info  DESTDIR=$PKG00_BIG_GLOB
+#  make install-pdf DESTDIR=$PKG00_BIG_GLOB
+#
+# Test for arm-none-eabi/include/math.h to see that the newlib install worked.
+if [ -f ${PKG00_BIG_GLOB}${PREFIX}/arm-none-eabi/include/math.h ]; then
+  echo "blather: newlib build seems to be in place."
+else
+  echo "Problem with newlib build, STOPPING"
+  echo "C header file math.h is not present where expected."
+  echo "$0 exiting, failed to build nelib."
+   exit 1;
+fi
+
+# Invoccation of magic from the vasty deep.
+# We can build mpfr and pmc. (Watch and see.)
+# I have however failed to build gmp.  So, I don't.
+# The presence of these libraries in the $PACKAGE_
+#
+( cd $TMP
+  mkdir mpfr.build.lnx;
+  cd mpfr.build.lnx;
+  CFLAGS="$SLKCFLAGS" \
+  CXXFLAGS="$SLKCFLAGS" \
+  ../mpfr-$MPFR_VERSION/configure \
+  --target=${TARGET} \
+  --prefix=${PREFIX} \
+  --libdir=${PREFIX}/lib \
+  --infodir=${PREFIX}/usr/info \
+  --with-gnu-ld \
+  --verbose  || exit 1
+  make $NUMJOBS || make || exit 1
+  make install DESTDIR=$PKG00_BIG_GLOB || exit 1
+)2> $TMP/mpfr.build.log.err | tee $TMP/mpfr.build.log
+#
+#
+( cd $TMP
+  mkdir mpc.build.lnx;
+  cd mpc.build.lnx;
+  CFLAGS="$SLKCFLAGS" \
+  CXXFLAGS="$SLKCFLAGS" \
+  ../mpc-$LIBMPC_VERSION/configure \
+  --target=${TARGET} \
+  --prefix=${PREFIX} \
+  --libdir=${PREFIX}/lib \
+  --infodir=${PREFIX}/usr/info \
+  --with-gnu-ld \
+  --verbose  || exit 1
+  make $NUMJOBS || make || exit 1
+  make install DESTDIR=$PKG00_BIG_GLOB || exit 1
+)2> $TMP/mpc.build.log.err | tee $TMP/mpc.build.log
+#
+#
+
+
+#  Do the second gcc build in it's own directory.
+( cd $TMP
+  mkdir gcc2.build.lnx;
+  cd gcc2.build.lnx;
+  CFLAGS="$SLKCFLAGS" \
+  CXXFLAGS="$SLKCFLAGS" \
+  ../gcc-$GCC_VERSION/configure \
+  --prefix=${PREFIX} \
+  --target=${TARGET} \
+  --host=${HOST_AND_BUILD} \
+  --build=${HOST_AND_BUILD} \
+  --enable-multilib \
+  --enable-interwork \
+  --enable-languages=${LANGUAGES_TO_ENABLE}  \
+  --enable-libstdc++ \
+  --with-system-zlib \
+  --with-newlib \
+  --with-cpu=cortex-m4 \
+  --with-mode=thumb \
+  --disable-libgomp \
+  --without-libffi \
+  --disable-nls \
+  --disable-decimal-float \
+  --disable-libssp \
+  --disable-oprofile \
+  --with-gnu-as \
+  --with-gnu-ld \
+  --verbose || exit 1
+  echo "blather CONFIGURE SUCCESS ( gcc round 2 )"
+  # The cleanup hides or deletes config.log.  Make a copy.
+  if [ -f config.log ]; then
+    cp config.log ../gcc2-config.log.save
+  fi
+  # Start the build:
+  make $NUMJOBS all || exit 1;
+  echo "blather Conclusion of make all (gcc round 2)"
+  # Consider GCCCHECK here.
+  echo "blather Will now install tp PKG00_BIG_GLOB"
+  make install DESTDIR=$PKG00_BIG_GLOB
+)2> $TMP/gcc2.build.log.err | tee $TMP/gcc2.build.log
+echo "blather Build gcc round 2 finished"
+
+
+# Test for 
+# arm-none-eabi/include/c++/4.8.2/initializer_list
+# At this late stage do not exit on failure.  
+# The impaired toolchain may useable for some purposes.
+if [ -f ${PKG00_BIG_GLOB}${PREFIX}/arm-none-eabi/include/c++/4.8.2/initializer_list ]; then
+  echo "blather: Second build seems to be in place."
+  touch second_build_succeeded
+else
+  echo "blather Problem with second build:"
+  echo "blather C++ header file nitializer_list is not present where expected."
+  touch second_build_failed
+fi
+
+
+echo "blather Configure and build of gdb commences."
+( cd $TMP
+  mkdir gdb.build.lnx
+  cd gdb.build.lnx
+  CFLAGS="$SLKCFLAGS" \
+  CXXFLAGS="$SLKCFLAGS" \
+  ../gdb-$GDB_VERSION/configure  \
+  --target=${TARGET} \
+  --prefix=$PREFIX \
+  --host=${HOST_AND_BUILD} \
+  --build=${HOST_AND_BUILD} \
+  --enable-multilib \
+  --enable-interwork \
+  --enable-languages=${LANGUAGES_TO_ENABLE} \
+  --disable-python \
+  --disable-nls \
+  --disable-decimal-float \
+  --disable-libssp \
+  --with-newlib \
+  --with-gnu-ld \
+  --verbose || exit 1;
+  echo "blather Configure of gdb finished. Will make all."
+  make $NUMJOBS all || exit 1;
+  echo "blather make all of gdb finished. Next step is make install."
+  make install DESTDIR=$PKG00_BIG_GLOB
+) 2> $TMP/gdb.build.log.err | tee $TMP/gdb.build.log
+
+echo "blather Finished gdb install"
+
+if [ -f /etc/slackware-version ] && [ $(whoami) = "root" ] && [ -f /sbin/makepkg  ] 
+then
+  (cd $PKG00_BIG_GLOB
+  /sbin/makepkg -l y -c n $TMP/${PKGNAM}.txz)
+  echo "Please find the package ${PKGNAM}.txz at:"
+  echo "${TMP}"
+else # Attempt to be portable to non-Slackware distributions.
+  echo "Your toolchain has been built in this directory:"
+  echo "$PKG00_BIG_GLOB"
+  echo "It has not been packaged."
+fi
+echo
+echo "    GCC cross tools for target arm-none-eabi build is complete!"
+echo
+########## End of File.

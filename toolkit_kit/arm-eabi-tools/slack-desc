@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.  Line
+# up the first '|' above the ':' following the base package name, and the '|' on
+# the right side marks the last column you can put a character in.  You must make
+# exactly 11 lines for the formatting to be correct.  It's also customary to
+# leave one space after the ':'.
+
+              |-----handy-ruler------------------------------------------------------|
+arm-eabi-tools: arm-eabi-tools  (Cross compile toolkit for target arm-none-eabi.)
+arm-eabi-tools:
+arm-eabi-tools: Gnu C and C++ compilers targeting arm-none-eabi microcontrollers.
+arm-eabi-tools: 
+arm-eabi-tools: Utilities for assembling and linking target binaries. (Gnu binutils) 
+arm-eabi-tools:
+arm-eabi-tools: The Gnu debugger gdb is included.  
+arm-eabi-tools: 
+arm-eabi-tools: Standard C library functions are provided by newlib, a light weight
+arm-eabi-tools: library suitable for embedded systems.
+arm-eabi-tools: 

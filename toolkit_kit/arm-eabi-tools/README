@@ -1,0 +1,69 @@
+The included Slackbuild script builds a cross compile tool kit for arm microcontrollers.
+
+This toolkit targets Cortex M4 microcontrollers. The intention is to 
+support projects that rely on the floating point unit available on such chips.  
+Due to this specificity and various other annoyances the author deems this
+script too ragged for submission to Slackbuilds.org.
+
+These tools were initially intended for STM32F4 Discovery development board.
+They also work for Texas Instruments Tiva LaunchPad Evaluation Kit, EC-TM43123GXL.
+
+The build of the cross toolkit proceeds in five steps:
+1) build binutils.
+2) build gcc with newlib headers in the include path.
+3) build newlib making sure the cross gcc executable 
+   from step 2 is in the $PATH environmental variable.
+4) build gcc again.
+5) build the gdb debugger.
+
+For details, read the script.
+
+Others have had success in building a toolchain by putting (or linking) 
+the newlib sources into gcc source tree and building them simultaneouly.
+I can discern no concensus as to which way is "right."
+
+As gcc has advanced it has been become necessary (or desirable) to include
+the libraries gmp, mpfr, libmpc as part of the build.  This is done by
+linking the souce directories of these libraries into the source directory
+of gcc.
+
+ANNOYANCES:
+The gcc configure script creates header files in directory 
+${PREFIX}/${TARGET}/sys-include on the build machine.
+
+The build is conducted in a subdirectory of /usr/local/build.
+Some may find this offensive.  It is easy enough to reset.
+The intentions is to leave the expanded source code in place so the debugger 
+can step through and list this code.
+
+The script builds every package in a directory separate from the source
+and keeps a log of both standard out and standard error.  The script 
+is profligate with disk space.
+
+As provided this script un-defines ${HOST} and ${BUILD} in
+the configuration options --host=${HOST} and --build=${BUILD}.  
+This causes the gnu configure script to set these values to those of 
+the actual build machine.  Official Slackware scripts set ${HOST} to 
+a more generic value.
+
+THANKS:
+Thanks to the detailed work of the Slackware Team, your Slackware 14.1 system 
+has all the tools needed to build this toolchain. 
+
+STUFF:
+Linker script notes:
+Explicitly open source linker scripts are scarce. 
+Those inlcuded in vendor sample programs work.
+
+STM32F4discovery related references:
+ST Microelectronics sample programs could recently be found in this bundle:
+http://www.st.com/internet/com/SOFTWARE_RESOURCES/SW_COMPONENT/FIRMWARE/stm32f4discovery_fw.zip
+
+J. Thomson has a nice tutorial:
+http://jethomson.wordpress.com/2011/11/17/getting-started-with-the-stm32f4discovery-in-linux/
+His makefiles for the STM samples are here,
+http://jthomson.towhee.org/stm32f4discovery_files/STM32F4DISCOVERY_Makefiles.zip
+
+Tiva LaunchPad notes:
+If your $PATH has been prepended with the bin directory of 
+these tools, the vendor provided makefiles work directly.  
