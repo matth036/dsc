@@ -79,7 +79,6 @@ class Current_Time_View:Character_Reciever {
   bool finished;
 };
 
-
 class Angular_Coordinates_View:Character_Reciever {
  public:
   Angular_Coordinates_View( Simple_Altazimuth_Scope* );

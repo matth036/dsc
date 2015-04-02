@@ -67,7 +67,7 @@ void Information_View::set_text_4( std::string t ){
 std::unique_ptr < CharLCD_STM32F > Information_View::write_first_line(std::unique_ptr < CharLCD_STM32F > lcd)
 {
   int n = 0;
-  n += lcd->print( text_2 );
+  n += lcd->print( text_1 );
   while (n < width_) {
     n += lcd->print(' ');
   } 

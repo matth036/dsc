@@ -2,6 +2,8 @@
 #define _COMMAND_ACTIONS_H
 
 
+void version_info_view_action( char* yytext, int yyleng );
+
 void ngc_point_to_action( char* yytext, int yyleng );
 void bsc_point_to_action( char* yytext, int yyleng );
 void bsc_details_view_action( char* yytext, int yyleng );

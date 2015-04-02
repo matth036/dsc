@@ -264,10 +264,11 @@ CAA3DCoordinate solar_system::calculate_moon_RA_Dec_Dist(double JD)
   double L = CAAMoon::EclipticLongitude(JD);
   double B = CAAMoon::EclipticLatitude(JD);
   double R = CAAMoon::RadiusVector(JD);
-  /* Something is wrong, probably here. */
+  /* Following example 47a p.142-143 */
   double NutationInLongitude = CAANutation::NutationInLongitude(JD);
   double Epsilon = CAANutation::TrueObliquityOfEcliptic(JD);
-  L += CAACoordinateTransformation::DMSToDegrees(0, 0, NutationInLongitude);
+  //L += CAACoordinateTransformation::DMSToDegrees(0, 0, NutationInLongitude, (NutationInLongitude>0) );
+  L += NutationInLongitude/3600.0;
   /* Convert to RA and Declination */
   CAA2DCoordinate RA_DEC =
       CAACoordinateTransformation::Ecliptic2Equatorial(L, B, Epsilon);

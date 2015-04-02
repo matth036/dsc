@@ -14,7 +14,7 @@
 #include "starlist_access.h"
 #include "extra_solar_transforms.h"
 #include "telescope_model.h"
-
+#include "build_date.h"
 #include "AADynamicalTime.h"
 
 
@@ -260,6 +260,74 @@ void bsc_point_to_dangerously(char *yytext, int yyleng)
   }
   check_in_main_lcd(std::move(lcd));
 }
+
+
+/* The (flex provided) arguments are ignored. */
+void version_info_view_action( char* yytext, int yyleng ){
+  auto lcd = check_out_main_lcd();
+  auto view = std::unique_ptr < Information_View > (new Information_View());
+  view->set_text_1( "Build Information" );
+  std::string date_string;
+  std::string addon;
+  date_string = sexagesimal::to_string_hack( static_cast<uint32_t>(build_year()) );
+  date_string += "-";
+  addon = sexagesimal::to_string_hack( static_cast<uint32_t>(build_month()) );
+  date_string += addon;
+  date_string += "-";
+  addon = sexagesimal::to_string_hack( static_cast<uint32_t>(build_day()) );
+  date_string += addon;
+  date_string += " ";
+  addon = sexagesimal::to_string_hack( static_cast<uint32_t>(build_hour()) );
+  while( addon.size() < 2 ){
+    addon = " " + addon; // space pad
+  }
+  date_string += addon;
+  date_string += ":";
+  addon = sexagesimal::to_string_hack( static_cast<uint32_t>(build_minute()) );
+  while( addon.size() < 2 ){
+    addon = "0" + addon;  // zero pad
+  }
+  date_string += addon;
+  date_string += ":";
+  addon = sexagesimal::to_string_hack( static_cast<uint32_t>(build_second()) );
+  while( addon.size() < 2 ){
+    addon = "0" + addon;  // zero pad
+  }
+  date_string += addon;
+
+  view->set_text_2( date_string );
+  std::string compiler_string ; 
+#if __GNUC__
+  compiler_string = "GCC "; 
+  compiler_string += sexagesimal::to_string_hack( static_cast<uint32_t>(__GNUC__) );
+  compiler_string += '.';
+  compiler_string += sexagesimal::to_string_hack( static_cast<uint32_t>(__GNUC_MINOR__) );
+  compiler_string += '.';
+  compiler_string += sexagesimal::to_string_hack( static_cast<uint32_t>(__GNUC_PATCHLEVEL__) );
+  // + __GNUC__ + '.'  + __GNUC_MINOR__ + '.' + __GNUC_PATCHLEVEL__ ;
+#else
+  compiler_string = "Unknown Compiler";
+#endif
+  view->set_text_3( compiler_string );
+  //   view->set_text_4( "__cplusplus = " + __cplusplus );
+  std::string cpp_string = "__cplusplus = ";
+  cpp_string += sexagesimal::to_string_hack( static_cast<uint32_t>( __cplusplus) );
+  view->set_text_4( cpp_string );
+
+  while( !view->is_finished() ){
+    lcd->setCursor(0,0);
+    lcd = view->write_first_line(std::move(lcd));
+    lcd->setCursor(0,1);
+    lcd = view->write_second_line(std::move(lcd));
+    lcd->setCursor(0,2);
+    lcd = view->write_third_line(std::move(lcd));
+    lcd->setCursor(0,3);
+    lcd = view->write_fourth_line(std::move(lcd));
+  }
+
+  check_in_main_lcd(std::move(lcd));
+}
+
 
 void bsc_details_view_action( char *yytext, int yyleng ){
   uint32_t bsc_num;

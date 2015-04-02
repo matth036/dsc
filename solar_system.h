@@ -20,6 +20,7 @@ namespace solar_system {
   CAA3DCoordinate minus(CAA3DCoordinate &, CAA3DCoordinate &);
 
   constexpr double C_AU_per_day = (1.0 / 0.0057755183);
+  constexpr double AU_kilometers = 149597870.0;
   /* See Meeus p. 133 */
   constexpr double B1900_0 = 2415020.3135;
   constexpr double B1950_0 = 2433282.4235;

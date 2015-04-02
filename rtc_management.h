@@ -35,8 +35,6 @@ extern "C" {
 
   double JD_timestamp_pretty_good_000();
   double JD_timestamp(void);
-  /* @TODO sanitize this. */
-  // double JD_timestamp_truly_fucked_hack(void);
   void RTC_add_seconds(double);
   void RTC_add_days(double);
   void RTC_add_years(double);

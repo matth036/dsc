@@ -107,19 +107,20 @@ int main(void)
    * followed by the corresponding ports in another initializer list.
    */
   main_lcd_ptr = unique_ptr < CharLCD_STM32F > ( new CharLCD_STM32F { {
-	GPIO_Pin_0,  /* RS  */
-	  GPIO_Pin_2, /* R/W */
+	  specificities::char_lcd_RS_pin,
+	  specificities::char_lcd_RW_pin,  /* R/W */
 	  specificities::char_lcd_E_pin,
 	  specificities::char_lcd_DB0_pin,
-	  GPIO_Pin_8, /* DB1 */
-	  GPIO_Pin_10, /* DB2 */
-	  GPIO_Pin_14, /* DB3 */
+	  specificities::char_lcd_DB1_pin,
+	  specificities::char_lcd_DB2_pin,
+	  specificities::char_lcd_DB3_pin,
 	  specificities::char_lcd_DB4_pin,
 	  specificities::char_lcd_DB5_pin,
-	  GPIO_Pin_11, /* DB6 */
-	  GPIO_Pin_15, /* DB7 */
+	  specificities::char_lcd_DB6_pin,
+	  specificities::char_lcd_DB7_pin,
+
 	  }, 
-	{GPIOD,
+	{GPIOD,  /* @TODO treat the ports as was treated the pins. */
 	    GPIOD,
 	    GPIOD,
 	    GPIOD,
