@@ -114,7 +114,6 @@ CharLCD_STM32F::CharLCD_STM32F(initializer_list < pin > pins,
     gpio_init_lsb();
     gpio_init_msb();
   }
-  blocked_for_PWM = false;
   begin(16, 1);
 
 }
@@ -279,7 +278,8 @@ void CharLCD_STM32F::clear()
 void CharLCD_STM32F::home()
 {
   command(LCD_RETURNHOME);	// set cursor position to zero
-  /* For Newhaven OLED displays, this extra delay is not needed.  
+  /* 
+   * For Newhaven OLED displays, this extra delay is not needed.  
    * Keep it in for compatibility with Hitachi compatable LCDs.
    */
   //microsecond_delay(2000);	// this command takes a long time!
@@ -290,35 +290,20 @@ void CharLCD_STM32F::VARIOUS_HACKS(){
 
 }
 
-void CharLCD_STM32F::row_switcheroo(){
-  swap_rows(0,1);
-  swap_rows(2,3);
-}
-
-void CharLCD_STM32F::swap_rows(int a, int b){
-  if( a<0 || b<0 ){
-    return;
-  }
-  if( a>3 || b>3 ){
-    return;
-  }
-  int temp;
-  temp = row_offsets[a];
-  row_offsets[a] = row_offsets[b];
-  row_offsets[b] = temp;
-}
-
 void CharLCD_STM32F::setCursor(uint8_t col, uint8_t row)
 {
-  /* HACK ALERT:  I HAVE NO IDEA WHY THESE ARE SHUFFLED ON MY EXAMPLE. 
-   * Documentation indicates the traditional layout is correct. 
-   *
-   * I have made row_offsets[] a class member and provided a means to
-   * permute the entries. See ::swap_rows(int,int);
+  /* 
+   * HACK ALERT:  
+   *  For unkown reasons my OLED display had the rows appear in permutated order.
+   *  so, I arranged to swap the rows by swapping the values in row_offsets[].
    * 
+   *  Eventually I found that turning the display off and on fixed the 
+   *  shuffled order of the rows.
+   *  
+   *  The methods for swapping the rows have been removed but as a relic, the 
+   *  row_offsets[] remain a class member.
+   *
    */ 
-  // int row_offsets[] = { 0x00, 0x40, 0x14, 0x54 };
-  // int row_offsets[] = { 0x40, 0x00, 0x54, 0x14 };
   if (row >= _numlines) {
     row = _numlines - 1;	// we count rows starting w/0
   }
@@ -472,9 +457,6 @@ inline size_t CharLCD_STM32F::write(uint8_t value)
 // write either command or data, with automatic 4/8-bit selection
 void CharLCD_STM32F::send(uint8_t value, uint8_t mode)
 {
-  while( blocked_for_PWM ){
-    /* All non PWM commands and writes wait. */
-  }
   if (mode) {
     rs_on();
   } else {
@@ -489,41 +471,6 @@ void CharLCD_STM32F::send(uint8_t value, uint8_t mode)
     write4bits(value >> 4);
     write4bits(value);
   }
-}
-
-void CharLCD_STM32F::pwm_flip_on(){
-  if( blocked_for_PWM ){
-    return;  
-  }
-  blocked_for_PWM = true;
-  _displaycontrol |= LCD_DISPLAYON;
-  uint8_t value = LCD_DISPLAYCONTROL | _displaycontrol;
-  rs_off();
-  rw_off();
-  if (_displayfunction & LCD_8BITMODE) {
-    write8bits(value);
-  } else {
-    write4bits(value >> 4);
-    write4bits(value);
-  }
-  blocked_for_PWM = false;
-}
-
-void CharLCD_STM32F::pwm_flip_off(){
-  if( blocked_for_PWM ){
-    return;  
-  }
-  blocked_for_PWM = true;
-  rs_off();
-  rw_off();
-  constexpr uint8_t value = LCD_DISPLAYOFF;
-  if (_displayfunction & LCD_8BITMODE) {
-    write8bits(value);
-  } else {
-    write4bits(value >> 4);
-    write4bits(value);
-  }
-  blocked_for_PWM = false;
 }
 
 void CharLCD_STM32F::pulseEnable(void)
@@ -635,27 +582,10 @@ uint8_t CharLCD_STM32F::read8bits(){
   return data;
 }
 
-/************************
-Program received signal SIGINT, Interrupt.
-0x08044f82 in TIM_GetFlagStatus (TIMx=0x40002000, TIM_FLAG=2)
-    at /home/dan/stm32f4_discovery/STM32F4-Discovery_FW_V1.1.0//Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_tim.c:2437
-2437      assert_param(IS_TIM_ALL_PERIPH(TIMx));
-(gdb) bt
-#0  0x08044f82 in TIM_GetFlagStatus (TIMx=0x40002000, TIM_FLAG=2)
-    at /home/dan/stm32f4_discovery/STM32F4-Discovery_FW_V1.1.0//Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_tim.c:2437
-#1  0x08043cc8 in MicroSecondDelay::microsecond_delay (value=10) at microsecond_delay.cpp:54
-#2  0x080416ae in CharLCD_STM32F::ready_wait (this=0x200014f8) at CharLCD_STM32F.cpp:658
-#3  0x08041642 in CharLCD_STM32F::write8bits (this=0x200014f8, value=48 '0') at CharLCD_STM32F.cpp:599
-#4  0x080414ac in CharLCD_STM32F::send (this=0x200014f8, value=48 '0', mode=0 '\000') at CharLCD_STM32F.cpp:487
-#5  0x08041434 in CharLCD_STM32F::command(unsigned char) [clone .local.2411] (this=0x200014f8, value=48 '0')
-    at CharLCD_STM32F.cpp:455
-#6  0x08041138 in CharLCD_STM32F::begin (this=0x200014f8, cols=16 '\020', lines=1 '\001', dotsize=0 '\000')
-    at CharLCD_STM32F.cpp:243
-#7  0x08040f2c in CharLCD_STM32F::__base_ctor (this=0x200014f8, pins=..., ports=...) at CharLCD_STM32F.cpp:118
-#8  0x0804246a in main () at main.cpp:118
-telescope->set_align_error_max( static_cast<float>(CAACoordinateTransformation::RadiansToDegrees(max_error) ) );
-  //telescope->set_align_error_mean( static_cast<float>(CAACoordinateTransformation::RadiansToDegrees( sum_error/count ) ) );***************************/
-/* This works, but, if the Display (or the wiring) is broken, 
+
+
+/* 
+ * This works, but, if the Display (or the wiring) is broken, 
  * The whole System stops here.  Need a safety valve.
  * 
  * The incident that inspired this comment was a loose wire 
@@ -668,7 +598,8 @@ void CharLCD_STM32F::ready_wait(){
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
   GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
-  /* NOPULL works but is slow. 
+  /* 
+   * NOPULL works but is slow. 
    * DOWN works.
    * UP leaves the screen blank.
    */

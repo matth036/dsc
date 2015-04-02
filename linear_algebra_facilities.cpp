@@ -188,7 +188,7 @@ void simple_svd_test()
   JacobiSVD < Matrix3d > svd {
   B, NoQRPreconditioner | ComputeFullU | ComputeFullV};
 
-  Matrix3d U = svd.matrixU();	// The program goes to shit here on the uC.
+  Matrix3d U = svd.matrixU();	// The program goes to bad here on the uC.
   Matrix3d V = svd.matrixV();
   Matrix3d A = U * V.transpose();
   if (A.determinant() < 0) {

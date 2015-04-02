@@ -106,21 +106,12 @@ public:
   void rightToLeft();
   void autoscroll();
   void noAutoscroll();
-
   void createChar(uint8_t, uint8_t[]);
   void setCursor(uint8_t, uint8_t); 
   virtual size_t write(uint8_t);
   void command(uint8_t);
-  void VARIOUS_HACKS();
-
   /************ Keep VARIOUS_HACKS for experimentation. **************************/
-  /************ remove these **************************/
-  void row_switcheroo();
-  void swap_rows(int,int);
-  void pwm_flip_on();
-  void pwm_flip_off();
-  /***************************************/
-
+  void VARIOUS_HACKS();
   using Print::write;
 private:
   void send(uint8_t, uint8_t);
@@ -146,16 +137,15 @@ private:
   GPIO_TypeDef* _enable_port;
   uint16_t       _data_pins[8];
   GPIO_TypeDef* _data_ports[8];
-  int row_offsets[4] = { 0x00, 0x40, 0x14, 0x54 };
+  /* Check if these values apply to displays with other than four rows. */
+  uint8_t row_offsets[4] = { 0x00, 0x40, 0x14, 0x54 };
   uint8_t _displayfunction;
   uint8_t _displaycontrol;
   uint8_t _displaymode;
-
   uint8_t _initialized;
-
   uint8_t _numlines;
   uint8_t _currline;
-  bool blocked_for_PWM;
+  //  bool blocked_for_PWM;
 };
 
 #endif // CHARLCD_STM32F_H
