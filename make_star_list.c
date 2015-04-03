@@ -5,7 +5,7 @@
 
 #include <iostream>
 
-/*  Edit this to produce a star list of acceptable size. */
+/*  Edit this function to produce a star list of acceptable size. */
 int
 doUseThisLine (char *catalog_line)
 {
@@ -39,7 +39,7 @@ doUseThisLine (char *catalog_line)
   }
 
   if (navigation_star::is_navigation_star (BSCnum))
-    {    /* Use this conditional if all navigational are to be included. */
+    {    /* This conditonal ensures that all Navigational Stars are included. */
       return 1;
     }
   if (DECdd < -45 )
@@ -64,7 +64,7 @@ doUseThisLine (char *catalog_line)
   with no restriction on Vmag
   STARLIST_SIZE = 9108
   */
-  return 0;
+  return 1;
 }
 
 
@@ -149,7 +149,7 @@ int main ()
       std::cout << " *  RA = " << current_RA.to_string()  <<  std::endl;
       std::cout << " * DEC = " << current_DEC.to_string() <<  std::endl;
       std::cout << " */ " << std::endl;
-      // printf( "*/  \n" );
+
       int i;
       have_current_line = have_next_line;
       for( i=0; i<256; ++i ){
