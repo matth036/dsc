@@ -102,7 +102,8 @@ CPPSRC+=telescope_model.cpp
 CPPSRC+=rtc_management.cpp
 CPPSRC+=solar_system.cpp
 CPPSRC+=extra_solar_transforms.cpp
-CPPSRC+=ngc_objects.cpp
+# Put this funtionality in ngc_list_access.cpp
+# CPPSRC+=ngc_objects.cpp
 CPPSRC+=matrix_keypad.cpp
 CPPSRC+=input_views.cpp
 CPPSRC+=menu_views.cpp

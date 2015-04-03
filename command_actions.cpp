@@ -9,8 +9,8 @@
 #include "rtc_management.h"
 #include "binary_tidbits.h"
 #include "solar_system.h"
-#include "ngc_objects.h"
-#include "ngc_list.h"
+
+#include "ngc_list_access.h"
 #include "starlist_access.h"
 #include "extra_solar_transforms.h"
 #include "telescope_model.h"
@@ -63,7 +63,7 @@ void ngc_point_to_action(char *yytext, int yyleng)
   if( ngc_num <= 0 || ngc_num > 7840 ){
     return;
   }
-  int index = ngc_objects::get_index( ngc_num );
+  int index = ngc_list_access::get_index( ngc_num );
   /* get_index(ngc_num) fails by returning -1 */
   /* This will be little tested since I am inclined to include the entirety of the NGC. */
   if( index == -1 ){
@@ -88,8 +88,8 @@ void ngc_point_to_action(char *yytext, int yyleng)
   CAA2DCoordinate RA_Dec;
   sexagesimal::Sexagesimal RA;
   sexagesimal::Sexagesimal Dec;
-  RA.set_binary_data(ngc_list[index].RA_data);
-  Dec.set_binary_data(ngc_list[index].DEC_data);
+  RA = ngc_list_access::get_RA_i( index );
+  Dec = ngc_list_access::get_Dec_i( index );
   RA_Dec.X = RA.to_double();
   RA_Dec.Y = Dec.to_double();
   /* For stars we would have a proper motion correction here. 

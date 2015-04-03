@@ -336,8 +336,6 @@ class NGC_Details_View:Character_Reciever {
   CAA2DCoordinate RA_Dec;
   float dimension_a;
   float dimension_b;
-  //   double distance;
-  //  Simple_Altazimuth_Scope* telescope;
   Character_Reciever* saved_cr;
   int32_t width_;
   bool finished;

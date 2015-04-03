@@ -15,7 +15,8 @@
 #include "AADynamicalTime.h"
 #include "sexagesimal.h"
 #include "extra_solar_transforms.h"
-#include "ngc_objects.h"
+
+#include "ngc_list_access.h"
 
 #include "input_views.h"
 #include "output_views.h"

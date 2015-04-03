@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 #include "sexagesimal.h"
-// class sexagesimal::Sexagesimal;
+
 
 namespace ngc_objects{
   float get_magnitude( uint32_t ngc_num );

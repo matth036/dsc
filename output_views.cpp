@@ -12,7 +12,7 @@
 #include "main.h"
 #include "binary_tidbits.h"
 #include "solar_system.h"
-#include "ngc_objects.h"
+#include "ngc_list_access.h"
 #include "starlist_access.h"
 #include "extra_solar_transforms.h"
 #include "keypad_layout.h"
@@ -525,7 +525,6 @@ std::unique_ptr < CharLCD_STM32F >
   }
   return std::move(lcd);
 }
-/********************************************************************/
 /********************************************************************/
 
 Countdown_View::Countdown_View(){
@@ -1126,15 +1125,15 @@ void NGC_Details_View::dismiss_action( ){
   finished = true;
 }
 
-void NGC_Details_View::setup( int num ){
-  ngc_num_ = num;
-  index = ngc_objects::get_index( num );
+void NGC_Details_View::setup( int ngc_num ){
+  ngc_num_ = ngc_num;
+  index = ngc_list_access::get_index( ngc_num_ );
   if( index != -1 ){
-    magnitude = ngc_objects::get_magnitude_i( index );
-    dimension_a = ngc_objects::get_dimension_a_i( index );
-    dimension_b = ngc_objects::get_dimension_b_i( index );
-    sexagesimal::Sexagesimal RA = ngc_objects::get_RA_i(index);
-    sexagesimal::Sexagesimal Dec = ngc_objects::get_Dec_i(index);
+    magnitude = ngc_list_access::get_magnitude_i( index );
+    dimension_a = ngc_list_access::get_dimension_a_i( index );
+    dimension_b = ngc_list_access::get_dimension_b_i( index );
+    sexagesimal::Sexagesimal RA = ngc_list_access::get_RA_i(index);
+    sexagesimal::Sexagesimal Dec = ngc_list_access::get_Dec_i(index);
     RA_Dec.X = RA.to_double();
     RA_Dec.Y = Dec.to_double();
     /* @TODO perform precesion transformation. */
