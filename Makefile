@@ -208,7 +208,6 @@ $(AA_SRCDIR): aaplus.zip
 	mkdir -p $(AA_SRCDIR)
 	unzip -d $(AA_SRCDIR) aaplus.zip
 
-#       cp -f ./AAhack/*h ./AAhack/*.cpp   $(AA_SRCDIR)
 $(OBJ): starlist.h ngc_list.h
 
 flex_lexer.cpp: flex_lexer.l

@@ -6,8 +6,9 @@ OPTLVL:=0 # Optimization level, can be [0, 1, 2, 3, s, g].
 PROJECT_NAME:=$(notdir $(lastword $(CURDIR)))
 TOP:=$(shell readlink -f "../../..")
 
+AA_SRCDIR=../AstronomicalAlgorithms
 #
-vpath %.cpp ../AstronomicalAlgorithms ..
+vpath %.cpp $(AA_SRCDIR) ..
 
 INCLUDE=-I$(CURDIR)
 INCLUDE+=-I/usr/local/include/c++/4.8.1
@@ -37,6 +38,8 @@ CPPSRC+=sexagesimal.cpp
 CPPSRC+=AASun.cpp
 CPPSRC+=AAEarth.cpp
 CPPSRC+=AAFK5.cpp
+CPPSRC+=AAGlobe.cpp
+CPPSRC+=AAParallax.cpp
 CPPSRC+=navigation_star.cpp
 CPPSRC+=solar_system.cpp
 CPPSRC+=horizontal_equatorial.cpp
@@ -63,9 +66,7 @@ CPPSRC+=AASaturn.cpp
 CPPSRC+=AAUranus.cpp
 CPPSRC+=AANeptune.cpp
 CPPSRC+=AAPluto.cpp
-
 CPPSRC+=AASidereal.cpp
-
 CPPSRC+=starlist_access.cpp
 
 
@@ -92,91 +93,141 @@ AR=$(TOOLCHAIN_PATH)/$(TOOLCHAIN_PREFIX)-ar
 GDB=$(TOOLCHAIN_PATH)/$(TOOLCHAIN_PREFIX)-gdb
 CXXFLAGS=$(CFLAGS)
 
-all: example_23b example_33a nautical_almanac astronomical_almanac jd nutation_data \
+
+
+all: $(OBJ) example_23b example_33a nautical_almanac astronomical_almanac jd nutation_data \
  memoized_mean_sidereal memoized_apparent_sidereal burnham_test horizontal2equatorial \
- h2q intercept_azimuth near_parabolic
+ h2q intercept_azimuth near_parabolic moon_test
 
 #	$(CC) -o $(TARGET) $(LDFLAGS) $(OBJ)	$(LDLIBS)
+$(AA_SRCDIR): ../aaplus.zip
+	rm -Rf $(AA_SRCDIR)
+	mkdir -p $(AA_SRCDIR)
+	unzip -d $(AA_SRCDIR) ../aaplus.zip
+
+
+AACoordinateTransformation.o: $(AA_SRCDIR) $(AA_SRCDIR)/AACoordinateTransformation.cpp
+	$(CXX) $(CXXFLAGS) -c -o AACoordinateTransformation.o $(INCLUDE) $(AA_SRCDIR)/AACoordinateTransformation.cpp
+
+
+../make_star_list: ../make_star_list.c ../sexagesimal.cpp ../navigation_star.cpp
+	$(CXX) -std=c++11 -o ../make_star_list ../make_star_list.c ../sexagesimal.cpp ../navigation_star.cpp
+
+../starlist.h: ../make_star_list ../catalog
+	$(shell cd ..; ./make_star_list > starlist.h; indent starlist.h)	
+
+
+../catalog:
+	cp ../YaleStarCatalog/catalog.gz  ..
+	gunzip ../catalog.gz
+
+
+
+
+
+
+# g++ -std=c++11 -g -o make_star_list make_star_list.c navigation_star.cpp  sexagesimal.cpp
+
+
+
+
+
+
+
+
+
+
+
+starlist_access.o: ../starlist_access.cpp ../starlist_access.h ../starlist.h $(AA_SRCDIR)
+	$(CXX) $(CXXFLAGS) -c -o starlist_access.o $(INCLUDE) ../starlist_access.cpp
 
 example_23b: $(OBJ) example_23b.o
-	$(CC) -o example_23b  $(LDFLAGS) $(OBJ) example_23b.o $(LDLIBS) 
+	$(CXX) -o example_23b  $(LDFLAGS) $(OBJ) example_23b.o $(LDLIBS) 
 
 example_23b.o: example_23b.cpp
 	$(CXX) $(CXXFLAGS) -c -o example_23b.o $(INCLUDE) example_23b.cpp
 
 example_33a: $(OBJ) example_33a.o
-	$(CC) -o example_33a  $(LDFLAGS) $(OBJ) example_33a.o $(LDLIBS) 
+	$(CXX) -o example_33a  $(LDFLAGS) $(OBJ) example_33a.o $(LDLIBS) 
 
 example_33a.o: example_33a.cpp
 	$(CXX) $(CXXFLAGS) -c -o example_33a.o $(INCLUDE) example_33a.cpp
 
 nautical_almanac: $(OBJ) nautical_almanac.o
-	$(CC) -o nautical_almanac  $(LDFLAGS) $(OBJ) nautical_almanac.o $(LDLIBS) 
+	$(CXX) -o nautical_almanac  $(LDFLAGS) $(OBJ) nautical_almanac.o $(LDLIBS) 
 
 nautical_almanac.o: nautical_almanac.cpp
 	$(CXX) $(CXXFLAGS) -c -o nautical_almanac.o $(INCLUDE) nautical_almanac.cpp
 
 astronomical_almanac: $(OBJ) astronomical_almanac.o
-	$(CC) -o astronomical_almanac  $(LDFLAGS) $(OBJ) astronomical_almanac.o $(LDLIBS) 
+	$(CXX) -o astronomical_almanac  $(LDFLAGS) $(OBJ) astronomical_almanac.o $(LDLIBS) 
 
 astronomical_almanac.o: astronomical_almanac.cpp
 	$(CXX) $(CXXFLAGS) -c -o astronomical_almanac.o $(INCLUDE) astronomical_almanac.cpp
 
 burnham_test: $(OBJ) burnham_test.o
-	$(CC) -o burnham_test  $(LDFLAGS) $(OBJ) burnham_test.o $(LDLIBS) 
+	$(CXX) -o burnham_test  $(LDFLAGS) $(OBJ) burnham_test.o $(LDLIBS) 
 
 burnham_test.o: burnham_test.cpp
 	$(CXX) $(CXXFLAGS) -c -o burnham_test.o $(INCLUDE) burnham_test.cpp
 
 nutation_data: $(OBJ) nutation_data.o
-	$(CC) -o nutation_data  $(LDFLAGS) $(OBJ) nutation_data.o $(LDLIBS) 
+	$(CXX) -o nutation_data  $(LDFLAGS) $(OBJ) nutation_data.o $(LDLIBS) 
 
 nutation_data.o: nutation_data.cpp
 	$(CXX) $(CXXFLAGS) -c -o nutation_data.o $(INCLUDE) nutation_data.cpp
 
 memoized_apparent_sidereal: $(OBJ) memoized_apparent_sidereal.o
-	$(CC) -o memoized_apparent_sidereal  $(LDFLAGS) $(OBJ) memoized_apparent_sidereal.o $(LDLIBS) 
+	$(CXX) -o memoized_apparent_sidereal  $(LDFLAGS) $(OBJ) memoized_apparent_sidereal.o $(LDLIBS) 
 
 memoized_apparent_sidereal.o: memoized_apparent_sidereal.cpp
 	$(CXX) $(CXXFLAGS) -c -o memoized_apparent_sidereal.o $(INCLUDE) memoized_apparent_sidereal.cpp
 
 
 memoized_mean_sidereal: $(OBJ) memoized_mean_sidereal.o
-	$(CC) -o memoized_mean_sidereal  $(LDFLAGS) $(OBJ) memoized_mean_sidereal.o $(LDLIBS) 
+	$(CXX) -o memoized_mean_sidereal  $(LDFLAGS) $(OBJ) memoized_mean_sidereal.o $(LDLIBS) 
 
 memoized_mean_sidereal.o: memoized_mean_sidereal.cpp
 	$(CXX) $(CXXFLAGS) -c -o memoized_mean_sidereal.o $(INCLUDE) memoized_mean_sidereal.cpp
 
 jd: $(OBJ) jd.o
-	$(CC) -o jd  $(LDFLAGS) $(OBJ) jd.o $(LDLIBS) 
+	$(CXX) -o jd  $(LDFLAGS) $(OBJ) jd.o $(LDLIBS) 
 
 jd.o: jd.cpp
 	$(CXX) $(CXXFLAGS) -c -o jd.o $(INCLUDE) jd.cpp
 
 horizontal2equatorial: $(OBJ) horizontal2equatorial.o
-	$(CC) -o horizontal2equatorial  $(LDFLAGS) $(OBJ) horizontal2equatorial.o $(LDLIBS) 
+	$(CXX) -o horizontal2equatorial  $(LDFLAGS) $(OBJ) horizontal2equatorial.o $(LDLIBS) 
 
 horizontal2equatorial.o: horizontal2equatorial.cpp
 	$(CXX) $(CXXFLAGS) -c -o horizontal2equatorial.o $(INCLUDE) horizontal2equatorial.cpp
 
 h2q: $(OBJ) h2q.o
-	$(CC) -o h2q  $(LDFLAGS) $(OBJ) h2q.o $(LDLIBS) 
+	$(CXX) -o h2q  $(LDFLAGS) $(OBJ) h2q.o $(LDLIBS) 
 
 h2q.o: h2q.cpp
 	$(CXX) $(CXXFLAGS) -c -o h2q.o $(INCLUDE) h2q.cpp
 
 
 intercept_azimuth: $(OBJ) intercept_azimuth.o
-	$(CC) -o intercept_azimuth  $(LDFLAGS) $(OBJ) intercept_azimuth.o $(LDLIBS) 
+	$(CXX) -o intercept_azimuth  $(LDFLAGS) $(OBJ) intercept_azimuth.o $(LDLIBS) 
 
 intercept_azimuth.o: intercept_azimuth.cpp
 	$(CXX) $(CXXFLAGS) -c -o intercept_azimuth.o $(INCLUDE) intercept_azimuth.cpp
 
 near_parabolic: $(OBJ) near_parabolic.o
-	$(CC) -o near_parabolic  $(LDFLAGS) $(OBJ) near_parabolic.o $(LDLIBS) 
+	$(CXX) -o near_parabolic  $(LDFLAGS) $(OBJ) near_parabolic.o $(LDLIBS) 
 
 near_parabolic.o: near_parabolic.cpp
 	$(CXX) $(CXXFLAGS) -c -o near_parabolic.o $(INCLUDE) near_parabolic.cpp
+
+
+moon_test: $(OBJ) moon_test.o
+	$(CC) -o moon_test  $(LDFLAGS) $(OBJ) moon_test.o $(LDLIBS) 
+
+moon_test.o: moon_test.cpp
+	$(CXX) $(CXXFLAGS) -c -o moon_test.o $(INCLUDE) moon_test.cpp
+
 
 
 
@@ -199,3 +250,4 @@ clean:
 	rm -f intercept_azimuth intercept_azimuth.o
 	rm -f jd jd.o
 	rm -f near_parabolic near_parabolic.o
+	rm -f moon_test moon_test.o
