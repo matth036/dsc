@@ -3,13 +3,9 @@
 
 
 void version_info_view_action( char* yytext, int yyleng );
-
 void ngc_point_to_action( char* yytext, int yyleng );
 void bsc_point_to_action( char* yytext, int yyleng );
 void bsc_details_view_action( char* yytext, int yyleng );
-
-void bsc_point_to_dangerously(char *yytext, int yyleng);
-
 void solar_system_point_to_action( char* yytext, int yyleng );
 void almanac_star_point_to_action( char* yytext, int yyleng );
 void planetary_details_view_action( char* yytext, int yyleng );
@@ -19,7 +15,7 @@ void RA_and_Declination_dialog();
 void Burnham_Handbook_Point_To();
 void angular_coordinate_view();
 
-
+/* Used ? */
 void default_action( char* yytext, int yyleng );
 
 void navigation_star_menu_test();

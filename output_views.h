@@ -152,32 +152,6 @@ class Pushto_Output_View: public Character_Reciever {
   bool finished;
 };
 
-
-class Pushto_Output_View_DANGEROUSLY: public Pushto_Output_View{
- public:
- Pushto_Output_View_DANGEROUSLY(   CAA2DCoordinate RA_and_Dec ) : Pushto_Output_View(  RA_and_Dec ) {
-
-  }
-  // ~Pushto_Output_View_DANGEROUSLY( );
-  void put_char(char);
-  std::unique_ptr < CharLCD_STM32F > write_second_line(std::unique_ptr <
-						       CharLCD_STM32F >);
-  std::unique_ptr < CharLCD_STM32F > write_third_line(std::unique_ptr <
-						       CharLCD_STM32F >);
-  std::unique_ptr < CharLCD_STM32F > write_fourth_line(std::unique_ptr <
-						       CharLCD_STM32F >);
- private:
-  int num_ticks_azi = 1;
-  int num_ticks_alt = 0;
-  void cycle_num_ticks();
-  void reverse_cycle_num_ticks();
-  void dangerous_increment_encoder();
-  void dangerous_decrement_encoder();
-};
-
-
-
-
 class Countdown_View:Character_Reciever {
  public:
   Countdown_View();

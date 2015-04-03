@@ -35,7 +35,7 @@ WORD            {ALPAH}+
 
 %%
 
-ABAB                        version_info_view_action( yytext, yyleng );
+ABAB                         version_info_view_action( yytext, yyleng );
 
 CA{DIGIT}{1,4}               ngc_point_to_action( yytext, yyleng );
 ACA{DIGIT}{1,4}              ngc_details_view_action( yytext, yyleng );
@@ -43,8 +43,6 @@ ACA{DIGIT}{1,4}              ngc_details_view_action( yytext, yyleng );
 B{STAR}C{DIGIT}{1,4}         bsc_point_to_action( yytext, yyleng );
 
 AB{STAR}C{DIGIT}{1,4}        bsc_details_view_action( yytext, yyleng );
-
-CACA{DIGIT}{1,4}             bsc_point_to_dangerously( yytext, yyleng); 
 
 B{DIGIT}{1}                  solar_system_point_to_action(  yytext, yyleng );
 AB{DIGIT}{1}                 planetary_details_view_action( yytext, yyleng );
@@ -58,7 +56,7 @@ AAA555                       display_current_time_view();
 AAA556                       add_seconds_dialog();
 AAA554                       subtract_seconds_dialog();
 
-AAA090 angular_coordinate_view();
+AAA090                       angular_coordinate_view();
 
 AAA58                        navigation_star_menu_test();
 AAA360                       sexagesimal_test_dialog();
