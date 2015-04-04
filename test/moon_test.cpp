@@ -9,6 +9,7 @@
 #include "AASidereal.h"
 #include <cmath>
 #include "binary_tidbits.h"
+#include "horizontal_parallax.h"
 
 using std::cout;
 using std::endl;
@@ -17,7 +18,7 @@ using std::endl;
 /* 
    Write up the caculationa again, this time returning the Coordinates, not the Delta Coordinates.
  */
-CAA2DCoordinate Equatorial2TopocentricRigorous(double Alpha, double Delta, double Distance, double Longitude, double Latitude, double Height, double JD){
+CAA2DCoordinate Equatorial2TopocentricRigorousVerbose(double Alpha, double Delta, double Distance, double Longitude, double Latitude, double Height, double JD){
   // g_AAParallax_C1 is a constant and probably shouldn't be repetitively defined.
   double g_AAParallax_C1 = sin(CAACoordinateTransformation::DegreesToRadians(CAACoordinateTransformation::DMSToDegrees(0, 0, 8.794)));
 
@@ -168,7 +169,7 @@ int main( int argc, char **argv){
 
   CAADate timestamp;
 
-  if( 0 ){
+  if( 1 ){
     timestamp = CAADate( unix_epoch.Julian() + static_cast<double>(unix_time)/86400.0, true );
   }else{
     //    timestamp = CAADate( 2015,3,31,15,55,0.0, true );
@@ -259,7 +260,7 @@ int main( int argc, char **argv){
 
   cout << "\nDo Over!  Again!" << endl;
   RA_Dec_Dist = solar_system::calculate_moon_RA_Dec_Dist(timestamp.Julian());
-  CAA2DCoordinate Topocentric_RA_Dec = Equatorial2TopocentricRigorous( RA_Dec_Dist.X, 
+  CAA2DCoordinate Topocentric_RA_Dec = Equatorial2TopocentricRigorousVerbose( RA_Dec_Dist.X, 
 									     RA_Dec_Dist.Y, 
 									     RA_Dec_Dist.Z/solar_system::AU_kilometers,
 									     longitude.to_double(),
@@ -269,6 +270,23 @@ int main( int argc, char **argv){
 
   cout << "       Topocentric RA " << sexagesimal::Sexagesimal(Topocentric_RA_Dec.X).to_string() << endl;
   cout << "Topocentric Declination " << sexagesimal::Sexagesimal(Topocentric_RA_Dec.Y).to_string() << endl;
+
+
+  cout << "\nDo Over!  Yet Again!!" << endl;
+  cout << "This time with the actual uC code." << endl;
+  RA_Dec_Dist = solar_system::calculate_moon_RA_Dec_Dist(timestamp.Julian());
+  Topocentric_RA_Dec = Equatorial2TopocentricRigorous( RA_Dec_Dist.X, 
+							      RA_Dec_Dist.Y, 
+							      RA_Dec_Dist.Z/solar_system::AU_kilometers,
+							      longitude.to_double(),
+							      latitude.to_double(),
+							      0.0,
+							      timestamp.Julian());
+
+  printf( "Julian Date = %18.9lf\n", timestamp.Julian() );
+  cout << "       Topocentric RA " << sexagesimal::Sexagesimal(Topocentric_RA_Dec.X).to_string() << endl;
+  cout << "Topocentric Declination " << sexagesimal::Sexagesimal(Topocentric_RA_Dec.Y).to_string() << endl;
+
 
   return 0;
 }

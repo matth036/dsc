@@ -42,6 +42,7 @@ CPPSRC+=AAParallax.cpp
 CPPSRC+=navigation_star.cpp
 CPPSRC+=solar_system.cpp
 CPPSRC+=horizontal_equatorial.cpp
+CPPSRC+=horizontal_parallax.cpp
 CPPSRC+=lbr_and_xyz.cpp
 
 
