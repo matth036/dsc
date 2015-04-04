@@ -117,6 +117,9 @@ $(AA_SRCDIR) : ../aaplus.zip
 ../starlist.h:
 	 $(MAKE) -C .. starlist.h
 
+../ngc_list.h:
+	 $(MAKE) -C .. ngc_list.h
+
 example_23b: $(OBJ) example_23b.o
 	$(CXX) -o example_23b  $(LDFLAGS) $(OBJ) example_23b.o $(LDLIBS) 
 

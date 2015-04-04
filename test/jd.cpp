@@ -17,7 +17,7 @@ int main( int argc, char **argv){
     sscanf( argv[2], "%d", &month );
     sscanf( argv[3], "%lf", &day );
   }else{
-    printf( "usage: %s YYYY MM DD\n", argv[0] );
+    printf( "usage: %s YYYY MM DD.ddd\n", argv[0] );
     return 1;
   }
 
