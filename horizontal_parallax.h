@@ -23,7 +23,11 @@ extern "C" {
    * 
    * The return values are the coordinates, not the delta's.
    */
+  CAA2DCoordinate Equatorial2TopocentricNonRigorous(double Alpha, double Delta, double Distance, double Longitude, double Latitude, double Height, double JD);
+
   CAA2DCoordinate Equatorial2TopocentricRigorous(double Alpha, double Delta, double Distance, double Longitude, double Latitude, double Height, double JD);
+
+  CAA2DCoordinate Equatorial2TopocentricRigorous_PJ(double Alpha, double Delta, double Distance, double Longitude, double Latitude, double Height, double JD);
 
   CAA2DCoordinate Equatorial2TopocentricRigorousAlternative(double Alpha, double Delta, double Distance, double Longitude, double Latitude, double Height, double JD);
 

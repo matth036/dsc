@@ -7,12 +7,24 @@
 #include <cmath>
 #include "binary_tidbits.h"
 
+CAA2DCoordinate Equatorial2TopocentricNonRigorous(double Alpha, double Delta, double Distance, double Longitude, double Latitude, double Height, double JD){
+  CAA2DCoordinate delta_RA_Dec = CAAParallax::Equatorial2TopocentricDelta(Alpha,Delta,Distance,Longitude,Latitude,Height,JD);
+  CAA2DCoordinate Topocentric_RA_Dec;
+  Topocentric_RA_Dec.X = Alpha + delta_RA_Dec.X;
+  Topocentric_RA_Dec.Y = Delta + delta_RA_Dec.Y;
+  return Topocentric_RA_Dec;
+}
+
+
+CAA2DCoordinate Equatorial2TopocentricRigorous_PJ(double Alpha, double Delta, double Distance, double Longitude, double Latitude, double Height, double JD){
+  return CAAParallax::Equatorial2Topocentric(Alpha,Delta,Distance,Longitude,Latitude,Height,JD);
+}
 
 
 CAA2DCoordinate Equatorial2TopocentricRigorous(double Alpha, double Delta, double Distance, double Longitude, double Latitude, double Height, double JD){
   // g_AAParallax_C1 is a constant and probably shouldn't be repetitively defined.
   double g_AAParallax_C1 = sin(CAACoordinateTransformation::DegreesToRadians(CAACoordinateTransformation::DMSToDegrees(0, 0, 8.794)));
-  // Meeus uses phi' where Naughter uses Theta'
+  // Meeus uses phi' where Naughter uses Theta'   (Or, does the book use a strange font for greek?)
   double RhoSinThetaPrime = CAAGlobe::RhoSinThetaPrime(Latitude, Height);
   double RhoCosThetaPrime = CAAGlobe::RhoCosThetaPrime(Latitude, Height);
   // In versions of this algorithm that return differences, we needed to save this value.
@@ -25,7 +37,7 @@ CAA2DCoordinate Equatorial2TopocentricRigorous(double Alpha, double Delta, doubl
   double cosDelta = cos(Delta);
   double sinDelta = sin(Delta);
 
-  //Calculate the Parallax, first equation in Chapter 40.
+  //Calculate the Parallax, first equation in Chapter 40. p.279
   double pi = asin(g_AAParallax_C1 / Distance);  
 
   //Calculate the hour angle
@@ -82,20 +94,28 @@ CAA2DCoordinate Equatorial2TopocentricRigorousAlternative(double Alpha, double D
   double cosDelta = cos(Delta);
   double sinH = sin(H);
   double cosH = cos(H);
-  double A = cosDelta*sinH;
+
   double RhoSinThetaPrime = CAAGlobe::RhoSinThetaPrime(Latitude, Height);
   double RhoCosThetaPrime = CAAGlobe::RhoCosThetaPrime(Latitude, Height);
   //Calculate the Parallax, first equation in Chapter 40.
   double pi = asin(g_AAParallax_C1 / Distance);  
-  double sin_pi = sin( pi );  // Sub optimal?
+  double sin_pi = sin( pi );  // obvioulsly sub optimal.  Test before fixing.
 
+  double A = cosDelta*sinH;
   double B = cosDelta*cosH - RhoCosThetaPrime*sin_pi;
   double C = sinDelta - RhoSinThetaPrime*sin_pi;
   double q = sqrt(A*A + B*B + C*C);
 
-  // Package and return.
+  double H_prime = CAACoordinateTransformation::RadiansToHours( atan2(A,B) );
   CAA2DCoordinate Topocentric_RA_Dec;
-  Topocentric_RA_Dec.X = CAACoordinateTransformation::RadiansToHours( atan(A/B) );
+
+  // Package and return.
+  if( binary_tidbits::west_longitude_is_positive() ){
+    Topocentric_RA_Dec.X = theta - Longitude/15 - H_prime;
+  }else{
+    Topocentric_RA_Dec.X = theta + Longitude/15 - H_prime;
+  }
+  Topocentric_RA_Dec.X = CAACoordinateTransformation::MapTo0To24Range( Topocentric_RA_Dec.X );
   Topocentric_RA_Dec.Y = CAACoordinateTransformation::RadiansToDegrees( asin(C/q) );
   return Topocentric_RA_Dec;
 }
