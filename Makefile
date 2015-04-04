@@ -9,7 +9,7 @@ TOOLCHAIN_PREFIX:=arm-none-eabi
 #
 OPTLVL:=0 # Optimization level, can be [0, 1, 2, 3, s, g, fast].
 
-AA_SRCDIR:=AstronomicalAlgorithms
+AA_SRCDIR:=AA_src
 
 # make sets CURRDIR to the path name of the current directory.
 PROJECT_NAME:=$(notdir $(lastword $(CURDIR)))
@@ -196,12 +196,11 @@ all: $(TARGET).elf
 
 $(TARGET).elf: $(OBJ) $(LINKER_SCRIPT)
 	$(LD) -o $(TARGET).elf $(LDFLAGS) $(OBJ)	$(LDLIBS) 
-
+#
 $(LINKER_SCRIPT): dso_handle_ld.patch $(VENDOR_STM_SOURCE_DIR)/Project/Peripheral_Examples/EXTI/TrueSTUDIO/EXTI/stm32_flash.ld
 	patch $(VENDOR_STM_SOURCE_DIR)/Project/Peripheral_Examples/EXTI/TrueSTUDIO/EXTI/stm32_flash.ld -o $(LINKER_SCRIPT) < dso_handle_ld.patch
 
 $(SRC) $(CPPSRC): $(AA_SRCDIR) 
-
 #
 $(AA_SRCDIR): aaplus.zip
 	rm -Rf $(AA_SRCDIR)
@@ -256,19 +255,14 @@ DPublic_HCNGC.txt: Public_HCNGC.zip
 make_star_list: make_star_list.c navigation_star.cpp  sexagesimal.cpp
 	g++ -std=c++11 -g -o make_star_list make_star_list.c navigation_star.cpp  sexagesimal.cpp
 
-toolkit_kit: $(TARGET).elf
-	mkdir -p toolkit_kit
-	cp -bR $(TOOLCHAIN_PATH)/../share/slackbuild toolkit_kit
-
 debug: $(TARGET).elf 
 	./do_flash.pl $(TARGET).bin 
 	$(GDB) $(TARGET).elf -x "target extended-remote localhost:3333"
 
 bugger:
-	echo obj
-	echo $(OBJ)
-	echo CPPOBJ
-	echo $(CPPOBJ)
+	@echo OBJ =
+	@echo $(OBJ)
+
 
 .PHONY: clean
 

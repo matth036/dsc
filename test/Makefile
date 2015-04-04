@@ -1,23 +1,22 @@
-#TARGET:=demo
+#
+# Native toolchain expressed as if a cross toolchain.
+#
 TOOLCHAIN_PATH:=/usr/bin
 TOOLCHAIN_PREFIX:=
+#
 OPTLVL:=0 # Optimization level, can be [0, 1, 2, 3, s, g].
 
-PROJECT_NAME:=$(notdir $(lastword $(CURDIR)))
 TOP:=$(shell readlink -f "../../..")
 
-AA_SRCDIR=../AstronomicalAlgorithms
+AA_SRCDIR=../AA_src
 #
 vpath %.cpp $(AA_SRCDIR) ..
 
-INCLUDE=-I$(CURDIR)
-INCLUDE+=-I/usr/local/include/c++/4.8.1
-INCLUDE+=-I..
-INCLUDE+=-I../AstronomicalAlgorithms
-#INCLUDE+=-I$(STMLIB)/CMSIS/Include
-
 # vpath is used so object files are written to the current directory instead
 # of the same directory as their source files
+INCLUDE=-I..
+INCLUDE+=-I$(AA_SRCDIR)
+
 
 # Plain c files
 # SRC=main.c
@@ -58,17 +57,14 @@ CPPSRC+=lbr_and_xyz.cpp
 CPPSRC+=AAMercury.cpp
 CPPSRC+=AAVenus.cpp
 CPPSRC+=AAMoon.cpp
-
 CPPSRC+=AAMars.cpp
 CPPSRC+=AAJupiter.cpp
 CPPSRC+=AASaturn.cpp
-
 CPPSRC+=AAUranus.cpp
 CPPSRC+=AANeptune.cpp
 CPPSRC+=AAPluto.cpp
 CPPSRC+=AASidereal.cpp
 CPPSRC+=starlist_access.cpp
-
 
 COMMONFLAGS=-O$(OPTLVL) -ggdb3 -Wall -Werror -std=c++11
 CFLAGS=$(COMMONFLAGS) $(MCUFLAGS) $(INCLUDE) $(CDEFS)
@@ -93,53 +89,33 @@ AR=$(TOOLCHAIN_PATH)/$(TOOLCHAIN_PREFIX)-ar
 GDB=$(TOOLCHAIN_PATH)/$(TOOLCHAIN_PREFIX)-gdb
 CXXFLAGS=$(CFLAGS)
 
-
-
-all: $(OBJ) example_23b example_33a nautical_almanac astronomical_almanac jd nutation_data \
+TESTS= example_23b example_33a nautical_almanac astronomical_almanac jd nutation_data \
  memoized_mean_sidereal memoized_apparent_sidereal burnham_test horizontal2equatorial \
  h2q intercept_azimuth near_parabolic moon_test
 
-#	$(CC) -o $(TARGET) $(LDFLAGS) $(OBJ)	$(LDLIBS)
-$(AA_SRCDIR): ../aaplus.zip
-	rm -Rf $(AA_SRCDIR)
-	mkdir -p $(AA_SRCDIR)
-	unzip -d $(AA_SRCDIR) ../aaplus.zip
+all: $(AA_SRCDIR) ../starlist.h objects tests
 
+objects:
+	$(MAKE) -C . $(OBJ)
 
-AACoordinateTransformation.o: $(AA_SRCDIR) $(AA_SRCDIR)/AACoordinateTransformation.cpp
-	$(CXX) $(CXXFLAGS) -c -o AACoordinateTransformation.o $(INCLUDE) $(AA_SRCDIR)/AACoordinateTransformation.cpp
+tests: $(TESTS)
+#
+$(TESTS): $(AA_SRCDIR) ../starlist.h $(OBJ)
+#
+# objects: $(OBJ)
+#
+# $(OBJ) : $(AA_SRCDIR) ../starlist.h
+#
+#
+$(AA_SRCDIR) : ../aaplus.zip
+	$(MAKE) -C .. AA_src
 
+# $(CPPSRC) : $(AA_SRCDIR)
+# AACoordinateTransformation.o: $(AA_SRCDIR) $(AA_SRCDIR)/AACoordinateTransformation.cpp
+# 	$(CXX) $(CXXFLAGS) -c -o AACoordinateTransformation.o $(INCLUDE) $(AA_SRCDIR)/AACoordinateTransformation.cpp
 
-../make_star_list: ../make_star_list.c ../sexagesimal.cpp ../navigation_star.cpp
-	$(CXX) -std=c++11 -o ../make_star_list ../make_star_list.c ../sexagesimal.cpp ../navigation_star.cpp
-
-../starlist.h: ../make_star_list ../catalog
-	$(shell cd ..; ./make_star_list > starlist.h; indent starlist.h)	
-
-
-../catalog:
-	cp ../YaleStarCatalog/catalog.gz  ..
-	gunzip ../catalog.gz
-
-
-
-
-
-
-# g++ -std=c++11 -g -o make_star_list make_star_list.c navigation_star.cpp  sexagesimal.cpp
-
-
-
-
-
-
-
-
-
-
-
-starlist_access.o: ../starlist_access.cpp ../starlist_access.h ../starlist.h $(AA_SRCDIR)
-	$(CXX) $(CXXFLAGS) -c -o starlist_access.o $(INCLUDE) ../starlist_access.cpp
+../starlist.h:
+	 $(MAKE) -C .. starlist.h
 
 example_23b: $(OBJ) example_23b.o
 	$(CXX) -o example_23b  $(LDFLAGS) $(OBJ) example_23b.o $(LDLIBS) 
@@ -229,7 +205,8 @@ moon_test.o: moon_test.cpp
 	$(CXX) $(CXXFLAGS) -c -o moon_test.o $(INCLUDE) moon_test.cpp
 
 
-
+bugger:
+	echo $(OBJ)
 
 
 
@@ -237,6 +214,8 @@ moon_test.o: moon_test.cpp
 
 clean:
 	rm -f $(OBJ)
+	rm -f ../starlist.h
+	rm -Rf $(AA_SRCDIR)
 	rm -f example_23b example_23b.o
 	rm -f example_33a example_33a.o
 	rm -f nautical_almanac nautical_almanac.o
@@ -251,3 +230,5 @@ clean:
 	rm -f jd jd.o
 	rm -f near_parabolic near_parabolic.o
 	rm -f moon_test moon_test.o
+#
+#
