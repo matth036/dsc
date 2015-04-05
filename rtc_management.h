@@ -45,6 +45,31 @@ extern "C" {
   int get_backup_domain_altitude_ticks_per_rev();
   int get_backup_domain_azimuth_ticks_per_rev();
 
+  //  float get_backup_domain_longitude();
+  //  void save_backup_domain_longitude(float);
+
+  //  float get_backup_domain_altitude();
+  //  void save_backup_domain_altitude(float);
+
+  float get_backup_domain_altitude();
+  void save_backup_domain_altitude(float);
+
+
+  /* 
+   * Plan: Code as if temperature and pressure
+   * were periodicly sensed and recorded with
+   * save_backup_domain_temperature();
+   * save_backup_domain_pressure();
+   *  
+   * */
+  float get_backup_domain_temperature();
+  void save_backup_domain_temperature(float);
+
+  float get_backup_domain_pressure();
+  void save_backup_domain_pressure(float);
+
+
+
 #ifdef __cplusplus
 }
 #endif
@@ -55,6 +80,7 @@ sexagesimal::Sexagesimal get_backup_domain_longitude();
 sexagesimal::Sexagesimal get_backup_domain_latitude();
 void save_backup_domain_longitude(sexagesimal::Sexagesimal longitude);
 void save_backup_domain_latitude(sexagesimal::Sexagesimal latitude);
+
 #endif
 
 #endif				/*  RTC_MANAGMENT_H */

@@ -235,7 +235,8 @@ sexagesimal::Sexagesimal sexagesimal::double2sexagesimal(double d)
   deg, min, sec, millis};
 }
 
-/* In refining this and related methods, heed the instruction in 
+/* 
+ * In refining this and related methods, heed the instruction in 
  * Meeus "Astronomical Algorithms" p.6 
 */
 const std::string sexagesimal::Sexagesimal::to_string()
@@ -247,20 +248,15 @@ const std::string sexagesimal::Sexagesimal::to_string()
   } else {
     str = ' ';
   }
-  /* The conditional is a test bed for getting a sane to_string( uint32_t ) */
-#if 0
-  str += std::to_string( msb() );
-#else
-  str += sexagesimal::to_string_hack(msb());	//std::to_string( msb() );
-#endif
+  str += sexagesimal::to_string_hack(msb());	        // I want to use std::to_string( msb() );
   str += ':';
-  addon = sexagesimal::to_string_hack(minutes());	//std::to_string( minutes() );
+  addon = sexagesimal::to_string_hack(minutes());	// std::to_string( minutes() );
   while (addon.size() < 2) {	// zero padding
     addon = '0' + addon;
   }
   str += addon;
   str += ':';
-  addon = sexagesimal::to_string_hack(seconds());	//std::to_string( seconds() );
+  addon = sexagesimal::to_string_hack(seconds());	// std::to_string( seconds() );
   while (addon.size() < 2) {	// zero padding
     addon = '0' + addon;
   }
@@ -409,7 +405,11 @@ const std::string sexagesimal::Sexagesimal::to_hms_string()
 }
 
 
-/* Usefull for comparison with Nautical Almanac. */
+
+/* 
+ * I have omitted the milli-seconds so a Longitude and a Latitude 
+ *  will fit on a single 20 character line.
+ */
 const std::string sexagesimal::Sexagesimal::to_latitude_string()
 {
   std::string str;
@@ -450,9 +450,10 @@ const std::string sexagesimal::Sexagesimal::to_latitude_string()
   return str;
 }
 
-
-
-/* Usefull for comparison with Nautical Almanac. */
+/* 
+ * I have omitted the milli-seconds so a Longitude and a Latitude 
+ *  will fit on a single 20 character line.
+ */
 const std::string sexagesimal::Sexagesimal::to_longitude_string()
 {
   std::string str;

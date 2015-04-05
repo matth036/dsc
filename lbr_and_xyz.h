@@ -9,4 +9,5 @@ CAA3DCoordinate XYZ_to_LBR(CAA3DCoordinate xyz);
 
 CAA3DCoordinate AziAltR_to_XYZ(CAA3DCoordinate azi_alt_r);
 CAA3DCoordinate XYZ_to_AziAltR(CAA3DCoordinate xyz);
+
 #endif   /*   _LBR_AND_XYZ_H  */

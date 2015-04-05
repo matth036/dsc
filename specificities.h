@@ -13,6 +13,12 @@ namespace specificities{
   constexpr uint32_t altitude_ticks_per_revolution = 4000;
   constexpr uint32_t azimuth_ticks_per_revolution = 4000;
 
+  constexpr bool latitude_is_north = true;
+  constexpr bool longitude_is_west = true;
+
+
+
+
   /* 
    * Ultimately, the startup count should not matter.
    * For the purpose of debugging and trouble shooting I arrange

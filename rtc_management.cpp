@@ -1,8 +1,9 @@
 #include "rtc_management.h"
-
+#include "specificities.h"
 #include "stm32f4xx_rtc.h"
 #include "build_date.h"
 #include "AADate.h"
+
 
 __IO uint32_t AsynchPrediv = 0;
 __IO uint32_t SynchPrediv = 0;
@@ -10,7 +11,7 @@ __IO uint32_t SynchPrediv = 0;
 uint32_t errorindex = 0;
 uint32_t i = 0;
 
-/* Move to header? Eliminate? */
+/* Eliminate? */
 uint32_t BKPDataReg[RTC_BKP_DR_NUMBER] = {
   RTC_BKP_DR0, RTC_BKP_DR1, RTC_BKP_DR2,
   RTC_BKP_DR3, RTC_BKP_DR4, RTC_BKP_DR5,
@@ -76,6 +77,10 @@ void RTC_WKUP_IRQHandler(void)
  *
  * The build time and date are used to set the clock.  These are recorded
  * and retrieved in the code found in build_date.c
+ *
+ * Code pertinant to wake up and time stamp is not really used.  
+ * Much of the RTC code is copied from an ST stopwatch example.
+ *
  **/
 void RTC_Cold_Config(void)
 {
@@ -94,8 +99,6 @@ void RTC_Cold_Config(void)
   /* These are the values from the Stopwatch Example. */
   SynchPrediv = 0x3FF;
   AsynchPrediv = 0x1F;
-  //  SynchPrediv = 0xFF;
-  //  AsynchPrediv = 0x7F;
 
   /* Enable the RTC Clock */
   RCC_RTCCLKCmd(ENABLE);
@@ -103,19 +106,22 @@ void RTC_Cold_Config(void)
   /* Wait for RTC APB registers synchronisation */
   RTC_WaitForSynchro();
 
-  /* Enable The TimeStamp */
+  /* 
+   * Enable The TimeStamp.  This project never used this feature.
+   *  Pins PC13 and PI18 can evidently be used to trigger a timestamp.
+   *  See stm32f4xx_rtc.h L608,L609. 
+   *  Consider taking this out so I do not inadvertently start triggering
+   *  timestamps.
+   */
   RTC_TimeStampCmd(RTC_TimeStampEdge_Falling, ENABLE);
 
   /* Write to the first RTC Backup Data Register */
   RTC_WriteBackupRegister(RTC_BKP_DR0, FIRST_DATA);
   /* As long as we have the Astronomical Algoritms date class, use it. */
-  /*
-  CAADate(long Year, long Month, double Day, double Hour, double Minute, double Second, bool bGregorianCalendar);
-  */
   /* Central Standard Time is GMT - 6
    * Central Daylight Savings Time is GMT - 5
    */
-  float GMT_offset_4_timzone = -6.0;
+  float GMT_offset_4_timzone = -5.0;
   CAADate date(build_year(), build_month(), build_day(), build_hour() - GMT_offset_4_timzone,
 	       build_minute(), build_second(), true);
 
@@ -179,15 +185,14 @@ void RTC_Cold_Config(void)
 void initial_write_to_backup_reg()
 {
   uint32_t index = 0;
-
+  // First, zero everything.
   for (index = 0; index < RTC_BKP_DR_NUMBER; index++) {
-    if (index == 0) {
-      RTC_WriteBackupRegister(BKPDataReg[index], FIRST_DATA);
-    } else {
-      RTC_WriteBackupRegister(BKPDataReg[index], 0x0);
-    }
+    RTC_WriteBackupRegister(BKPDataReg[index], 0x0);
   }
-
+  // 
+  RTC_WriteBackupRegister(BKPDataReg[0], FIRST_DATA);
+  save_backup_domain_azimuth_ticks_per_rev( specificities::azimuth_ticks_per_revolution );
+  save_backup_domain_altitude_tick_per_rev( specificities::altitude_ticks_per_revolution );
 }
 
 /* Sample code from Timestamp example. */

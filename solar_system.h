@@ -4,8 +4,6 @@
 #include <string>
 #include "AAElliptical.h"
 
-CAA3DCoordinate LBR_to_XYZ(CAA3DCoordinate lbr);
-
 namespace solar_system {
 
   CAAEllipticalPlanetaryDetails calculate_details(std::string body, double JD);
@@ -28,4 +26,5 @@ namespace solar_system {
   constexpr double J2050_0 = 2469807.5;
 
 }
+
 #endif				/* SOLAR_SYSTEM_H */

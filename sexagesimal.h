@@ -22,7 +22,7 @@ namespace sexagesimal{
     const uint32_t millis();
     const uint32_t seconds();
     const uint32_t minutes();
-    const uint32_t msb(); // Degrees arc of Hours time.
+    const uint32_t msb(); // Degrees of angle or Hours time.
     const double to_double();
     const std::string to_string();
 
@@ -32,7 +32,6 @@ namespace sexagesimal{
     const std::string to_hms_string();
     const std::string to_HMS_string();
     const std::string to_dms_string();
-
 
     const std::string to_latitude_string();
     const std::string to_longitude_string();
