@@ -18,6 +18,7 @@
 #include "AANutation.h"
 #include "AAMoon.h"
 #include "lbr_and_xyz.h"
+#include "rtc_management.h"
 #include "horizontal_parallax.h"
 
 // #include "main.h"
@@ -277,20 +278,21 @@ CAA3DCoordinate solar_system::calculate_moon_RA_Dec_Dist(double JD)
   RA_Dec_Dist.X = RA_DEC.X;
   RA_Dec_Dist.Y = RA_DEC.Y;
   RA_Dec_Dist.Z = R;
-
-  if( false ){
-
+#if 0
+    sexagesimal::Sexagesimal longitude = get_backup_domain_longitude();
+    sexagesimal::Sexagesimal latitude = get_backup_domain_latitude();
 
     CAA2DCoordinate RA_Dec_topocentric = Equatorial2TopocentricRigorous_PJ(RA_Dec_Dist.X,
 									   RA_Dec_Dist.Y,
 									   RA_Dec_Dist.Z/solar_system::AU_kilometers,
-									   0,0,0,JD);
+									   longitude.to_double(),
+									   latitude.to_double(),
+									   0.0,
+									   JD);
 
     RA_Dec_Dist.X = RA_Dec_topocentric.X;  
     RA_Dec_Dist.Y = RA_Dec_topocentric.Y;  
-
-  }
-
+#endif
 
   return RA_Dec_Dist;
 }

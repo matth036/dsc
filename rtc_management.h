@@ -81,6 +81,9 @@ sexagesimal::Sexagesimal get_backup_domain_latitude();
 void save_backup_domain_longitude(sexagesimal::Sexagesimal longitude);
 void save_backup_domain_latitude(sexagesimal::Sexagesimal latitude);
 
+
+
+
 #endif
 
 #endif				/*  RTC_MANAGMENT_H */

@@ -16,6 +16,7 @@
 #include "telescope_model.h"
 #include "build_date.h"
 #include "AADynamicalTime.h"
+#include "horizontal_parallax.h"
 
 
 
@@ -27,28 +28,71 @@ void scan_for_action(std::string command)
   yy_delete_buffer(buffer_state);
 }
 
-void debug_action(){
-  Simple_Altazimuth_Scope* scope = get_main_simple_telescope();
-  int32_t value;
-  double degrees;
-  double echo_value;
-  for( value = -4010; value<=4010; ++value ){
-    degrees = scope->altitude_degrees( value );
-    echo_value = scope->altitude_encoder_value( degrees );
-    double check_value = (static_cast<double>(value) - echo_value);
-    while( check_value <  0.0 ){
-      check_value += 4000.0;
-    }
-    while( check_value > 4000. ){
-      check_value -= 4000.;
-    }
-    if( check_value > 3999.999 ){
-      check_value -= 4000.;
-    }
-    if( check_value > .001 || check_value < -.001){
-      for(;;){}
-    }
+/* These test functions will not appear in header files. For now. */
+void information_view_test(){
+  auto lcd = check_out_main_lcd();
+  auto view = std::unique_ptr < Information_View > (new Information_View());
+  view->set_text_1( "Alpha" );
+  view->set_text_2( "Bravo" );
+  view->set_text_3( "Charlie" );
+  view->set_text_4( "Delta" );
+
+  while( !view->is_finished() ){
+    lcd->setCursor(0,0);
+    lcd = view->write_first_line(std::move(lcd));
+    lcd->setCursor(0,1);
+    lcd = view->write_second_line(std::move(lcd));
+    lcd->setCursor(0,2);
+    lcd = view->write_third_line(std::move(lcd));
+    lcd->setCursor(0,3);
+    lcd = view->write_fourth_line(std::move(lcd));
   }
+  check_in_main_lcd(std::move(lcd));
+}
+
+
+void moon_parallax_test(){
+  auto lcd = check_out_main_lcd();
+  auto view = std::unique_ptr < Information_View > (new Information_View());
+  double JD = JD_timestamp_pretty_good_000();
+  CAA3DCoordinate ra_dec_dist = solar_system::calculate_moon_RA_Dec_Dist(JD);
+  view->set_text_1( sexagesimal::Sexagesimal(ra_dec_dist.X).to_string() );
+  view->set_text_2( sexagesimal::Sexagesimal(ra_dec_dist.Y).to_string() );
+
+  sexagesimal::Sexagesimal longitude = get_backup_domain_longitude();
+  sexagesimal::Sexagesimal latitude = get_backup_domain_latitude();
+
+  CAA2DCoordinate RA_Dec_topocentric = Equatorial2TopocentricRigorousAlternative(ra_dec_dist.X,
+									   ra_dec_dist.Y,
+									   ra_dec_dist.Z/solar_system::AU_kilometers,
+									   longitude.to_double(),
+									   latitude.to_double(),
+									   0.0,
+									   JD);
+
+  view->set_text_3( sexagesimal::Sexagesimal(RA_Dec_topocentric.X).to_string() );
+  view->set_text_4( sexagesimal::Sexagesimal(RA_Dec_topocentric.Y).to_string() );
+
+
+  while( !view->is_finished() ){
+    lcd->setCursor(0,0);
+    lcd = view->write_first_line(std::move(lcd));
+    lcd->setCursor(0,1);
+    lcd = view->write_second_line(std::move(lcd));
+    lcd->setCursor(0,2);
+    lcd = view->write_third_line(std::move(lcd));
+    lcd->setCursor(0,3);
+    lcd = view->write_fourth_line(std::move(lcd));
+  }
+  check_in_main_lcd(std::move(lcd));
+}
+
+
+
+
+void debug_action(){
+  //  information_view_test();
+  moon_parallax_test();
 }
 
 
