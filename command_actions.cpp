@@ -62,13 +62,37 @@ void moon_parallax_test(){
   sexagesimal::Sexagesimal longitude = get_backup_domain_longitude();
   sexagesimal::Sexagesimal latitude = get_backup_domain_latitude();
 
-  CAA2DCoordinate RA_Dec_topocentric = Equatorial2TopocentricRigorousAlternative(ra_dec_dist.X,
-									   ra_dec_dist.Y,
-									   ra_dec_dist.Z/solar_system::AU_kilometers,
-									   longitude.to_double(),
-									   latitude.to_double(),
-									   0.0,
-									   JD);
+  CAA2DCoordinate RA_Dec_topocentric;
+
+// No Good.
+#if 0
+  RA_Dec_topocentric = Equatorial2TopocentricRigorous_PJ(ra_dec_dist.X,
+							   ra_dec_dist.Y,
+							   ra_dec_dist.Z/solar_system::AU_kilometers,
+							   longitude.to_double(),
+							   latitude.to_double(),
+							   0.0,
+							   JD);
+
+
+RA_Dec_topocentric = CAAParallax::Equatorial2Topocentric(ra_dec_dist.X,
+							ra_dec_dist.Y,
+							   (ra_dec_dist.Z/solar_system::AU_kilometers),
+							longitude.to_double(),
+							latitude.to_double(),
+							0.0,
+							JD);
+
+
+#endif
+
+  RA_Dec_topocentric = Equatorial2TopocentricRigorousAlternative(ra_dec_dist.X,
+								   ra_dec_dist.Y,
+								 ra_dec_dist.Z/solar_system::AU_kilometers,
+								   longitude.to_double(),
+								 latitude.to_double(),
+								   0.0,
+								 JD);
 
   view->set_text_3( sexagesimal::Sexagesimal(RA_Dec_topocentric.X).to_string() );
   view->set_text_4( sexagesimal::Sexagesimal(RA_Dec_topocentric.Y).to_string() );

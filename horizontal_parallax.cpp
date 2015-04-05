@@ -15,12 +15,6 @@ CAA2DCoordinate Equatorial2TopocentricNonRigorous(double Alpha, double Delta, do
   return Topocentric_RA_Dec;
 }
 
-
-CAA2DCoordinate Equatorial2TopocentricRigorous_PJ(double Alpha, double Delta, double Distance, double Longitude, double Latitude, double Height, double JD){
-  return CAAParallax::Equatorial2Topocentric(Alpha,Delta,Distance,Longitude,Latitude,Height,JD);
-}
-
-
 CAA2DCoordinate Equatorial2TopocentricRigorous(double Alpha, double Delta, double Distance, double Longitude, double Latitude, double Height, double JD){
   // g_AAParallax_C1 is a constant and probably shouldn't be repetitively defined.
   double g_AAParallax_C1 = sin(CAACoordinateTransformation::DegreesToRadians(CAACoordinateTransformation::DMSToDegrees(0, 0, 8.794)));
@@ -118,5 +112,48 @@ CAA2DCoordinate Equatorial2TopocentricRigorousAlternative(double Alpha, double D
   Topocentric_RA_Dec.X = CAACoordinateTransformation::MapTo0To24Range( Topocentric_RA_Dec.X );
   Topocentric_RA_Dec.Y = CAACoordinateTransformation::RadiansToDegrees( asin(C/q) );
   return Topocentric_RA_Dec;
+}
+
+
+CAA3DCoordinate Equatorial2TopocentricRigorousAlternative3D(double Alpha, double Delta, double Distance, double Longitude, double Latitude, double Height, double JD){
+  double g_AAParallax_C1 = sin(CAACoordinateTransformation::DegreesToRadians(CAACoordinateTransformation::DMSToDegrees(0, 0, 8.794)));
+  double theta = CAASidereal::ApparentGreenwichSiderealTime(JD);
+  double H;
+  if( binary_tidbits::west_longitude_is_positive() ){
+    H = CAACoordinateTransformation::HoursToRadians(theta - Longitude/15 - Alpha);
+  }else{
+    H = CAACoordinateTransformation::HoursToRadians(theta + Longitude/15 - Alpha);
+  }
+  Alpha = CAACoordinateTransformation::HoursToRadians(Alpha);
+  Delta = CAACoordinateTransformation::DegreesToRadians(Delta);
+  double sinDelta = sin(Delta);
+  double cosDelta = cos(Delta);
+  double sinH = sin(H);
+  double cosH = cos(H);
+
+  double RhoSinThetaPrime = CAAGlobe::RhoSinThetaPrime(Latitude, Height);
+  double RhoCosThetaPrime = CAAGlobe::RhoCosThetaPrime(Latitude, Height);
+  //Calculate the Parallax, first equation in Chapter 40.
+  double pi = asin(g_AAParallax_C1 / Distance);  
+  double sin_pi = sin( pi );  // obvioulsly sub optimal.  Test before fixing.
+
+  double A = cosDelta*sinH;
+  double B = cosDelta*cosH - RhoCosThetaPrime*sin_pi;
+  double C = sinDelta - RhoSinThetaPrime*sin_pi;
+  double q = sqrt(A*A + B*B + C*C);
+
+  double H_prime = CAACoordinateTransformation::RadiansToHours( atan2(A,B) );
+  CAA3DCoordinate Topocentric_RA_Dec_Dist;
+
+  // Package and return.
+  if( binary_tidbits::west_longitude_is_positive() ){
+    Topocentric_RA_Dec_Dist.X = theta - Longitude/15 - H_prime;
+  }else{
+    Topocentric_RA_Dec_Dist.X = theta + Longitude/15 - H_prime;
+  }
+  Topocentric_RA_Dec_Dist.X = CAACoordinateTransformation::MapTo0To24Range( Topocentric_RA_Dec_Dist.X );
+  Topocentric_RA_Dec_Dist.Y = CAACoordinateTransformation::RadiansToDegrees( asin(C/q) );
+  Topocentric_RA_Dec_Dist.Z = q;
+  return Topocentric_RA_Dec_Dist;
 }
 
