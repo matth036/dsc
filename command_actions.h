@@ -15,8 +15,6 @@ void RA_and_Declination_dialog();
 void Burnham_Handbook_Point_To();
 void angular_coordinate_view();
 
-/* Used ? */
-void default_action( char* yytext, int yyleng );
 
 void navigation_star_menu_test();
 void sexagesimal_test_dialog();
@@ -30,6 +28,8 @@ void countdown_to_Saint_Patricks_Day();
 void debug_action();
 
 
+/* Used ? */
+void default_action( char* yytext, int yyleng );
 
 
 

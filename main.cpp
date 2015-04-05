@@ -142,25 +142,46 @@ int main(void)
    * fixes a shuffling of lines 0123 -> 1032   */
   lcd->noDisplay();
   MicroSecondDelay::millisecond_delay(1);
-  MicroSecondDelay::millisecond_delay(400);
+  MicroSecondDelay::millisecond_delay(399);
   lcd->display();
 
   for( int i=0; i<4; ++i ){
     lcd->setCursor(0, i%4);
     lcd->print("  LCD is Setup  ");
   }
-  MicroSecondDelay::millisecond_delay(400);
+  MicroSecondDelay::millisecond_delay(399);
   lcd->home();
   lcd->clear();
   for( int i=0; i<8; ++i ){
     lcd->setCursor(0, i%4);
     lcd->print(i);
     lcd->print("  Look out, world!");
+    MicroSecondDelay::millisecond_delay(4000/8);
   }
-  MicroSecondDelay::millisecond_delay(4000);
+
   lcd->home();
   lcd->clear();
 
+  /* Set up read backup register RTC_BKP_DR0,
+   * Configure RTC if it is not the value set
+   * on the first run.
+   */
+  if (RTC_ReadBackupRegister(RTC_BKP_DR0) != FIRST_DATA) {
+    lcd->setCursor(0, 0);
+    lcd->print("FIRST_DATA not read.");
+    /* RTC Configuration */
+    RTC_Cold_Config();
+    lcd->setCursor(0, 1);
+    lcd->print(" RTC_Cold_Config();");
+  } else {
+    lcd->setCursor(0, 0);
+    lcd->print("FIRST_DATA read");
+    RTC_Enable_Init();
+    lcd->setCursor(0, 1);
+    lcd->print(" RTC_Enable_Init(); ");
+  }
+  MicroSecondDelay::millisecond_delay(2500);
+  /////////////////////////////////////////////////
   /* Shaft decoders, hardware on telescope mount. */
   // Azimuth
   uint32_t azi_ticks;
@@ -198,25 +219,6 @@ int main(void)
       std::unique_ptr<Quadrature_Decoder>(&decoder_1) };
 
   main_sight_data = new Alignment_Data_Set( main_simple_telescope );
-  /* Set up read backup register RTC_BKP_DR0,
-   * Configure RTC if it is not the value set
-   * on the first run.
-   */
-  if (RTC_ReadBackupRegister(RTC_BKP_DR0) != FIRST_DATA) {
-    lcd->setCursor(0, 0);
-    lcd->print("FIRST_DATA not read.");
-    /* RTC Configuration */
-    RTC_Cold_Config();
-    lcd->setCursor(0, 1);
-    lcd->print(" RTC_Cold_Config();");
-  } else {
-    lcd->setCursor(0, 0);
-    lcd->print("FIRST_DATA read");
-    RTC_Enable_Init();
-    lcd->setCursor(0, 1);
-    lcd->print(" RTC_Enable_Init(); ");
-  }
-  MicroSecondDelay::millisecond_delay(3000);
   /////////////////////////////////////////////////
   lcd->home();
   lcd->clear();
@@ -233,7 +235,7 @@ int main(void)
   lcd->print("Altitude Ticks ");
   lcd->setCursor(0, 3);
   lcd->print( decoder_1.get_ticks_per_revolution() );
-  MicroSecondDelay::millisecond_delay(6000);
+  MicroSecondDelay::millisecond_delay(4000);
   lcd->home();
   lcd->clear();
 
@@ -264,11 +266,11 @@ int main(void)
       /* Relinquish the main LCD along with the flow of control. */
       check_in_main_lcd(std::move(lcd));
       
-      /* New flex_lexer.cpp */ 
+      /* New flex_lexer.cpp   */ 
       scan_for_action(  command );
 
-
-      dsc_controller::do_execute_command(command);
+      // 
+      // dsc_controller::do_execute_command(command);
 
       lcd = check_out_main_lcd();
     }
@@ -299,10 +301,12 @@ int main(void)
     Alt_Azi_Snapshot_t data = main_simple_telescope->get_snapshot();
     lcd->setCursor( 0, 1);
     n = 0;
+    n += lcd->print("Alt ");
     n += lcd->print( data.alt_value );
     while (n < 10) {  // TODO USE 
       n += lcd->print(' ');
     }
+    n += lcd->print("Az ");
     n += lcd->print( data.azi_value );
     while (n < 20) {
       n += lcd->print(' ');
