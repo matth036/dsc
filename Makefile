@@ -144,6 +144,10 @@ CPPSRC+=$(AA_SRCDIR)/AANeptune.cpp
 CPPSRC+=$(AA_SRCDIR)/AAPluto.cpp
 CPPSRC+=$(AA_SRCDIR)/AAElliptical.cpp
 CPPSRC+=$(AA_SRCDIR)/AAElementsPlanetaryOrbit.cpp
+CPPSRC+=$(AA_SRCDIR)/AAParallax.cpp
+CPPSRC+=$(AA_SRCDIR)/AAGlobe.cpp
+
+
 
 # March 2014 attempted update to  STM32F4xx_DSP_StdPeriph_Lib_V1.3.0/
 # Define was: 

@@ -110,7 +110,6 @@ public:
   void setCursor(uint8_t, uint8_t); 
   virtual size_t write(uint8_t);
   void command(uint8_t);
-  /************ Keep VARIOUS_HACKS for experimentation. **************************/
   void VARIOUS_HACKS();
   using Print::write;
 private:

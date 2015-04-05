@@ -201,6 +201,7 @@ void initial_write_to_backup_reg()
    * then construct the encoder reader object.
    *
    */
+
 }
 
 /* Sample code from Timestamp example. */

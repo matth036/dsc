@@ -250,7 +250,6 @@ int main(void)
       /* If there is a command to execute do so. */
       std::string command = dsc_controller::pop_cmd_buffer();
       lcd->clear();
-      //lcd->setCursor(0,0);      
       lcd->home();
       MicroSecondDelay::millisecond_delay(1);
       n = lcd->print(" COMMAND: ");
@@ -263,15 +262,13 @@ int main(void)
       }
       MicroSecondDelay::millisecond_delay(3000);
       lcd->clear();
-      /* Relinquish the main LCD along with the flow of control. */
+      /* Relinquish the main LCD because if
+       * scan_for_action(  command );
+       * matches a valid command as specified in flex_lexer.l,
+       * the command action function will be called.  Many (most)
+       * commands will write to the LCD.  */
       check_in_main_lcd(std::move(lcd));
-      
-      /* New flex_lexer.cpp   */ 
       scan_for_action(  command );
-
-      // 
-      // dsc_controller::do_execute_command(command);
-
       lcd = check_out_main_lcd();
     }
     /* This is what the main loop does if there is no command to execute. 
