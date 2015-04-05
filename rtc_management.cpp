@@ -189,10 +189,18 @@ void initial_write_to_backup_reg()
   for (index = 0; index < RTC_BKP_DR_NUMBER; index++) {
     RTC_WriteBackupRegister(BKPDataReg[index], 0x0);
   }
-  // 
-  RTC_WriteBackupRegister(BKPDataReg[0], FIRST_DATA);
-  save_backup_domain_azimuth_ticks_per_rev( specificities::azimuth_ticks_per_revolution );
-  save_backup_domain_altitude_tick_per_rev( specificities::altitude_ticks_per_revolution );
+  /* 
+   * Intentionally not setting ticks_per_revolution.
+   *
+   * Let main() 
+   * get_backup_domain_altitude_ticks_per_rev()
+   * and if the value is zero, pop up a menu to prompt for the value.
+   * The menu should have default value = specificities::altitude_ticks_per_revolution.
+   * then
+   * save_backup_domain_altitude_ticks_per_rev( );
+   * then construct the encoder reader object.
+   *
+   */
 }
 
 /* Sample code from Timestamp example. */
@@ -414,7 +422,7 @@ void save_backup_domain_latitude( sexagesimal::Sexagesimal latitude ){
   RTC_WriteBackupRegister(RTC_BKP_DR3, latitude.get_data());
 }
 
-void save_backup_domain_altitude_tick_per_rev( int alt_ticks ){
+void save_backup_domain_altitude_ticks_per_rev( int alt_ticks ){
     RTC_WriteBackupRegister(RTC_BKP_DR4, alt_ticks);
 }
 

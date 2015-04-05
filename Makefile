@@ -169,8 +169,10 @@ COMMONFLAGS=-O$(OPTLVL) -ggdb3 -Werror -Wall -Wno-unused-local-typedefs -flto -f
 # COMMONFLAGS=-O$(OPTLVL)   -g -Werror -Wall -fno-omit-frame-pointer 
 
 CFLAGS=$(COMMONFLAGS) $(MCUFLAGS) $(INCLUDE) $(CDEFS) #
-
-CXXFLAGS= -std=c++11  -felide-constructors $(CFLAGS) 
+#
+# My build of GCC 4.8.4 does not recognize -std=c++14
+# -std=c++11 is OK
+CXXFLAGS= -std=c++11 -felide-constructors $(CFLAGS) 
 
 LDLIBS=-lm -lgcc
 LDFLAGS=$(COMMONFLAGS)  -fno-exceptions -ffunction-sections -fdata-sections \

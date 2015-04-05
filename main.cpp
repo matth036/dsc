@@ -142,23 +142,57 @@ int main(void)
    * fixes a shuffling of lines 0123 -> 1032   */
   lcd->noDisplay();
   MicroSecondDelay::millisecond_delay(1);
+  MicroSecondDelay::millisecond_delay(400);
   lcd->display();
+
+  for( int i=0; i<4; ++i ){
+    lcd->setCursor(0, i%4);
+    lcd->print("  LCD is Setup  ");
+  }
+  MicroSecondDelay::millisecond_delay(400);
+  lcd->home();
+  lcd->clear();
+  for( int i=0; i<8; ++i ){
+    lcd->setCursor(0, i%4);
+    lcd->print(i);
+    lcd->print("  Look out, world!");
+  }
+  MicroSecondDelay::millisecond_delay(4000);
+  lcd->home();
+  lcd->clear();
+
   /* Shaft decoders, hardware on telescope mount. */
-
   // Azimuth
- Quadrature_Decoder decoder_0{GPIOD,GPIO_Pin_13,
-      GPIOD,GPIO_Pin_12,
-      AZIMUTH_DECODER_TIMER_TO_USE,
-     specificities::azimuth_ticks_per_revolution};
+  uint32_t azi_ticks;
+  azi_ticks = get_backup_domain_azimuth_ticks_per_rev();
+  if( azi_ticks == 0  ){
+    azi_ticks = specificities::azimuth_ticks_per_revolution;
+    /*  
+     * @TODO Prompt for  azimuth_ticks_per_rev  with default value  specificities::azimuth_ticks_per_revolution
+     */
+    save_backup_domain_azimuth_ticks_per_rev( azi_ticks );
+  }
+  Quadrature_Decoder decoder_0{GPIOD,GPIO_Pin_13,
+     GPIOD,GPIO_Pin_12,
+     AZIMUTH_DECODER_TIMER_TO_USE,
+     azi_ticks};
 
- // Altitude
+  // Altitude
+  uint32_t alti_ticks = get_backup_domain_altitude_ticks_per_rev();
+  if( alti_ticks == 0 ){
+    alti_ticks = specificities::altitude_ticks_per_revolution; 
+    /* @TODO Prompt for value. */
+    save_backup_domain_altitude_ticks_per_rev( alti_ticks );
+  }
   Quadrature_Decoder decoder_1{GPIOE,GPIO_Pin_9,
       GPIOE,GPIO_Pin_11,
       ALTITUDE_DECODER_TIMER_TO_USE,
-      specificities::altitude_ticks_per_revolution};
+      alti_ticks};
 
   decoder_0.set_count( specificities::azimuth_startup_count );   // Azimuth
   decoder_1.set_count( specificities::altitude_startup_count ); // Altitude
+
+
 
   main_simple_telescope = new Simple_Altazimuth_Scope{ std::unique_ptr<Quadrature_Decoder>(&decoder_0), 
       std::unique_ptr<Quadrature_Decoder>(&decoder_1) };
@@ -186,23 +220,24 @@ int main(void)
   /////////////////////////////////////////////////
   lcd->home();
   lcd->clear();
+
+  lcd->home();
+  lcd->clear();
   lcd->setCursor(0, 0);
-  lcd->print("DR0: ");
-  lcd->print(RTC_ReadBackupRegister(RTC_BKP_DR0), 16);
-  MicroSecondDelay::millisecond_delay(3000);
+  lcd->print("Azimuth Ticks ");
+  lcd->setCursor(0, 0);
+  lcd->print("Azimuth Ticks ");
   lcd->setCursor(0, 1);
-  lcd->print("DR1: ");
-  lcd->print(RTC_ReadBackupRegister(RTC_BKP_DR1), 16);
+  lcd->print( decoder_0.get_ticks_per_revolution() );
   lcd->setCursor(0, 2);
-  lcd->print("DR2: ");
-  lcd->print(RTC_ReadBackupRegister(RTC_BKP_DR2), 16);
+  lcd->print("Altitude Ticks ");
   lcd->setCursor(0, 3);
-  lcd->print("DR3: ");
-  lcd->print(RTC_ReadBackupRegister(RTC_BKP_DR3), 16);
-  lcd->setCursor(0, 0);
-  lcd->print("DR0: ");
-  lcd->print(RTC_ReadBackupRegister(RTC_BKP_DR0), 16);
-  MicroSecondDelay::millisecond_delay(4000);
+  lcd->print( decoder_1.get_ticks_per_revolution() );
+  MicroSecondDelay::millisecond_delay(6000);
+  lcd->home();
+  lcd->clear();
+
+  MicroSecondDelay::millisecond_delay(1);
   loop_counter = 0;
   lcd->clear();
   lcd->setCursor(0, 0);

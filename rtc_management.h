@@ -40,7 +40,7 @@ extern "C" {
   void RTC_add_years(double);
 
 
-  void save_backup_domain_altitude_tick_per_rev(int alt_ticks);
+  void save_backup_domain_altitude_ticks_per_rev(int alt_ticks);
   void save_backup_domain_azimuth_ticks_per_rev(int azi_ticks);
   int get_backup_domain_altitude_ticks_per_rev();
   int get_backup_domain_azimuth_ticks_per_rev();
