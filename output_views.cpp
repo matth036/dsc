@@ -406,6 +406,10 @@ void Pushto_Output_View::put_char(char c){
   }
 }
 
+void Pushto_Output_View::set_ra_and_dec( CAA2DCoordinate RA_and_Dec ){
+  RA_Dec = RA_and_Dec;
+}
+
 std::unique_ptr < CharLCD_STM32F >
     Pushto_Output_View::write_first_line(std::unique_ptr < CharLCD_STM32F > lcd)
 {

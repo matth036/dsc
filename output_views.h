@@ -127,7 +127,8 @@ class Pushto_Output_View: public Character_Reciever {
 
   inline bool is_finished() {
     return finished;
-  } 
+  }
+  void set_ra_and_dec( CAA2DCoordinate RA_and_Dec );
   void put_char(char);
   void set_label_1(std::string);
   void set_label_2(std::string);

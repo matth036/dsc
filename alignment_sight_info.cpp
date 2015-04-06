@@ -14,8 +14,10 @@
 #include "refraction_temperature_pressure.h"
 
 #include "horizontal_equatorial.h"
+#include "horizontal_parallax.h"
 #include "topocentric_unit_vectors.h"
 #include "lbr_and_xyz.h" 
+#include "rtc_management.h"
 
 /***********
 template<uint32_t N_axis> struct Encoder_Data_Set{
@@ -109,15 +111,28 @@ CAA2DCoordinate calulate_RA_and_Dec(std::string object, double JD, bool& success
     }
   }
   if( object == "Moon" ){
-    /* MOON STUFF.  The handling of the moon is botched in other parts of
+    /* 
+       Fixed but not tested. April 2015.
+
+       MOON STUFF.  The handling of the moon is botched in other parts of
        this project.  Test to see if this is correct.  
        Test against Kstars. December 2014.
 
        I have made no correction for horizontal parallax.
      */
     CAA3DCoordinate RA_Dec_Dist = solar_system::calculate_moon_RA_Dec_Dist(JD);
-    RA_and_DEC.X = RA_Dec_Dist.X;
-    RA_and_DEC.Y = RA_Dec_Dist.Y;
+    if( rtc_have_longitude()  && rtc_have_latitude() ){
+      sexagesimal::Sexagesimal longitude = get_backup_domain_longitude();
+      sexagesimal::Sexagesimal latitude = get_backup_domain_latitude();
+      double altitude = 0.0;
+      RA_and_DEC = Equatorial2TopocentricRigorousAlternative(RA_Dec_Dist.X, RA_Dec_Dist.Y, RA_Dec_Dist.Z/solar_system::AU_kilometers,
+							     longitude.to_double(), latitude.to_double(), altitude,
+							     JD);
+
+    }else{
+      RA_and_DEC.X = RA_Dec_Dist.X;
+      RA_and_DEC.Y = RA_Dec_Dist.Y;
+    }
     success = true;
     return RA_and_DEC;
   }
@@ -136,7 +151,6 @@ CAA2DCoordinate calulate_RA_and_Dec(std::string object, double JD, bool& success
     success = true;
     return RA_and_DEC;
   }
-
   success = false;
   return RA_and_DEC;
 }

@@ -68,7 +68,8 @@ extern "C" {
   float get_backup_domain_pressure();
   void save_backup_domain_pressure(float);
 
-
+  bool rtc_have_longitude();
+  bool rtc_have_latitude();
 
 #ifdef __cplusplus
 }
@@ -80,6 +81,9 @@ sexagesimal::Sexagesimal get_backup_domain_longitude();
 sexagesimal::Sexagesimal get_backup_domain_latitude();
 void save_backup_domain_longitude(sexagesimal::Sexagesimal longitude);
 void save_backup_domain_latitude(sexagesimal::Sexagesimal latitude);
+
+/*  */
+// const uint32_t void_sexagesimal = sexagesimal::Sexagesimal(-365,0,0,0).get_binary_data(); 
 
 
 

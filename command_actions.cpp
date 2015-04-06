@@ -400,17 +400,12 @@ void solar_system_point_to_action(char *yytext, int yyleng)
 
   std::string body_name = solar_system::solar_system_body_name(body_num);
   double JD = JD_timestamp_pretty_good_000();
-  CAA2DCoordinate RA_Dec;
-  if (body_num == 3) {
-    CAA3DCoordinate RA_Dec_Dist = solar_system::calculate_moon_RA_Dec_Dist(JD);
-    RA_Dec.X = RA_Dec_Dist.X;
-    RA_Dec.X = RA_Dec_Dist.Y;
-  } else {
-    CAAEllipticalPlanetaryDetails details =
-	solar_system::calculate_details(body_name, JD);
-    RA_Dec.X = details.ApparentGeocentricRA;
-    RA_Dec.Y = details.ApparentGeocentricDeclination;
+  bool success = false;
+  CAA2DCoordinate RA_Dec = calulate_RA_and_Dec(body_name, JD, success);
+  if( !success ){
+    return;
   }
+
   auto lcd = check_out_main_lcd();
 
   lcd->clear();
@@ -434,6 +429,12 @@ void solar_system_point_to_action(char *yytext, int yyleng)
     lcd = view->write_second_line(std::move(lcd));
     lcd->setCursor(0, 3);
     lcd = view->write_third_line(std::move(lcd));
+
+    JD = JD_timestamp_pretty_good_000();
+    RA_Dec = calulate_RA_and_Dec(body_name, JD, success);
+    if( success ){
+      view->set_ra_and_dec( RA_Dec );
+    }
   }
   check_in_main_lcd(std::move(lcd));
 

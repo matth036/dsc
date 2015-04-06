@@ -19,6 +19,7 @@ namespace sexagesimal{
     Sexagesimal(){data.ui = 0x00000000;}
     /* The layout of the bits allow for comparison as if they were int32_t.  */ 
     bool operator<(Sexagesimal other){return data.i < other.data.i;}
+    bool operator==(Sexagesimal other){return data.i == other.data.i;}
     const uint32_t millis();
     const uint32_t seconds();
     const uint32_t minutes();
@@ -62,6 +63,8 @@ namespace sexagesimal{
     Sexagesimal longitude;
     Sexagesimal latitude;
   } Long_Lat_pair;
+
+  const Sexagesimal VOID_SEXAGESIMAL{-512,59,59,999};
 
 
 } // namespace sexagesimal

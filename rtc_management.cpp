@@ -201,8 +201,20 @@ void initial_write_to_backup_reg()
    * then construct the encoder reader object.
    *
    */
-
+  save_backup_domain_longitude( sexagesimal::VOID_SEXAGESIMAL );
+  save_backup_domain_latitude( sexagesimal::VOID_SEXAGESIMAL );
 }
+
+bool rtc_have_longitude(){
+  return !(get_backup_domain_longitude() == sexagesimal::VOID_SEXAGESIMAL);
+}
+
+bool rtc_have_latitude(){
+  return !(get_backup_domain_latitude() == sexagesimal::VOID_SEXAGESIMAL);
+}
+
+
+
 
 /* Sample code from Timestamp example. */
 void RTC_Timestamp_Config(void)
