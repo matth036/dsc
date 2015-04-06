@@ -21,11 +21,11 @@ AAA987 Clear all alignment sight information.
 
 AAA456 Solve for alignment sight fix. (Called a test in the code, it is thought to be functional.)
 
-AAA234 prompt for an alignment sight on Navigational Star or Solar System Body.
+AAA234  prompt for an alignment sight on Navigational Star or Solar System Body.
 
 AAA0317 Countdown to Saint Patrick's Day. (An easter egg.)
 
-AAA2490 RA and Declination point to directions. For pointing to known RA and Declination. (Current Epoch)
+CC2490  RA and Declination point to directions. For pointing to known RA and Declination. (Current Epoch)
 
-AAA1950 Burnham's Celestial Handbook. (Uses Burnham's notation and does precesscion and nutation correction from 1950 to current epoch.)
+BCC     Burnham's Celestial Handbook. (Uses Burnham's notation and does precesscion and nutation correction from 1950 to current epoch.)
 

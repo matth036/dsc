@@ -11,8 +11,13 @@ void almanac_star_point_to_action( char* yytext, int yyleng );
 void planetary_details_view_action( char* yytext, int yyleng );
 void ngc_details_view_action( char* yytext, int yyleng );
 
+void epoch_point_to( double JD_epoch );
 void RA_and_Declination_dialog();
+void epoch_J2000_point_to();
+void epoch_B1950_point_to();
+void epoch_B1900_point_to();
 void Burnham_Handbook_Point_To();
+
 void angular_coordinate_view();
 
 

@@ -494,7 +494,109 @@ void almanac_star_point_to_action(char *yytext, int yyleng)
   check_in_main_lcd(std::move(lcd));
 }
 
-/* AAA2490 */
+void epoch_B1900_point_to(){
+  epoch_point_to( solar_system::B1900_0);
+}
+
+/* CC1950 menu item */
+void epoch_B1950_point_to(){
+  epoch_point_to( solar_system::B1950_0);
+}
+
+/* CC2000 menu item */
+void epoch_J2000_point_to(){
+  epoch_point_to( solar_system::J2000_0);
+}
+
+std::string epoch_string( double JD ){
+  CAADate date{JD,true};
+  int32_t year = date.Year();
+  std::string str = sexagesimal::to_string_hack( year );
+  /* @TODO append one decimal year. */
+  return str;
+}
+
+
+void epoch_point_to( double JD_epoch ){
+  auto lcd = check_out_main_lcd();
+  lcd->clear();
+
+  sexagesimal::Sexagesimal RA;
+  {
+    std::unique_ptr<Sexagesimal_Input_View> RA_view =
+      std::unique_ptr<Sexagesimal_Input_View>(new Sexagesimal_Input_View{ "RA HH:MM:SS.xxx" });
+    RA_view->set_minus_char( '-' );  /* Not expected to be used. */
+    RA_view->set_minus_char( ' ' );
+    RA_view->set_msd_digits( 2 );
+    RA_view->set_center_label(false);
+    while( !RA_view->is_finished() ){
+      lcd->setCursor(0,0);
+      lcd = RA_view->write_first_line(std::move(lcd));
+      lcd->setCursor(0,1);
+      lcd = RA_view->write_second_line(std::move(lcd));
+    }
+    RA = RA_view->get_value();
+  } /* ~Sexagesimal_Input_View() should be invoked here because the unique_ptr goes out of scope. */
+
+  sexagesimal::Sexagesimal declination;
+  {
+    std::unique_ptr<Sexagesimal_Input_View> Dec_view =
+      std::unique_ptr<Sexagesimal_Input_View>(new Sexagesimal_Input_View{ "Declination DD:MM:SS" });
+    Dec_view->set_plus_char( 'N' );
+    Dec_view->set_minus_char( 'S' );
+    Dec_view->set_msd_digits( 2 );
+    while( !Dec_view->is_finished() ){
+      lcd->setCursor(0,2);
+      lcd = Dec_view->write_first_line(std::move(lcd));
+      lcd->setCursor(0,3);
+      lcd = Dec_view->write_second_line(std::move(lcd));
+    }
+    declination = Dec_view->get_value();
+  } /* Again the input view is destructed. */
+  CAA2DCoordinate RA_Dec;
+  RA_Dec.X = RA.to_double();
+  RA_Dec.Y = declination.to_double();
+
+
+  MicroSecondDelay::millisecond_delay(700);
+
+  lcd->clear();
+  for( int i=0; i<10; ++i ){
+    lcd->setCursor( 0,0 );
+    lcd->print( RA.to_string() );
+    lcd->setCursor( 0,1 );
+    lcd->print( declination.to_string() );
+  }
+  double JD_now = JD_timestamp_pretty_good_000();
+  RA_Dec = precession_and_nutation_correct_from_mean_eqinox(RA_Dec, JD_epoch, JD_now);
+
+  lcd->setCursor( 0,2 );
+  lcd->print( sexagesimal::Sexagesimal( RA_Dec.X ).to_string() );
+  lcd->setCursor( 0,3 );
+  lcd->print( sexagesimal::Sexagesimal( RA_Dec.Y ).to_string() );
+
+  MicroSecondDelay::millisecond_delay(7000);
+
+  std::unique_ptr< Pushto_Output_View > view = 
+    std::unique_ptr<Pushto_Output_View >( new Pushto_Output_View( RA_Dec ) );
+  view->set_label_2( "Epoch " + epoch_string( JD_epoch )  );
+
+  while( !view->is_finished() ){
+    lcd->setCursor(0,0);
+    lcd = view->write_first_line(std::move(lcd));
+    lcd->setCursor(0,1);
+    lcd = view->write_second_line(std::move(lcd));
+    lcd->setCursor(0,2);
+    lcd = view->write_third_line(std::move(lcd));
+    lcd->setCursor(0,3);
+    lcd = view->write_fourth_line(std::move(lcd));
+  }
+  check_in_main_lcd(std::move(lcd));
+}
+
+
+
+/* CC2490 */
 void RA_and_Declination_dialog(){
   auto lcd = check_out_main_lcd();
   lcd->clear();
@@ -553,12 +655,12 @@ void RA_and_Declination_dialog(){
 }
 
 
-/* AAA1950 
- * For Burnham's Guide.
+/* 
+ * BCC  (For Burnham's Guide.)
  * 
  * Burnham gives the coordinates in this format:
- * 22115s2119 = RA 22h 11.5m: Dec -21(deg) 19(min).
- * 06078n4844 = RA  6h 07.8m: Dec +48(deg) 44(min).
+ * 22115s2119 = RA 22h 11.5m  Dec -21(deg) 19(min).
+ * 06078n4844 = RA  6h 07.8m  Dec +48(deg) 44(min).
  *
  */
 void Burnham_Handbook_Point_To(){

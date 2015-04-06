@@ -39,7 +39,8 @@ CAA2DCoordinate proper_motion_adjusted_position(const star_data & sd,
   return ra_dec;
 }
 
-/* Applicable to stars, deep space objects. 
+/* 
+ * Applicable to stars, deep space objects. 
  *
  * ra_dec should be J2000.0 coordinates.
  * JD should be corrected for dynamical time.
@@ -85,39 +86,6 @@ CAA2DCoordinate precession_correct(CAA2DCoordinate RA_Dec_J2000, double JD_0, do
 
 
 
-CAA2DCoordinate precession_and_nutation_correct_from_mean_eqinox(CAA2DCoordinate RA_Dec_J2000,
-						double JD)
-{
-  CAA2DCoordinate position;
-  double nil;
-  double nio;
-  double toe;
-  double RA_nutation;
-  double DEC_nutation;
-
-  position =
-      CAAPrecession::PrecessEquatorial(RA_Dec_J2000.X, RA_Dec_J2000.Y,
-				       solar_system::J2000_0, JD);
-
-  nil = CAANutation::NutationInLongitude(JD);	/* arc seconds. */
-  nio = CAANutation::NutationInObliquity(JD);	/*  arc seconds */
-  toe = CAANutation::TrueObliquityOfEcliptic(JD);	/*  Degrees */
-  RA_nutation = CAANutation::NutationInRightAscension(position.X,
-							     position.Y,
-							     toe,
-							     nil,
-							     nio);
-  DEC_nutation = CAANutation::NutationInDeclination(position.X,
-							   toe,
-							   nil,
-							   nio);
-  /* RA_nutation and DEC_nutation are both in arc seconds. */
-
-  position.X += RA_nutation / 3600.0 / 15.0;
-  position.Y += DEC_nutation / 3600.0;
-
-  return position;
-}
 
 CAA2DCoordinate precession_and_nutation_correct(CAA2DCoordinate RA_Dec_J2000,
 						double JD)
@@ -132,6 +100,11 @@ CAA2DCoordinate precession_and_nutation_correct(CAA2DCoordinate RA_Dec_J2000,
   /* At the end, I add on a nutation correction.  
    * Should I subtract such a correction at the start?
    * If so, include this conditional code.
+   *
+   * Usually J2000 Coordinates are with respect to the mean eqinox so it
+   * is incorrect tu un-apply nutation at the start of the calculation.
+   *  
+   * Consider eliminating this function to avoid erronious use.
    */
 #if 1
   nil = CAANutation::NutationInLongitude(solar_system::J2000_0);	/* arc seconds. */
@@ -219,6 +192,17 @@ CAA2DCoordinate precession_and_nutation_correct(CAA2DCoordinate RA_Dec_0,
   return position;
 }
 
+/*
+ * "Mean Equinox" coordinates have nutation "averaged out."
+ * 
+ *  So, do not un-apply nutation correction at the start of the calculation.
+ *
+ *  Any expression of a value that makes a decomposition ((Mean Value) + (Variations From Mean Value)).
+ *  must somehow choose what the Mean Value is.  Evidently, the nutation expressions take the Mean Value
+ *  to be nothing more than the precession described by the Rigorous method of Meeus, Chapter 21.
+ *  
+ *  One should not expect that (Variations From Mean Value) will average to zero.
+ */
 CAA2DCoordinate precession_and_nutation_correct_from_mean_eqinox(CAA2DCoordinate RA_Dec_0,
 						double JD_0, double JD_1)
 {
@@ -247,7 +231,7 @@ CAA2DCoordinate precession_and_nutation_correct_from_mean_eqinox(CAA2DCoordinate
   return position;
 }
 
-
+/* This is an example of what I believe to be correct and rigorous coordinate transformations. */
 CAA2DCoordinate burnham_correct(CAA2DCoordinate RA_Dec, double JD ){
   RA_Dec = precession_correct( RA_Dec, solar_system::B1950_0, solar_system::J2000_0 );
   double deltaT = CAADynamicalTime::DeltaT( JD );
@@ -257,6 +241,45 @@ CAA2DCoordinate burnham_correct(CAA2DCoordinate RA_Dec, double JD ){
   return RA_Dec;
 }
 
+/* Overide wher initial Julian date is solar_system::J2000_0 = 2451545.0  */
+CAA2DCoordinate precession_and_nutation_correct_from_mean_eqinox(CAA2DCoordinate RA_Dec_J2000,
+						double JD)
+{
+#if 1
+  return precession_and_nutation_correct_from_mean_eqinox( RA_Dec_J2000, solar_system::J2000_0, JD);
+#else
+  /* Smaller code results if we do it the other way. Keeping this code in case errors are found. */
+  CAA2DCoordinate position;
+  double nil;
+  double nio;
+  double toe;
+  double RA_nutation;
+  double DEC_nutation;
+
+  position =
+      CAAPrecession::PrecessEquatorial(RA_Dec_J2000.X, RA_Dec_J2000.Y,
+				       solar_system::J2000_0, JD);
+
+  nil = CAANutation::NutationInLongitude(JD);	/* arc seconds. */
+  nio = CAANutation::NutationInObliquity(JD);	/*  arc seconds */
+  toe = CAANutation::TrueObliquityOfEcliptic(JD);	/*  Degrees */
+  RA_nutation = CAANutation::NutationInRightAscension(position.X,
+							     position.Y,
+							     toe,
+							     nil,
+							     nio);
+  DEC_nutation = CAANutation::NutationInDeclination(position.X,
+							   toe,
+							   nil,
+							   nio);
+  /* RA_nutation and DEC_nutation are both in arc seconds. */
+
+  position.X += RA_nutation / 3600.0 / 15.0;
+  position.Y += DEC_nutation / 3600.0;
+
+  return position;
+#endif
+}
 
 CAA2DCoordinate navigation_star::nav_star_RA_Dec(int navstar_num, double JD)
 {
@@ -271,7 +294,7 @@ CAA2DCoordinate navigation_star::nav_star_RA_Dec(int navstar_num, double JD)
 
   double deltaT = CAADynamicalTime::DeltaT(JD);
 
-  RA_Dec = apply_aberration(RA_Dec, JD + deltaT / 86400.0);
+  RA_Dec = apply_aberration(RA_Dec, JD + deltaT/86400.0 );
 
   RA_Dec = precession_and_nutation_correct_from_mean_eqinox(RA_Dec, JD);
 

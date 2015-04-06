@@ -815,8 +815,6 @@ void Burnham_Format_Input_View::put_digit(char d){
   if( position < 10 ){
     char_buffer[position] = d;
   }
-  // char_buffer[position] = d;
-  // char_buffer[10] = '\0';
   increment_position(); /* positon is the rightmost unset character. */
 }
 
@@ -880,7 +878,6 @@ double Burnham_Format_Input_View::get_RA(){
   if( n == 1 ){
     RA += (1.0/600.0)*static_cast<double>( scan_value );
   }
-
   return RA;
 }
 
@@ -912,7 +909,6 @@ CAA2DCoordinate Burnham_Format_Input_View::get_RA_and_Dec(){
   RA_and_Dec.Y = get_Declination();
   return RA_and_Dec;
 }
-
 
 std::unique_ptr < CharLCD_STM32F >
     Burnham_Format_Input_View::write_first_line(std::unique_ptr < CharLCD_STM32F > lcd)

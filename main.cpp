@@ -144,24 +144,24 @@ int main(void)
   MicroSecondDelay::millisecond_delay(1);
   MicroSecondDelay::millisecond_delay(399);
   lcd->display();
-
+  lcd->clear();
+  lcd->home();
   for( int i=0; i<4; ++i ){
     lcd->setCursor(0, i%4);
     lcd->print("  LCD is Setup  ");
   }
   MicroSecondDelay::millisecond_delay(399);
-  lcd->home();
+
   lcd->clear();
+  lcd->home();
   for( int i=0; i<8; ++i ){
     lcd->setCursor(0, i%4);
     lcd->print(i);
     lcd->print("  Look out, world!");
-    MicroSecondDelay::millisecond_delay(4000/8);
+    MicroSecondDelay::millisecond_delay(200);
   }
-
-  lcd->home();
   lcd->clear();
-
+  lcd->home();
   /* Set up read backup register RTC_BKP_DR0,
    * Configure RTC if it is not the value set
    * on the first run.

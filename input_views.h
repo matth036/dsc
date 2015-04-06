@@ -158,9 +158,12 @@ class Sexagesimal_Input_View:Character_Reciever {
  * Burnham_Format_Input_View
  *
  * Burnham gives the coordinates in this format:
- * 22115s2119 ==> RA 22h 11.5m: Dec -21(deg) 19(min).
- * 06078n4844 ==> RA  6h 07.8m: Dec +48(deg) 44(min).
+ * 22115s2119 ==> RA 22h 11.5m  Dec -21(deg) 19(min).
+ * 06078n4844 ==> RA  6h 07.8m  Dec +48(deg) 44(min).
  * 
+ * The get methods return the input values.  For pointing purposes,
+ * if the values actually are those of Burham's handbook, precession from
+ * 1950 to the present epoch should be applied.
  ***************************************************/
 
 class Burnham_Format_Input_View: public Character_Reciever{

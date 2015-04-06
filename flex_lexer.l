@@ -49,8 +49,11 @@ AB{DIGIT}{1}                 planetary_details_view_action( yytext, yyleng );
 
 A{STAR}{DIGIT}{1,2}          almanac_star_point_to_action( yytext, yyleng );
 
-AAA2490                      RA_and_Declination_dialog();
-AAA1950                      Burnham_Handbook_Point_To();
+CC2490                       RA_and_Declination_dialog();  /* Celestial Coordinates point to. 0-24 Hours right ascension, +-0-90 Degrees declination. */
+BCC                          Burnham_Handbook_Point_To();  /* Burnham Celestial Coordinates point to.  */
+CC2000                       epoch_J2000_point_to();
+CC1950                       epoch_B1950_point_to();
+CC1900                       epoch_B1900_point_to();
 
 AAA555                       display_current_time_view();
 AAA556                       add_seconds_dialog();
