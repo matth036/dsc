@@ -121,7 +121,7 @@ CAA2DCoordinate calulate_RA_and_Dec(std::string object, double JD, bool& success
        I have made no correction for horizontal parallax.
      */
     CAA3DCoordinate RA_Dec_Dist = solar_system::calculate_moon_RA_Dec_Dist(JD);
-    if( rtc_have_longitude()  && rtc_have_latitude() ){
+    if( have_backup_domain_longitude()  && have_backup_domain_latitude() ){
       sexagesimal::Sexagesimal longitude = get_backup_domain_longitude();
       sexagesimal::Sexagesimal latitude = get_backup_domain_latitude();
       double altitude = 0.0;

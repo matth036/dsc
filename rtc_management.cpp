@@ -205,11 +205,11 @@ void initial_write_to_backup_reg()
   save_backup_domain_latitude( sexagesimal::VOID_SEXAGESIMAL );
 }
 
-bool rtc_have_longitude(){
+bool have_backup_domain_longitude(){
   return !(get_backup_domain_longitude() == sexagesimal::VOID_SEXAGESIMAL);
 }
 
-bool rtc_have_latitude(){
+bool have_backup_domain_latitude(){
   return !(get_backup_domain_latitude() == sexagesimal::VOID_SEXAGESIMAL);
 }
 
