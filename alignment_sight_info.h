@@ -1,5 +1,5 @@
-#ifndef ALIGNMENT_SIGHT_INFO_H
-#define ALIGNMENT_SIGHT_INFO_H
+#ifndef _ALIGNMENT_SIGHT_INFO_H
+#define _ALIGNMENT_SIGHT_INFO_H
 
 #include <string>
 #include <vector>
@@ -90,4 +90,4 @@ class Alignment_Data_Set{
   bool _has_solution;
 };
 
-#endif  /*  ALIGNMENT_SIGHT_INFO_H  */
+#endif  /*  _ALIGNMENT_SIGHT_INFO_H  */

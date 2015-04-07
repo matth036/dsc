@@ -1,5 +1,5 @@
-#ifndef STAR_DATA_H
-#define STAR_DATA_H
+#ifndef _STAR_DATA_H
+#define _STAR_DATA_H
 #include <stdlib.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -25,4 +25,4 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
-#endif				/* EOF  - STAR_DATA_H  */
+#endif				/* EOF  - _STAR_DATA_H  */

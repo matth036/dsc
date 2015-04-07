@@ -1,5 +1,5 @@
-#ifndef STM32_E407_UTILITIES_H
-#define STM32_E407_UTILITIES_H
+#ifndef _STM32_E407_UTILITIES_H
+#define _STM32_E407_UTILITIES_H
 
 #define SRAM_STACK_HEAP_PROBULATE 1
 
@@ -35,4 +35,5 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
-#endif
+
+#endif /* _STM32_E407_UTILITIES_H */

@@ -33,7 +33,7 @@ ${PREFIX}/${TARGET}/sys-include on the build machine.
 
 The build is conducted in a subdirectory of /usr/local/build.
 Some may find this offensive.  It is easy enough to reset.
-The intentions is to leave the expanded source code in place so the debugger 
+The intention is to leave the expanded source code in place so the debugger 
 can step through and list this code.
 
 The script builds every package in a directory separate from the source

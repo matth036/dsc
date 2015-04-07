@@ -1,5 +1,5 @@
-#ifndef SOLAR_SYSTEM_H
-#define SOLAR_SYSTEM_H
+#ifndef _SOLAR_SYSTEM_H
+#define _SOLAR_SYSTEM_H
 
 #include <string>
 #include "AAElliptical.h"
@@ -9,6 +9,7 @@ namespace solar_system {
   CAAEllipticalPlanetaryDetails calculate_details(std::string body, double JD);
   CAA3DCoordinate calculate_moon_RA_Dec_Dist(double JD);
   std::string solar_system_body_name(int);
+  std::string solar_system_body_name(CAAElliptical::EllipticalObject);
 
   double dot_product(CAA3DCoordinate &, CAA3DCoordinate &);
   CAA3DCoordinate product(double a, CAA3DCoordinate & b);
@@ -27,4 +28,4 @@ namespace solar_system {
 
 }
 
-#endif				/* SOLAR_SYSTEM_H */
+#endif				/* _SOLAR_SYSTEM_H */

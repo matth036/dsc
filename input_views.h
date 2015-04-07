@@ -1,5 +1,5 @@
-#ifndef INPUT_VIEWS_H
-#define INPUT_VIEWS_H
+#ifndef _INPUT_VIEWS_H
+#define _INPUT_VIEWS_H
 
 #include "character_reciever.h"
 #include <string>
@@ -244,4 +244,4 @@ class Alignment_Timestamp_Prompt:public Character_Reciever {
   bool finished;
 };
 
-#endif				/*  INPUT_VIEWS_H  */
+#endif				/*  _INPUT_VIEWS_H  */

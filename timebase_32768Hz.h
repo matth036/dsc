@@ -1,5 +1,5 @@
-#ifndef TIMEBASE_32768HZ_H
-#define TIMEBASE_32768HZ_H
+#ifndef _TIMEBASE_32768HZ_H
+#define _TIMEBASE_32768HZ_H
 
 #include <stm32f4xx.h>
 
@@ -22,4 +22,4 @@ namespace timebase_32768Hz {
 
 }				/* end of namespace. */
 #endif				/* end of ifdef __cplusplus */
-#endif				/* eof TIMEBASE_32768HZ_H */
+#endif				/* eof _TIMEBASE_32768HZ_H */

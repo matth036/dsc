@@ -1,5 +1,5 @@
-#ifndef OUTPUT_VIEWS_H
-#define OUTPUT_VIEWS_H
+#ifndef _OUTPUT_VIEWS_H
+#define _OUTPUT_VIEWS_H
 
 /* 
  * An output view will need character input for actions like 
@@ -344,4 +344,4 @@ class NGC_Details_View:Character_Reciever {
 
 
 
-#endif				/*  OUTPUT_VIEWS_H  */
+#endif				/*  _OUTPUT_VIEWS_H  */

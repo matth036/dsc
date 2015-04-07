@@ -1,5 +1,5 @@
-#ifndef LINEAR_ALBEGRA_INTERFACE_H
-#define LINEAR_ALBEGRA_INTERFACE_H
+#ifndef _LINEAR_ALBEGRA_INTERFACE_H
+#define _LINEAR_ALBEGRA_INTERFACE_H
 
 #include "AA3DCoordinate.h"
 class Alignment_Data_Set;
@@ -39,4 +39,4 @@ namespace linear_algebra_interface {
   void svd_test();
 
 }
-#endif
+#endif /*  _LINEAR_ALBEGRA_INTERFACE_H  */

@@ -126,6 +126,40 @@ std::string solar_system::solar_system_body_name(int num)
   }
 }
 
+/* Overide of solar_system::solar_system_body_name(int num) */
+std::string solar_system_body_name(CAAElliptical::EllipticalObject body){
+  switch (body) {
+  case CAAElliptical::SUN:
+    return "Sun";
+  case CAAElliptical::MERCURY:
+    return "Mercury";
+  case CAAElliptical::VENUS:
+    return "Venus";
+  case CAAElliptical::MARS:
+    return "Mars";
+  case CAAElliptical::JUPITER:
+    return "Jupiter";
+  case CAAElliptical::SATURN:
+    return "Saturn";
+  case CAAElliptical::URANUS:
+    return "Uranus";
+  case CAAElliptical::NEPTUNE:
+    return "Neptune";
+  case CAAElliptical::PLUTO:
+    return "Pluto";
+  default:
+    for (;;) {
+      /* 
+       *  Removed assert for compilation to desktop native for testing.
+       */
+    }
+    return "Sherman's Planet";
+  }
+
+}
+
+
+
 CAA3DCoordinate vsop87_XYZ(const std::string & body, const double JD)
 {
   CAA3DCoordinate lbr;

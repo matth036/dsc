@@ -1,5 +1,5 @@
-#ifndef MICROSECOND_DELAY_H
-#define MICROSECOND_DELAY_H
+#ifndef _MICROSECOND_DELAY_H
+#define _MICROSECOND_DELAY_H
 
 
 /*! 9-15-2013 Changed from TIM13 to TIM14 to avoid conflict with keypad. */
@@ -26,4 +26,4 @@ namespace MicroSecondDelay {
 #endif /* ifdef __cplusplus */
 
 
-#endif				/* MICROSECOND_DELAY_H */
+#endif				/* _MICROSECOND_DELAY_H */

@@ -1,5 +1,5 @@
-#ifndef MENU_VIEWS_H
-#define MENU_VIEWS_H
+#ifndef _MENU_VIEWS_H
+#define _MENU_VIEWS_H
 
 #include <string>
 #include <vector>
@@ -70,4 +70,4 @@ class Numbered_List_Menu:Character_Reciever {
   bool finished;
 };
 
-#endif				/* MENU_VIEWS_H */
+#endif				/* _MENU_VIEWS_H */

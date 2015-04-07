@@ -1,5 +1,5 @@
-#ifndef NAVIGATION_STAR_H
-#define NAVIGATION_STAR_H
+#ifndef _NAVIGATION_STAR_H
+#define _NAVIGATION_STAR_H
 
 #include <stdlib.h>
 #include <stddef.h>
@@ -40,4 +40,4 @@ namespace navigation_star {
 
 }       /* namespace navigation_star */
 
-#endif	/* EOF  -  NAVIGATION_STAR_H */
+#endif	/* EOF  -  _NAVIGATION_STAR_H */

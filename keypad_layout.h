@@ -1,5 +1,5 @@
-#ifndef KEYPAD_LAYOUT_H
-#define KEYPAD_LAYOUT_H
+#ifndef _KEYPAD_LAYOUT_H
+#define _KEYPAD_LAYOUT_H
 
 #ifndef KEYPAD_TO_USE 
 #define KEYPAD_TO_USE TELEPHONE_AND_ABCD
@@ -45,4 +45,4 @@
 #endif
 
 
-#endif
+#endif   /*  _KEYPAD_LAYOUT_H  */

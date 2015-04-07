@@ -1,5 +1,5 @@
-#ifndef QUADRATURE_DECODER_H
-#define QUADRATURE_DECODER_H
+#ifndef _QUADRATURE_DECODER_H
+#define _QUADRATURE_DECODER_H
 
 /****************************  
 DM00042534.pdf describes timers & counters
@@ -112,4 +112,4 @@ class Fake_Decoder : public Decoder_Interface {
 };
 
 
-#endif	/*** eof QUADRATURE_DECODER_H */
+#endif	/*** eof _QUADRATURE_DECODER_H */

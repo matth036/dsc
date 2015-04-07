@@ -1,5 +1,5 @@
-#ifndef BUILD_DATE_H
-#define BUILD_DATE_H
+#ifndef _BUILD_DATE_H
+#define _BUILD_DATE_H
 
 /* These functions return information about the build time of the application.
  * They provide a reasonably current time value in the case of an un-set real time clock.
@@ -25,4 +25,4 @@ int build_month_num( const char* Month );
 }
 #endif
 
-#endif
+#endif  /* _BUILD_DATE_H */

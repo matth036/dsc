@@ -90,6 +90,11 @@ uint32_t sram_stack_heap_probulate(uint32_t depth)
   uint32_t heap_address;
   uint32_t *some_data;
   int i;
+  /* 
+   * Record information indicative of where we are in the stack. 
+   * The address of the local variable stack_item.
+   *  
+   **/
   stack_address = (uint32_t) & stack_item;
   if (stack_address > max_stack) {
     max_stack = stack_address;
@@ -97,9 +102,10 @@ uint32_t sram_stack_heap_probulate(uint32_t depth)
   if (stack_address < min_stack) {
     min_stack = stack_address;
   }
+  /* Allocate something. It's addres is in heap memory. */
   some_data = (uint32_t *) malloc(BLOCK_SIZE * sizeof(uint32_t));
-  if (!some_data) {
-    /* Because * don't know how to examine the static versions in the debugger. */
+  if (!some_data) { /* malloc failed, returning a null.  */
+    /* Because I don't know how to examine the static versions in the debugger. */
     max_heap_local = max_heap;
     min_heap_local = min_heap;
     max_stack_local = max_stack;
@@ -110,8 +116,11 @@ uint32_t sram_stack_heap_probulate(uint32_t depth)
      * $10 = 122
      * (gdb) print (min_stack_local - max_heap_local)/1024
      * $11 = 1
+     *
+     *  (max_stack_local - min_heap_local)/1024  indicates how many k-bytes were available before calling this function.
+     *  (min_stack_local - max_heap_local)/1024  indicates how close to a stack-heap collision we are.
     ******************/
-    return max_stack - min_heap;
+    return max_stack - min_heap; /* ending recursion. */
   } else {
     for (i = 0; i < BLOCK_SIZE; ++i) {
       some_data[i] = 0x0000ABBA;
@@ -123,11 +132,10 @@ uint32_t sram_stack_heap_probulate(uint32_t depth)
     if (heap_address < min_heap) {
       min_heap = heap_address;
     }
-
     if (depth > 0) {
-      sram_stack_heap_probulate(depth - 1);
+      sram_stack_heap_probulate(depth - 1);  /* recursivly call this function if depth is not exhausted. */
     }
-    /* Because * don't know how to examine the static versions in the debugger. */
+    /* Because I don't know how to examine the static versions in the debugger. */
     max_heap_local = max_heap;
     min_heap_local = min_heap;
     max_stack_local = max_stack;
@@ -138,9 +146,7 @@ uint32_t sram_stack_heap_probulate(uint32_t depth)
     some_data[3] = min_stack_local;
     some_data[4] = 777777;
     free( some_data );
-
-    
-    return max_stack - min_heap;
+    return max_stack - min_heap; 
   }
 
 

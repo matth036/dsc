@@ -1,5 +1,5 @@
-#ifndef MATRIX_KEYPAD_H
-#define MATRIX_KEYPAD_H
+#ifndef _MATRIX_KEYPAD_H
+#define _MATRIX_KEYPAD_H
 
 /* @TODO Remove this board specific include. (If necesary, use a chip specific include.) */
 
@@ -75,4 +75,4 @@ extern "C" {
 }
 #endif
 
-#endif				/* MATRIX_KEYPAD_H */
+#endif				/* _MATRIX_KEYPAD_H */

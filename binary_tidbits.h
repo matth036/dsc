@@ -1,5 +1,5 @@
-#ifndef BINARY_TIDBITS_H
-#define BINARY_TIDBITS_H
+#ifndef _BINARY_TIDBITS_H
+#define _BINARY_TIDBITS_H
 
 /* These values could well be contexpr. We provide them as functions
  * as a reminder that these are only conventions.  Reversing any of 
@@ -32,4 +32,4 @@ namespace binary_tidbits{
 
 }
 
-#endif /* BINARY_TIDBITS_H */
+#endif /* _BINARY_TIDBITS_H */

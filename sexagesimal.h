@@ -1,5 +1,5 @@
-#ifndef SEXAGESIMAL_H
-#define SEXAGESIMAL_H
+#ifndef _SEXAGESIMAL_H
+#define _SEXAGESIMAL_H
 
 #include <stdint.h>
 
@@ -70,4 +70,4 @@ namespace sexagesimal{
 } // namespace sexagesimal
 #endif
 
-#endif
+#endif  /*  _SEXAGESIMAL_H  */

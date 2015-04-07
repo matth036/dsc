@@ -1,5 +1,5 @@
-#ifndef CHARLCD_STM32F_H
-#define CHARLCD_STM32F_H
+#ifndef _CHARLCD_STM32F_H
+#define _CHARLCD_STM32F_H
 
 #include "stm32f4xx_gpio.h"
 #include "stm32f4xx.h"
@@ -147,4 +147,4 @@ private:
   //  bool blocked_for_PWM;
 };
 
-#endif // CHARLCD_STM32F_H
+#endif /*  _CHARLCD_STM32F_H  */
