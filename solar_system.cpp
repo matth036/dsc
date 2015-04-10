@@ -312,6 +312,7 @@ CAA3DCoordinate solar_system::calculate_moon_RA_Dec_Dist(double JD)
   RA_Dec_Dist.X = RA_DEC.X;
   RA_Dec_Dist.Y = RA_DEC.Y;
   RA_Dec_Dist.Z = R;
+  /* Correct for parallax elsewhre. */
 #if 0
     sexagesimal::Sexagesimal longitude = get_backup_domain_longitude();
     sexagesimal::Sexagesimal latitude = get_backup_domain_latitude();

@@ -241,7 +241,7 @@ CAA2DCoordinate burnham_correct(CAA2DCoordinate RA_Dec, double JD ){
   return RA_Dec;
 }
 
-/* Overide wher initial Julian date is solar_system::J2000_0 = 2451545.0  */
+/* Overide where initial Julian date is solar_system::J2000_0 = 2451545.0  */
 CAA2DCoordinate precession_and_nutation_correct_from_mean_eqinox(CAA2DCoordinate RA_Dec_J2000,
 						double JD)
 {

@@ -23,17 +23,10 @@ CAA2DCoordinate topocentric_unit_vectors::UV_to_AziAlt(CAA3DCoordinate topocentr
 }
 
 
-
-
-
 /* 
  * Used for transforming 
  *    {Azimuth,Altitude,1.0}   <--[to|from]-->  unit vector {x,y,z}
  * in the topocentic coordinate system.
-  
-
- * The z coordinate of corresponding to an object above the horizon will be negative.
- * Think of the unit vector as representing the direction of an incoming photon.
  *
  * Debugged under the notion that azimuth is zero to the north and increases
  * moving eastward from north.  Should work fine if zero azimuth is south.
@@ -54,11 +47,8 @@ CAA3DCoordinate topocentric_unit_vectors::XYZ_to_AziAltR(CAA3DCoordinate xyz){
 }
 
 
-/*
- * The Jacobian of this transformation is positive IF R > 0.
- */
-CAA3DCoordinate topocentric_unit_vectors::AziAltR_to_XYZ(CAA3DCoordinate azi_alt_r){
 
+CAA3DCoordinate topocentric_unit_vectors::AziAltR_to_XYZ(CAA3DCoordinate azi_alt_r){
   azi_alt_r.X -= 180;
   azi_alt_r.Y = -azi_alt_r.Y;
   CAA3DCoordinate temp = LBR_to_XYZ( azi_alt_r );  

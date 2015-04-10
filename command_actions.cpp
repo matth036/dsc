@@ -87,11 +87,11 @@ RA_Dec_topocentric = CAAParallax::Equatorial2Topocentric(ra_dec_dist.X,
 #endif
 
   RA_Dec_topocentric = Equatorial2TopocentricRigorousAlternative(ra_dec_dist.X,
-								   ra_dec_dist.Y,
+								 ra_dec_dist.Y,
 								 ra_dec_dist.Z/solar_system::AU_kilometers,
-								   longitude.to_double(),
+								 longitude.to_double(),
 								 latitude.to_double(),
-								   0.0,
+								 0.0,
 								 JD);
 
   view->set_text_3( sexagesimal::Sexagesimal(RA_Dec_topocentric.X).to_string() );
@@ -119,7 +119,30 @@ void debug_action(){
   moon_parallax_test();
 }
 
-
+/* 
+ * After locating an object it is likely not precisely centered in the eyepiece due to errors.
+ * If so, after centering the object, call this function for prompts to keep it centered.
+*/
+void point_to_where_already_pointed_action(){
+  Simple_Altazimuth_Scope* scope = get_main_simple_telescope();
+  // CAA2DCoordinate  Azi_and_Alt = scope->current_topocentric_Azi_and_Alt();
+  CAA2DCoordinate RA_and_Dec = scope->current_RA_and_Dec();
+  std::unique_ptr< Pushto_Output_View > view = 
+    std::unique_ptr<Pushto_Output_View >( new Pushto_Output_View( RA_and_Dec ) );
+  view->set_label_2( "Hold Position" );
+  auto lcd = check_out_main_lcd();
+  while( !view->is_finished() ){
+    lcd->setCursor(0,0);
+    lcd = view->write_first_line(std::move(lcd));
+    lcd->setCursor(0,1);
+    lcd = view->write_second_line(std::move(lcd));
+    lcd->setCursor(0,2);
+    lcd = view->write_third_line(std::move(lcd));
+    lcd->setCursor(0,3);
+    lcd = view->write_fourth_line(std::move(lcd));
+  }
+  check_in_main_lcd(std::move(lcd));
+}
 
 void ngc_point_to_action(char *yytext, int yyleng)
 {
@@ -167,6 +190,7 @@ void ngc_point_to_action(char *yytext, int yyleng)
   double JD = JD_timestamp_pretty_good_000();
   double deltaT = CAADynamicalTime::DeltaT( JD );
   RA_Dec = apply_aberration( RA_Dec, JD + deltaT/86400.0 );
+  /* This precess if from J2000. */
   RA_Dec = precession_and_nutation_correct_from_mean_eqinox( RA_Dec, JD );
 
   auto lcd = check_out_main_lcd();
