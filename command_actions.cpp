@@ -111,12 +111,15 @@ RA_Dec_topocentric = CAAParallax::Equatorial2Topocentric(ra_dec_dist.X,
   check_in_main_lcd(std::move(lcd));
 }
 
+/* Hackish forward declaration. @*/
 
 
+void point_to_where_already_pointed_action();
 
 void debug_action(){
-  //  information_view_test();
-  moon_parallax_test();
+//  information_view_test();
+  //moon_parallax_test();
+  point_to_where_already_pointed_action();
 }
 
 /* 
@@ -129,7 +132,7 @@ void point_to_where_already_pointed_action(){
   CAA2DCoordinate RA_and_Dec = scope->current_RA_and_Dec();
   std::unique_ptr< Pushto_Output_View > view = 
     std::unique_ptr<Pushto_Output_View >( new Pushto_Output_View( RA_and_Dec ) );
-  view->set_label_2( "Hold Position" );
+  view->set_label_2( "(To Hold Position)" );
   auto lcd = check_out_main_lcd();
   while( !view->is_finished() ){
     lcd->setCursor(0,0);
