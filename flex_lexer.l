@@ -54,7 +54,8 @@ CC2000                       epoch_J2000_point_to();
 CC1950                       epoch_B1950_point_to();
 CC1900                       epoch_B1900_point_to();
 
-BAC00                        point_to_where_already_pointed_action();  /* Maintian celestial position. */
+AAC{DIGIT}{1,3}              messier_catalog_point_to( yytext, yyleng ); /* Point to specified Messier Catalog object. (Two A's kinda look like M)  */
+BAC00                        point_to_where_already_pointed_action();    /* Maintian celestial position. */
 
 AAA555                       display_current_time_view();
 AAA556                       add_seconds_dialog();

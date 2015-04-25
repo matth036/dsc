@@ -115,9 +115,27 @@ RA_Dec_topocentric = CAAParallax::Equatorial2Topocentric(ra_dec_dist.X,
 
 void debug_action(){
 //  information_view_test();
-  //moon_parallax_test();
-  point_to_where_already_pointed_action();
+  moon_parallax_test();
+  //  point_to_where_already_pointed_action();
 }
+
+
+void messier_catalog_point_to( char* yytext, int yyleng ){
+  int messier_num;
+  int n = sscanf(yytext+3, "%d", &messier_num);
+  if (n != 1) {
+    return; /* man sscanf indicates the return value is the number of succesfully assigned. */
+  }
+  if( messier_num <= 0 || messier_num >= 110 ){
+    return;
+  }
+  /* And so on. */ 
+
+}
+
+
+
+
 
 /* 
  * After locating an object it is likely not precisely centered in the eyepiece due to errors.
