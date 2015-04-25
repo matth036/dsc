@@ -1,6 +1,7 @@
 #include "messier.h"
 #include "ngc_list_access.h"
 
+/* A helper function not declared in header messier.h  */
 bool is_messier_with_no_ngc( int messier_number ){
   if( messier_number < 1 )return false;
   if( messier_number > 110 )return false;
@@ -10,6 +11,7 @@ bool is_messier_with_no_ngc( int messier_number ){
   return false;
 }
 
+/* A helper function not declared in header messier.h  */
 CAA2DCoordinate messier_with_no_ngc_J2000_RA_and_Dec( int number ){
   CAA2DCoordinate result;
   sexagesimal::Sexagesimal RA;
@@ -38,26 +40,29 @@ CAA2DCoordinate messier_with_no_ngc_J2000_RA_and_Dec( int number ){
 
 
 
-CAA2DCoordinate messier_J2000_RA_and_Dec( int number ){
+CAA2DCoordinate messier_J2000_RA_and_Dec( int number, bool &OK ){
   if( is_messier_with_no_ngc(number) ){
     return messier_with_no_ngc_J2000_RA_and_Dec( number );
   }
   CAA2DCoordinate result;
   int ngc_number = messier_to_ngc(number);
   if( ngc_number == -1 ){
+    OK = false;
     return result;  /* returns {0.0,0.0} */
   }
   int index = ngc_list_access::get_index( ngc_number );
   if( index == -1 ){
+    OK = false;
     return result;  /* Also returns {0.0,0.0} */
   }
   result.X = ngc_list_access::get_RA_i(index).to_double();
   result.Y = ngc_list_access::get_Dec_i(index).to_double();
+  OK = true;
   return result;
 }
 
 
-
+/* Big old switch statement.  Wouldn't hurt to proof read. */
 int messier_to_ngc( int messier_number ){
   switch( messier_number ){
   case 1:
