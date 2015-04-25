@@ -81,12 +81,6 @@ CAA2DCoordinate precession_correct(CAA2DCoordinate RA_Dec_J2000, double JD_0, do
 
 
 
-
-
-
-
-
-
 CAA2DCoordinate precession_and_nutation_correct(CAA2DCoordinate RA_Dec_J2000,
 						double JD)
 {
