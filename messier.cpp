@@ -38,10 +38,15 @@ CAA2DCoordinate messier_with_no_ngc_J2000_RA_and_Dec( int number ){
   return CAA2DCoordinate{};
 }
 
-
-
+/* Intended for pointing to Messier objects. */
 CAA2DCoordinate messier_numbers::messier_J2000_RA_and_Dec( int number, bool &OK ){
   if( is_messier_with_no_ngc(number) ){
+    /*
+     * Recording success only because  
+     * messier_with_no_ngc_J2000_RA_and_Dec( number ); 
+     * has been tested.  Test again if re-written.
+     */
+    OK = true;
     return messier_with_no_ngc_J2000_RA_and_Dec( number );
   }
   CAA2DCoordinate result;
@@ -53,7 +58,8 @@ CAA2DCoordinate messier_numbers::messier_J2000_RA_and_Dec( int number, bool &OK 
   int index = ngc_list_access::get_index( ngc_number );
   if( index == -1 ){
     OK = false;
-    return result;  /* Also returns {0.0,0.0} */
+    /* Also returns {0.0,0.0},  Return via this statement may indicate a deficiency in ngc_list.h (which is machine generated.)  */
+    return result;  
   }
   result.X = ngc_list_access::get_RA_i(index).to_double();
   result.Y = ngc_list_access::get_Dec_i(index).to_double();
