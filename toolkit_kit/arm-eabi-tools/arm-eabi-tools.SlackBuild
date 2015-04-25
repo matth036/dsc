@@ -412,7 +412,7 @@ if [ -f ${PKG00_BIG_GLOB}${PREFIX}/arm-none-eabi/include/c++/4.8.2/initializer_l
   touch second_build_succeeded
 else
   echo "blather Problem with second build:"
-  echo "blather C++ header file nitializer_list is not present where expected."
+  echo "blather C++ header file initializer_list is not present where expected."
   touch second_build_failed
 fi
 

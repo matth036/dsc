@@ -114,7 +114,7 @@ RA_Dec_topocentric = CAAParallax::Equatorial2Topocentric(ra_dec_dist.X,
 
 
 void debug_action(){
-//  information_view_test();
+  //  information_view_test();
   moon_parallax_test();
   //  point_to_where_already_pointed_action();
 }
@@ -124,9 +124,9 @@ void messier_catalog_point_to( char* yytext, int yyleng ){
   int messier_num;
   int n = sscanf(yytext+3, "%d", &messier_num);
   if (n != 1) {
-    return; /* man sscanf indicates the return value is the number of succesfully assigned. */
+    return; /* man sscanf indicates the return value is the number of succesfully assigned items. */
   }
-  if( messier_num <= 0 || messier_num >= 110 ){
+  if( messier_num < 1 || messier_num > 110 ){
     return;
   }
   /* And so on. */ 
@@ -139,7 +139,7 @@ void messier_catalog_point_to( char* yytext, int yyleng ){
 
 /* 
  * After locating an object it is likely not precisely centered in the eyepiece due to errors.
- * If so, after centering the object, call this function for prompts to keep it centered.
+ * If so, after centering the object, call this function for prompt to keep it centered.
 */
 void point_to_where_already_pointed_action(){
   Simple_Altazimuth_Scope* scope = get_main_simple_telescope();
@@ -167,9 +167,9 @@ void ngc_point_to_action(char *yytext, int yyleng)
   int ngc_num;
   int n = sscanf(yytext+2, "%d", &ngc_num);
   if (n != 1) {
-    return; /* man sscanf indicates the return value is the number of succesfully assigned. */
+    return; /* man sscanf indicates the return value is the number of succesfully assigned items. */
   }
-  if( ngc_num <= 0 || ngc_num > 7840 ){
+  if( ngc_num < 1 || ngc_num > 7840 ){
     return;
   }
   int index = ngc_list_access::get_index( ngc_num );
