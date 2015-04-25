@@ -111,10 +111,7 @@ RA_Dec_topocentric = CAAParallax::Equatorial2Topocentric(ra_dec_dist.X,
   check_in_main_lcd(std::move(lcd));
 }
 
-/* Hackish forward declaration. @*/
 
-
-void point_to_where_already_pointed_action();
 
 void debug_action(){
 //  information_view_test();

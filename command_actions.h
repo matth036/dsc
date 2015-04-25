@@ -17,6 +17,9 @@ void epoch_J2000_point_to();
 void epoch_B1950_point_to();
 void epoch_B1900_point_to();
 void Burnham_Handbook_Point_To();
+void point_to_where_already_pointed_action();
+
+
 
 void angular_coordinate_view();
 
