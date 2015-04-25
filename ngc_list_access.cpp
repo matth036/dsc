@@ -6,7 +6,6 @@ int32_t ngc_list_access::ngc_list_size(){
   return NGC_LIST_SIZE; /* defined at the bottom of very large file ngc_list.h */
 }
 
-
 /* returns -1 if ngc_num is not in the onboard catalog. */
 int ngc_list_access::get_index( uint32_t ngc_num ){
   int index = -1;
@@ -18,8 +17,6 @@ int ngc_list_access::get_index( uint32_t ngc_num ){
   }
   return index;
 }
-
-
 
 float ngc_list_access::get_magnitude_i( int index ){
   return ngc_list[index].Vmag;
@@ -44,3 +41,4 @@ sexagesimal::Sexagesimal ngc_list_access::get_Dec_i( int index ){
   DEC.set_binary_data( ngc_list[index].DEC_data );
   return DEC;
 }
+
