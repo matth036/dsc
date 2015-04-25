@@ -12,6 +12,7 @@
 
 #include "ngc_list_access.h"
 #include "starlist_access.h"
+#include "messier.h"
 #include "extra_solar_transforms.h"
 #include "telescope_model.h"
 #include "build_date.h"
@@ -129,8 +130,30 @@ void messier_catalog_point_to( char* yytext, int yyleng ){
   if( messier_num < 1 || messier_num > 110 ){
     return;
   }
-  /* And so on. */ 
-
+  bool ok = false;
+  CAA2DCoordinate RA_and_Dec = messier_numbers::messier_J2000_RA_and_Dec( messier_num, ok );
+  if( !ok ){
+    return;
+  }
+  double JD = JD_timestamp_pretty_good_000();
+  double deltaT = CAADynamicalTime::DeltaT( JD );
+  RA_and_Dec = apply_aberration( RA_and_Dec, JD + deltaT/86400.0 );
+  /* This precess is from J2000. */
+  RA_and_Dec = precession_and_nutation_correct_from_mean_eqinox( RA_and_Dec, JD );
+  auto view = std::unique_ptr<Pushto_Output_View >( new Pushto_Output_View( RA_and_Dec ) );
+  view->set_label_2( "Messier Object M" + sexagesimal::to_string_hack( static_cast<uint32_t>(messier_num) ));
+  auto lcd = check_out_main_lcd();
+  while( !view->is_finished() ){
+    lcd->setCursor(0,0);
+    lcd = view->write_first_line(std::move(lcd));
+    lcd->setCursor(0,1);
+    lcd = view->write_second_line(std::move(lcd));
+    lcd->setCursor(0,2);
+    lcd = view->write_third_line(std::move(lcd));
+    lcd->setCursor(0,3);
+    lcd = view->write_fourth_line(std::move(lcd));
+  }
+  check_in_main_lcd(std::move(lcd));
 }
 
 
