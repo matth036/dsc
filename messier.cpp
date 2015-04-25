@@ -5,7 +5,7 @@
 bool is_messier_with_no_ngc( int messier_number ){
   if( messier_number < 1 )return false;
   if( messier_number > 110 )return false;
-  if( messier_to_ngc( messier_number ) == -1 ){
+  if( messier_numbers::messier_to_ngc( messier_number ) == -1 ){
     return true;
   }
   return false;
@@ -40,7 +40,7 @@ CAA2DCoordinate messier_with_no_ngc_J2000_RA_and_Dec( int number ){
 
 
 
-CAA2DCoordinate messier_J2000_RA_and_Dec( int number, bool &OK ){
+CAA2DCoordinate messier_numbers::messier_J2000_RA_and_Dec( int number, bool &OK ){
   if( is_messier_with_no_ngc(number) ){
     return messier_with_no_ngc_J2000_RA_and_Dec( number );
   }
@@ -63,7 +63,7 @@ CAA2DCoordinate messier_J2000_RA_and_Dec( int number, bool &OK ){
 
 
 /* Big old switch statement.  Wouldn't hurt to proof read. */
-int messier_to_ngc( int messier_number ){
+int messier_numbers::messier_to_ngc( int messier_number ){
   switch( messier_number ){
   case 1:
     return 1952;
