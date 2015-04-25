@@ -103,6 +103,7 @@ CPPSRC+=sexagesimal.cpp
 CPPSRC+=navigation_star.cpp
 CPPSRC+=starlist_access.cpp
 CPPSRC+=ngc_list_access.cpp
+CPPSRC+=messier.cpp
 CPPSRC+=controller.cpp
 CPPSRC+=telescope_model.cpp
 CPPSRC+=rtc_management.cpp
