@@ -31,6 +31,12 @@ namespace specificities{
 
   /* MACROS such as GPIO_Pin_7 are #defined in stm32f4xx_gpio.h */
 
+
+
+
+
+
+
   constexpr uint16_t char_lcd_RS_pin  = GPIO_Pin_0;        /* RS  */
   constexpr uint16_t char_lcd_RW_pin  = GPIO_Pin_2;        /* R/W */
   constexpr uint16_t char_lcd_E_pin   = GPIO_Pin_4;        /* E  (Enable) */

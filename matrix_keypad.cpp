@@ -1,4 +1,10 @@
 #include "matrix_keypad.h"
+/*
+  #include "main.h" makes this class less portable.
+  I think it was done this way because 
+  void main_keypad_time_tick_action()
+  is in main.cpp.
+ */
 #include "main.h"
 #include "controller.h"
 
@@ -44,7 +50,8 @@ void config_keypad_timer()
 }
 #endif
 
-/* This is the action called by the keypad timer.
+/* 
+   This is the action called by the keypad timer.
    It may be neccesary to move this to main.cpp.
 */
 
