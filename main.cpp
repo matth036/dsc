@@ -23,11 +23,9 @@ __IO uint32_t TimeDisplay = 0;
 
 ////////////////////////////////////////
 
-
 void Delay(uint32_t nTime);
 uint32_t loop_counter = 0;
 using std::unique_ptr;
-
 
 static std::unique_ptr < Matrix_Keypad > main_keypad_ptr;
 
@@ -59,19 +57,20 @@ void check_in_main_lcd(std::unique_ptr < CharLCD_STM32F > &&returned_ptr)
   main_lcd_ptr = std::move(returned_ptr);
 }
 
-static Alignment_Data_Set* main_sight_data = nullptr;
+static Alignment_Data_Set *main_sight_data = nullptr;
 
-Alignment_Data_Set* get_main_sight_data(){
+Alignment_Data_Set *get_main_sight_data()
+{
   return main_sight_data;
 }
 
 /* Needs to be set in main(). */
-static Simple_Altazimuth_Scope* main_simple_telescope = nullptr; 
+static Simple_Altazimuth_Scope *main_simple_telescope = nullptr;
 
-Simple_Altazimuth_Scope* get_main_simple_telescope(){
+Simple_Altazimuth_Scope *get_main_simple_telescope()
+{
   return main_simple_telescope;
 }
-
 
 int main(void)
 {
@@ -83,7 +82,6 @@ int main(void)
    */
   //  STM32_E407_led_setup();
   // timebase_5::timebase_5_configure();
-
 
   MicroSecondDelay::microsecond_delay_configure();
   /* This mysterious command turns on the hardware floating point unit. */
@@ -106,9 +104,9 @@ int main(void)
    * in an intializer list,
    * followed by the corresponding ports in another initializer list.
    */
-  main_lcd_ptr = unique_ptr < CharLCD_STM32F > ( new CharLCD_STM32F { {
-	  specificities::char_lcd_RS_pin,
-	  specificities::char_lcd_RW_pin,  /* R/W */
+  main_lcd_ptr = unique_ptr < CharLCD_STM32F > (new CharLCD_STM32F {{
+	specificities::char_lcd_RS_pin, 
+	  specificities::char_lcd_RW_pin,	/* R/W */
 	  specificities::char_lcd_E_pin,
 	  specificities::char_lcd_DB0_pin,
 	  specificities::char_lcd_DB1_pin,
@@ -117,22 +115,22 @@ int main(void)
 	  specificities::char_lcd_DB4_pin,
 	  specificities::char_lcd_DB5_pin,
 	  specificities::char_lcd_DB6_pin,
-	  specificities::char_lcd_DB7_pin,
-
+	  specificities::char_lcd_DB7_pin
 	  }, 
-	{GPIOD,  /* @TODO treat the ports as was treated the pins. */
-	    GPIOD,
-	    GPIOD,
-	    GPIOD,
-	    GPIOD,
-	    GPIOD,
-	    GPIOD,
-	    GPIOD,
-	    GPIOD,
-	    GPIOD,
-	    GPIOD,
-	    }}
-  );
+	{
+	specificities::char_lcd_RS_port,
+	  specificities::char_lcd_RW_port,	/* R/W */
+	  specificities::char_lcd_E_port,
+	  specificities::char_lcd_DB0_port,
+	  specificities::char_lcd_DB1_port,
+	  specificities::char_lcd_DB2_port,
+	  specificities::char_lcd_DB3_port,
+	  specificities::char_lcd_DB4_port,
+	  specificities::char_lcd_DB5_port,
+	  specificities::char_lcd_DB6_port,
+	  specificities::char_lcd_DB7_port
+	  }}
+    );
 
   main_lcd_ptr->begin(4, 20);
 
@@ -146,16 +144,16 @@ int main(void)
   lcd->display();
   lcd->clear();
   lcd->home();
-  for( int i=0; i<4; ++i ){
-    lcd->setCursor(0, i%4);
+  for (int i = 0; i < 4; ++i) {
+    lcd->setCursor(0, i % 4);
     lcd->print("  LCD is Setup  ");
   }
   MicroSecondDelay::millisecond_delay(399);
 
   lcd->clear();
   lcd->home();
-  for( int i=0; i<8; ++i ){
-    lcd->setCursor(0, i%4);
+  for (int i = 0; i < 8; ++i) {
+    lcd->setCursor(0, i % 4);
     lcd->print(i);
     lcd->print("  Look out, world!");
     MicroSecondDelay::millisecond_delay(200);
@@ -186,39 +184,36 @@ int main(void)
   // Azimuth
   uint32_t azi_ticks;
   azi_ticks = get_backup_domain_azimuth_ticks_per_rev();
-  if( azi_ticks == 0  ){
+  if (azi_ticks == 0) {
     azi_ticks = specificities::azimuth_ticks_per_revolution;
     /*  
      * @TODO Prompt for  azimuth_ticks_per_rev  with default value  specificities::azimuth_ticks_per_revolution
      */
-    save_backup_domain_azimuth_ticks_per_rev( azi_ticks );
+    save_backup_domain_azimuth_ticks_per_rev(azi_ticks);
   }
-  Quadrature_Decoder decoder_0{GPIOD,GPIO_Pin_13,
-     GPIOD,GPIO_Pin_12,
-     AZIMUTH_DECODER_TIMER_TO_USE,
-     azi_ticks};
+  Quadrature_Decoder decoder_0 {
+  GPIOD, GPIO_Pin_13,
+	GPIOD, GPIO_Pin_12, AZIMUTH_DECODER_TIMER_TO_USE, azi_ticks};
 
   // Altitude
   uint32_t alti_ticks = get_backup_domain_altitude_ticks_per_rev();
-  if( alti_ticks == 0 ){
-    alti_ticks = specificities::altitude_ticks_per_revolution; 
+  if (alti_ticks == 0) {
+    alti_ticks = specificities::altitude_ticks_per_revolution;
     /* @TODO Prompt for value. */
-    save_backup_domain_altitude_ticks_per_rev( alti_ticks );
+    save_backup_domain_altitude_ticks_per_rev(alti_ticks);
   }
-  Quadrature_Decoder decoder_1{GPIOE,GPIO_Pin_9,
-      GPIOE,GPIO_Pin_11,
-      ALTITUDE_DECODER_TIMER_TO_USE,
-      alti_ticks};
+  Quadrature_Decoder decoder_1 {
+  GPIOE, GPIO_Pin_9,
+	GPIOE, GPIO_Pin_11, ALTITUDE_DECODER_TIMER_TO_USE, alti_ticks};
 
-  decoder_0.set_count( specificities::azimuth_startup_count );   // Azimuth
-  decoder_1.set_count( specificities::altitude_startup_count ); // Altitude
+  decoder_0.set_count(specificities::azimuth_startup_count);	// Azimuth
+  decoder_1.set_count(specificities::altitude_startup_count);	// Altitude
 
+  main_simple_telescope = new Simple_Altazimuth_Scope {
+  std::unique_ptr < Quadrature_Decoder > (&decoder_0),
+	std::unique_ptr < Quadrature_Decoder > (&decoder_1)};
 
-
-  main_simple_telescope = new Simple_Altazimuth_Scope{ std::unique_ptr<Quadrature_Decoder>(&decoder_0), 
-      std::unique_ptr<Quadrature_Decoder>(&decoder_1) };
-
-  main_sight_data = new Alignment_Data_Set( main_simple_telescope );
+  main_sight_data = new Alignment_Data_Set(main_simple_telescope);
   /////////////////////////////////////////////////
   lcd->home();
   lcd->clear();
@@ -230,11 +225,11 @@ int main(void)
   lcd->setCursor(0, 0);
   lcd->print("Azimuth Ticks ");
   lcd->setCursor(0, 1);
-  lcd->print( decoder_0.get_ticks_per_revolution() );
+  lcd->print(decoder_0.get_ticks_per_revolution());
   lcd->setCursor(0, 2);
   lcd->print("Altitude Ticks ");
   lcd->setCursor(0, 3);
-  lcd->print( decoder_1.get_ticks_per_revolution() );
+  lcd->print(decoder_1.get_ticks_per_revolution());
   MicroSecondDelay::millisecond_delay(4000);
   lcd->home();
   lcd->clear();
@@ -245,7 +240,7 @@ int main(void)
   lcd->setCursor(0, 0);
   while (1) {
     ++loop_counter;
-    int n; /* Counts the characters printed to lcd. */
+    int n;			/* Counts the characters printed to lcd. */
     if (dsc_controller::cmd_buffer.size() > 0) {
       /* If there is a command to execute do so. */
       std::string command = dsc_controller::pop_cmd_buffer();
@@ -268,7 +263,7 @@ int main(void)
        * the command action function will be called.  Many (most)
        * commands will write to the LCD.  */
       check_in_main_lcd(std::move(lcd));
-      scan_for_action(  command );
+      scan_for_action(command);
       lcd = check_out_main_lcd();
     }
     /* This is what the main loop does if there is no command to execute. 
@@ -296,31 +291,30 @@ int main(void)
     }
 
     Alt_Azi_Snapshot_t data = main_simple_telescope->get_snapshot();
-    lcd->setCursor( 0, 1);
+    lcd->setCursor(0, 1);
     n = 0;
     n += lcd->print("Alt ");
-    n += lcd->print( data.alt_value );
-    while (n < 10) {  // TODO USE 
+    n += lcd->print(data.alt_value);
+    while (n < 10) {		// TODO USE 
       n += lcd->print(' ');
     }
     n += lcd->print("Az ");
-    n += lcd->print( data.azi_value );
-    while (n < 20) {
-      n += lcd->print(' ');
-    }
-    
-    sexagesimal::Sexagesimal longitude = get_backup_domain_longitude();
-    sexagesimal::Sexagesimal latitude = get_backup_domain_latitude();
-    n=0;
-    n += lcd->print( longitude.to_longitude_string() ); 
-    while (n < 10) {
-      n += lcd->print(' ');
-    }
-    n += lcd->print( latitude.to_latitude_string() ); 
+    n += lcd->print(data.azi_value);
     while (n < 20) {
       n += lcd->print(' ');
     }
 
+    sexagesimal::Sexagesimal longitude = get_backup_domain_longitude();
+    sexagesimal::Sexagesimal latitude = get_backup_domain_latitude();
+    n = 0;
+    n += lcd->print(longitude.to_longitude_string());
+    while (n < 10) {
+      n += lcd->print(' ');
+    }
+    n += lcd->print(latitude.to_latitude_string());
+    while (n < 20) {
+      n += lcd->print(' ');
+    }
 
   }
 }

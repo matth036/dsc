@@ -16,9 +16,6 @@ namespace specificities{
   constexpr bool latitude_is_north = true;
   constexpr bool longitude_is_west = true;
 
-
-
-
   /* 
    * Ultimately, the startup count should not matter.
    * For the purpose of debugging and trouble shooting I arrange
@@ -45,6 +42,21 @@ namespace specificities{
   constexpr uint16_t char_lcd_DB5_pin = GPIO_Pin_9;        /* DB5 */
   constexpr uint16_t char_lcd_DB6_pin = GPIO_Pin_11;       /* DB6 */
   constexpr uint16_t char_lcd_DB7_pin = GPIO_Pin_15;       /* DB7 */
+
+  // A pointer to a struct. 
+  // using port = GPIO_TypeDef*; 
+
+  constexpr GPIO_TypeDef* char_lcd_RS_port  = GPIOD;        /* RS  */
+  constexpr GPIO_TypeDef* char_lcd_RW_port  = GPIOD;        /* R/W */
+  constexpr GPIO_TypeDef* char_lcd_E_port   = GPIOD;        /* E  (Enable) */
+  constexpr GPIO_TypeDef* char_lcd_DB0_port = GPIOD;        /* DB0 */
+  constexpr GPIO_TypeDef* char_lcd_DB1_port = GPIOD;        /* DB1 */
+  constexpr GPIO_TypeDef* char_lcd_DB2_port = GPIOD;        /* DB2 */
+  constexpr GPIO_TypeDef* char_lcd_DB3_port = GPIOD;        /* DB3 */
+  constexpr GPIO_TypeDef* char_lcd_DB4_port = GPIOD;        /* DB4 */
+  constexpr GPIO_TypeDef* char_lcd_DB5_port = GPIOD;        /* DB5 */
+  constexpr GPIO_TypeDef* char_lcd_DB6_port = GPIOD;        /* DB6 */
+  constexpr GPIO_TypeDef* char_lcd_DB7_port = GPIOD;        /* DB7 */
 
 
 
