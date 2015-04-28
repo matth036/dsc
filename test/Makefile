@@ -92,7 +92,7 @@ CXXFLAGS=$(CFLAGS)
 
 TESTS= example_23b example_33a nautical_almanac astronomical_almanac jd nutation_data \
  memoized_mean_sidereal memoized_apparent_sidereal burnham_test horizontal2equatorial \
- h2q intercept_azimuth near_parabolic moon_test
+ h2q intercept_azimuth near_parabolic moon_test planet_declinations
 
 all: $(AA_SRCDIR) ../starlist.h objects tests
 
@@ -144,6 +144,12 @@ astronomical_almanac: $(OBJ) astronomical_almanac.o
 
 astronomical_almanac.o: astronomical_almanac.cpp
 	$(CXX) $(CXXFLAGS) -c -o astronomical_almanac.o $(INCLUDE) astronomical_almanac.cpp
+
+planet_declinations: $(OBJ) planet_declinations.o
+	$(CXX) -o planet_declinations  $(LDFLAGS) $(OBJ) planet_declinations.o $(LDLIBS) 
+
+planet_declinations.o: planet_declinations.cpp
+	$(CXX) $(CXXFLAGS) -c -o planet_declinations.o $(INCLUDE) planet_declinations.cpp
 
 burnham_test: $(OBJ) burnham_test.o
 	$(CXX) -o burnham_test  $(LDFLAGS) $(OBJ) burnham_test.o $(LDLIBS) 
@@ -224,6 +230,7 @@ clean:
 	rm -f example_33a example_33a.o
 	rm -f nautical_almanac nautical_almanac.o
 	rm -f astronomical_almanac astronomical_almanac.o
+	rm -f planet_declinations planet_declinations.o
 	rm -f burnham_test burnham_test.o
 	rm -f memoized_mean_sidereal memoized_mean_sidereal.o
 	rm -f memoized_apparent_sidereal memoized_apparent_sidereal.o
