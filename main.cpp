@@ -104,32 +104,9 @@ int main(void)
    * in an intializer list,
    * followed by the corresponding ports in another initializer list.
    */
-  main_lcd_ptr = unique_ptr < CharLCD_STM32F > (new CharLCD_STM32F {{
-	specificities::char_lcd_RS_pin, 
-	  specificities::char_lcd_RW_pin,	/* R/W */
-	  specificities::char_lcd_E_pin,
-	  specificities::char_lcd_DB0_pin,
-	  specificities::char_lcd_DB1_pin,
-	  specificities::char_lcd_DB2_pin,
-	  specificities::char_lcd_DB3_pin,
-	  specificities::char_lcd_DB4_pin,
-	  specificities::char_lcd_DB5_pin,
-	  specificities::char_lcd_DB6_pin,
-	  specificities::char_lcd_DB7_pin
-	  }, 
-	{
-	specificities::char_lcd_RS_port,
-	  specificities::char_lcd_RW_port,	/* R/W */
-	  specificities::char_lcd_E_port,
-	  specificities::char_lcd_DB0_port,
-	  specificities::char_lcd_DB1_port,
-	  specificities::char_lcd_DB2_port,
-	  specificities::char_lcd_DB3_port,
-	  specificities::char_lcd_DB4_port,
-	  specificities::char_lcd_DB5_port,
-	  specificities::char_lcd_DB6_port,
-	  specificities::char_lcd_DB7_port
-	  }}
+  main_lcd_ptr = unique_ptr < CharLCD_STM32F > 
+    (
+     new CharLCD_STM32F {specificities::char_lcd_pins, specificities::char_lcd_ports}
     );
 
   main_lcd_ptr->begin(4, 20);

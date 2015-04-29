@@ -123,6 +123,7 @@ CPPSRC+=topocentric_unit_vectors.cpp
 CPPSRC+=flex_lexer.cpp
 CPPSRC+=command_actions.cpp
 CPPSRC+=sight_data_command_actions.cpp
+CPPSRC+=specificities.cpp
 
 # (Subset of) Astronomical Algorithms Source Files
 CPPSRC+=$(AA_SRCDIR)/AACoordinateTransformation.cpp

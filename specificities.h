@@ -32,11 +32,6 @@ namespace specificities{
   /* MACROS such as GPIO_Pin_7 are #defined in stm32f4xx_gpio.h */
 
 
-
-
-
-
-
   constexpr uint16_t char_lcd_RS_pin  = GPIO_Pin_0;        /* RS  */
   constexpr uint16_t char_lcd_RW_pin  = GPIO_Pin_2;        /* R/W */
   constexpr uint16_t char_lcd_E_pin   = GPIO_Pin_4;        /* E  (Enable) */
@@ -48,6 +43,11 @@ namespace specificities{
   constexpr uint16_t char_lcd_DB5_pin = GPIO_Pin_9;        /* DB5 */
   constexpr uint16_t char_lcd_DB6_pin = GPIO_Pin_11;       /* DB6 */
   constexpr uint16_t char_lcd_DB7_pin = GPIO_Pin_15;       /* DB7 */
+
+  // 
+  extern std::initializer_list<uint16_t>       char_lcd_pins;
+  extern std::initializer_list<GPIO_TypeDef*>  char_lcd_ports;
+
 
   // A pointer to a struct. 
   // using port = GPIO_TypeDef*; 
