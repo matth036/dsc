@@ -13,6 +13,11 @@ namespace specificities{
   extern std::initializer_list<uint16_t>       char_lcd_pins;
   extern std::initializer_list<GPIO_TypeDef*>  char_lcd_ports;
 
+  extern std::initializer_list<uint16_t>       matrix_keypad_row_pins;
+  extern std::initializer_list<GPIO_TypeDef*>  matrix_keypad_row_ports;
+  extern std::initializer_list<uint16_t>       matrix_keypad_col_pins;
+  extern std::initializer_list<GPIO_TypeDef*>  matrix_keypad_col_ports;
+
   constexpr uint32_t altitude_ticks_per_revolution = 4000;
   constexpr uint32_t azimuth_ticks_per_revolution = 4000;
 

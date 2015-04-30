@@ -80,22 +80,16 @@ int main(void)
    *  To reconfigure the default setting of SystemInit() function, refer to
    *  system_stm32f4xx.c file
    */
-  //  STM32_E407_led_setup();
-  // timebase_5::timebase_5_configure();
 
   MicroSecondDelay::microsecond_delay_configure();
   /* This mysterious command turns on the hardware floating point unit. */
   SCB->CPACR |= ((3UL << 10 * 2) | (3UL << 11 * 2));
   main_keypad_ptr = unique_ptr < Matrix_Keypad > (new Matrix_Keypad {
-						  {
-						  GPIO_Pin_1, GPIO_Pin_3,
-						  GPIO_Pin_5, GPIO_Pin_7}, {
-						  GPIOF}, {
-						  GPIO_Pin_0, GPIO_Pin_2,
-						  GPIO_Pin_4, GPIO_Pin_6}, {
-						  GPIOF}}
-  );
-
+      specificities::matrix_keypad_row_pins,
+	specificities::matrix_keypad_row_ports,
+	specificities::matrix_keypad_col_pins,
+	specificities::matrix_keypad_col_ports}
+    );
   config_keypad_timer();
 
   /* 
