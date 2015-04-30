@@ -162,7 +162,7 @@ int main(void)
      */
     save_backup_domain_azimuth_ticks_per_rev(azi_ticks);
   }
-  Quadrature_Decoder decoder_0 {
+  Quadrature_Decoder decoder_0{
     specificities::azimuth_decoder_ch_A_port,
       specificities::azimuth_decoder_ch_A_pin,
       specificities::azimuth_decoder_ch_B_port,

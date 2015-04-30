@@ -45,7 +45,7 @@ A generic 8xAAA battery holder with connector to power the board.
 A 2032 coin cell battery in a holder with connectors for the real time clock.
 
 Two 4000 count per revolution quadrature encoders and mounting hardware.
-These were aquired with the amateur made telescope and probably originate 
+These were acquired with the amateur made telescope and probably originate 
 from Jim's Mobile.
 
 A 12.5 inch aperture Dobsonian telescope.  
