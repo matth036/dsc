@@ -163,8 +163,12 @@ int main(void)
     save_backup_domain_azimuth_ticks_per_rev(azi_ticks);
   }
   Quadrature_Decoder decoder_0 {
-  GPIOD, GPIO_Pin_13,
-	GPIOD, GPIO_Pin_12, AZIMUTH_DECODER_TIMER_TO_USE, azi_ticks};
+    specificities::azimuth_decoder_ch_A_port,
+      specificities::azimuth_decoder_ch_A_pin,
+      specificities::azimuth_decoder_ch_B_port,
+      specificities::azimuth_decoder_ch_B_pin,
+      AZIMUTH_DECODER_TIMER_TO_USE,
+      azi_ticks};
 
   // Altitude
   uint32_t alti_ticks = get_backup_domain_altitude_ticks_per_rev();
@@ -174,8 +178,12 @@ int main(void)
     save_backup_domain_altitude_ticks_per_rev(alti_ticks);
   }
   Quadrature_Decoder decoder_1 {
-  GPIOE, GPIO_Pin_9,
-	GPIOE, GPIO_Pin_11, ALTITUDE_DECODER_TIMER_TO_USE, alti_ticks};
+    specificities::altitude_decoder_ch_A_port,
+      specificities::altitude_decoder_ch_A_pin,
+      specificities::altitude_decoder_ch_B_port,
+      specificities::altitude_decoder_ch_B_pin,
+      ALTITUDE_DECODER_TIMER_TO_USE,
+      alti_ticks};
 
   decoder_0.set_count(specificities::azimuth_startup_count);	// Azimuth
   decoder_1.set_count(specificities::altitude_startup_count);	// Altitude
