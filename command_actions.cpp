@@ -18,7 +18,7 @@
 #include "build_date.h"
 #include "AADynamicalTime.h"
 #include "horizontal_parallax.h"
-
+#include "stm32_e407_utilities.h"
 
 
 
@@ -116,8 +116,18 @@ RA_Dec_topocentric = CAAParallax::Equatorial2Topocentric(ra_dec_dist.X,
 
 void debug_action(){
   //  information_view_test();
-  moon_parallax_test();
+  //  moon_parallax_test();
   //  point_to_where_already_pointed_action();
+  uint32_t max_depth = 1000;
+  uint32_t d;
+  for( uint32_t depth = 0; depth <= max_depth; ++depth ){
+    d = sram_stack_heap_probulate(depth);
+    if( d ){
+
+    }else{
+
+    }
+  }
 }
 
 

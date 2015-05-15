@@ -117,7 +117,7 @@ uint32_t sram_stack_heap_probulate(uint32_t depth)
      * (gdb) print (min_stack_local - max_heap_local)/1024
      * $11 = 1
      *
-     *  (max_stack_local - min_heap_local)/1024  indicates how many k-bytes were available before calling this function.
+     *  (max_stack_local - min_heap_local)/1024  indicates how many kilobytes were available before calling this function.
      *  (min_stack_local - max_heap_local)/1024  indicates how close to a stack-heap collision we are.
     ******************/
     return max_stack - min_heap; /* ending recursion. */
