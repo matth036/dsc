@@ -7,7 +7,7 @@
 class CharLCD_STM32F;
 #include "character_reciever.h"
 #include "alignment_sight_info.h"
-
+#include "AA2DCoordinate.h"
 
 constexpr uint32_t PROXIMITY_VIEW_DEFAULT_WIDTH = 20;  /* The width of the display in characters */
 
@@ -42,11 +42,15 @@ class Proximate_Stars_View:Character_Reciever {
   void set_size( uint32_t s );
 
  private:
+  void run_algorithm();
+  std::vector<uint32_t> stars;
+  double JD;
   Character_Reciever* saved_cr;
   uint32_t size = 15;
   uint32_t position = 0; 
   int32_t width_;
   Simple_Altazimuth_Scope* telescope;
+  CAA2DCoordinate RA_and_Dec;
   bool finished;
 };
 

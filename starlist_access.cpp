@@ -46,6 +46,6 @@ CAA2DCoordinate starlist_access::proper_motion_adjusted_position( int index, dou
 
 }
 
-int32_t starlist_access::starlist_size(){
+uint32_t starlist_access::starlist_size(){
   return STARLIST_SIZE;
 }

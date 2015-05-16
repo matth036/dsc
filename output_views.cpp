@@ -1024,7 +1024,7 @@ void BSC_Details_View::put_char( char c ){
   if( c == keypad_return_char ){
     dismiss_action();
   }else if( c == scroll_up_char ){
-    if( index+1 < starlist_access::starlist_size() ){
+    if( static_cast<uint32_t>(index+1) < starlist_access::starlist_size() ){
       set_index( index+1 );
     }
   }else if( c == scroll_down_char ){
