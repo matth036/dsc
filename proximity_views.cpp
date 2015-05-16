@@ -6,6 +6,44 @@
 #include "rtc_management.h"
 #include "starlist_access.h"
 #include "AAAngularSeparation.h"
+#include "AACoordinateTransformation.h"
+
+
+/* 
+ * single precision version of CAAAngularSeparation::Separation( ,,, )
+ *
+ */
+float separation(float Alpha1, float Delta1, float Alpha2, float Delta2)
+{
+  /* Expect the compiler to recognize the right hand side multiplier as a constant. */
+  Delta1 *= static_cast<float>(CAACoordinateTransformation::DegreesToRadians(1.0));
+  Delta2 *= static_cast<float>(CAACoordinateTransformation::DegreesToRadians(1.0));
+
+  Alpha1 *= static_cast<float>(CAACoordinateTransformation::HoursToRadians(1.0));
+  Alpha2 *= static_cast<float>(CAACoordinateTransformation::HoursToRadians(1.0));
+
+  float delta_Alpha = Alpha2 - Alpha1;
+  float cos_d2 = cosf(Delta2);
+  float cc_temp = cos_d2*cosf(delta_Alpha);
+  float cos_d1 = cosf(Delta1);
+  float sin_d1 = sinf(Delta1);
+  float sin_d2 = sinf(Delta2);
+  float x =       cos_d1*sin_d2 - sin_d1*cc_temp;
+  float y = cos_d2*sinf(delta_Alpha);
+  float z = sin_d1*sin_d2 + cos_d1*cc_temp;
+
+  float value = atan2f(sqrtf(x*x + y*y), z);
+  value *= static_cast<float>(CAACoordinateTransformation::RadiansToDegrees(1.0));
+  if (value < 0)
+    value += 180;
+
+  return value;
+}
+
+
+
+
+
 
 Proximate_Stars_View::Proximate_Stars_View( Simple_Altazimuth_Scope* scope){
   telescope = scope;
@@ -49,7 +87,7 @@ void Proximate_Stars_View::set_size( uint32_t s){
 }
 
 void Proximate_Stars_View::increment_position(){
-  if( position + 1 < size ){
+  if( position + 4 < size ){
     ++position;
   }
 }
@@ -62,9 +100,7 @@ void Proximate_Stars_View::decrement_position(){
 
 
 void Proximate_Stars_View::run_algorithm(){
-  while( stars.size() > 0 ){
-    stars.pop_back();
-  }
+  stars.clear();
   uint32_t index = 0;
   while( stars.size() < size && index < starlist_access::starlist_size() ){
     /* We may want to filter for magnitude here. */
@@ -72,33 +108,39 @@ void Proximate_Stars_View::run_algorithm(){
     ++index;
   }
   /* @TODO convert to J2000 RA and Declination */
-  double target_RA = RA_and_Dec.X;
-  double target_Dec = RA_and_Dec.Y;
-  auto distance_from_target = [target_RA, target_Dec]( CAA2DCoordinate subject ){
-    return CAAAngularSeparation::Separation(target_RA, target_Dec, subject.X, subject.Y );
+  float target_RA = RA_and_Dec.X;
+  float target_Dec = RA_and_Dec.Y;
+  auto distance_from_target = [target_RA, target_Dec]( float subject_RA, float subject_Dec ){
+    return separation(target_RA, target_Dec, subject_RA, subject_Dec );
   };
   double JD = this->JD;
   auto bsc_distance_from_target = [JD, distance_from_target]( uint32_t index ){
     CAA2DCoordinate position = starlist_access::proper_motion_adjusted_position( index, JD);
-    return distance_from_target( position );
+    return distance_from_target( position.X, position.Y );
   };
   auto target_proximity_compare = [bsc_distance_from_target]( const uint32_t a, const uint32_t b ){
-    double distance_a = bsc_distance_from_target( a );
-    double distance_b = bsc_distance_from_target( b );
+    auto distance_a = bsc_distance_from_target( a );
+    auto distance_b = bsc_distance_from_target( b );
     return distance_a < distance_b;
   };
+  lambda_size = sizeof( target_proximity_compare );
+  /* The algoritm proper begins here. */
   make_heap( stars.begin(), stars.end(), target_proximity_compare);
-
-
-
+  /* 
+   *   Now *stars.begin() has the largest distance_from_target() 
+   *   and, the rest of the list has the heap propery.
+   */
+  while( index < starlist_access::starlist_size() ){
+    if( target_proximity_compare( index, *stars.begin() )){
+      pop_heap( stars.begin(), stars.end(), target_proximity_compare);
+      stars.pop_back();
+      stars.push_back(index);
+      push_heap( stars.begin(), stars.end(), target_proximity_compare);
+    }
+    ++index;
+  }
+  sort_heap( stars.begin(), stars.end(), target_proximity_compare);
 }
-
-
-
-
-
-
-
 
 
 std::unique_ptr < CharLCD_STM32F > Proximate_Stars_View::write_first_line(std::unique_ptr < CharLCD_STM32F > lcd)
@@ -107,7 +149,16 @@ std::unique_ptr < CharLCD_STM32F > Proximate_Stars_View::write_first_line(std::u
   RA_and_Dec = telescope->current_RA_and_Dec();
   run_algorithm();
   int n = 0;
-  n += lcd->print( "Under Construction" );
+  n += lcd->print( position + 1 );
+  while (n < 3) {
+    n += lcd->print(' ');
+  } 
+  n += lcd->print( starlist_access::bsc_number(stars[0+position]) );
+  while (n < 8) {
+    n += lcd->print(' ');
+  } 
+  n += lcd->print( starlist_access::magnitude(stars[0+position]), 2);
+  n += lcd->print( 'm' );
   while (n < width_) {
     n += lcd->print(' ');
   } 
@@ -118,7 +169,16 @@ std::unique_ptr < CharLCD_STM32F > Proximate_Stars_View::write_second_line(std::
 									      CharLCD_STM32F > lcd)
 {
   int n = 0;
-  n += lcd->print( "Under Construction" );
+  n += lcd->print( position + 2 );
+  while (n < 3) {
+    n += lcd->print(' ');
+  } 
+    n += lcd->print( starlist_access::bsc_number(stars[1+position]) );
+  while (n < 8) {
+    n += lcd->print(' ');
+  } 
+  n += lcd->print( starlist_access::magnitude(stars[1+position]), 2);
+  n += lcd->print( 'm' );
   while (n < width_) {
     n += lcd->print(' ');
   } 
@@ -130,7 +190,16 @@ std::unique_ptr < CharLCD_STM32F > Proximate_Stars_View::write_third_line(std::u
 									      CharLCD_STM32F > lcd)
 {
   int n = 0;
-  n += lcd->print( "Under Construction" );
+  n += lcd->print( position + 3 );
+  while (n < 3) {
+    n += lcd->print(' ');
+  } 
+  n += lcd->print( starlist_access::bsc_number(stars[2+position]) );
+  while (n < 8) {
+    n += lcd->print(' ');
+  } 
+  n += lcd->print( starlist_access::magnitude(stars[2+position]), 2);
+  n += lcd->print( 'm' );
   while (n < width_) {
     n += lcd->print(' ');
   } 
@@ -141,10 +210,28 @@ std::unique_ptr < CharLCD_STM32F > Proximate_Stars_View::write_fourth_line(std::
 									      CharLCD_STM32F > lcd)
 {
   int n = 0;
-  n += lcd->print( "Under Construction" );
+#if 1
+  n += lcd->print( position + 4 );
+  while (n < 3) {
+    n += lcd->print(' ');
+  } 
+  n += lcd->print( starlist_access::bsc_number(stars[3+position]) );
+  while (n < 8) {
+    n += lcd->print(' ');
+  } 
+  n += lcd->print( starlist_access::magnitude(stars[3+position]), 2);
+  n += lcd->print( 'm' );
   while (n < width_) {
     n += lcd->print(' ');
   } 
+#else 
+  n += lcd->print( "sizeof( ... ) = " );
+  n += lcd->print( lambda_size );
+
+  while (n < width_) {
+    n += lcd->print(' ');
+  } 
+#endif
   return std::move(lcd);
 }
 

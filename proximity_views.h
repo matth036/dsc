@@ -45,8 +45,9 @@ class Proximate_Stars_View:Character_Reciever {
   void run_algorithm();
   std::vector<uint32_t> stars;
   double JD;
+  size_t lambda_size;
   Character_Reciever* saved_cr;
-  uint32_t size = 15;
+  uint32_t size = 99;
   uint32_t position = 0; 
   int32_t width_;
   Simple_Altazimuth_Scope* telescope;
