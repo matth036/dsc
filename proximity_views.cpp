@@ -5,6 +5,7 @@
 #include "char_lcd_stm32f4.h"
 #include "rtc_management.h"
 #include "starlist_access.h"
+#include "AAAngularSeparation.h"
 
 Proximate_Stars_View::Proximate_Stars_View( Simple_Altazimuth_Scope* scope){
   telescope = scope;
@@ -65,10 +66,31 @@ void Proximate_Stars_View::run_algorithm(){
     stars.pop_back();
   }
   uint32_t index = 0;
-  while( stars.size() < size && index < static_cast<uint32_t>(starlist_access::starlist_size()) ){
+  while( stars.size() < size && index < starlist_access::starlist_size() ){
+    /* We may want to filter for magnitude here. */
     stars.push_back( index );
     ++index;
   }
+  /* @TODO convert to J2000 RA and Declination */
+  double target_RA = RA_and_Dec.X;
+  double target_Dec = RA_and_Dec.Y;
+  auto distance_from_target = [target_RA, target_Dec]( CAA2DCoordinate subject ){
+    return CAAAngularSeparation::Separation(target_RA, target_Dec, subject.X, subject.Y );
+  };
+  double JD = this->JD;
+  auto bsc_distance_from_target = [JD, distance_from_target]( uint32_t index ){
+    CAA2DCoordinate position = starlist_access::proper_motion_adjusted_position( index, JD);
+    return distance_from_target( position );
+  };
+  auto target_proximity_compare = [bsc_distance_from_target]( const uint32_t a, const uint32_t b ){
+    double distance_a = bsc_distance_from_target( a );
+    double distance_b = bsc_distance_from_target( b );
+    return distance_a < distance_b;
+  };
+  make_heap( stars.begin(), stars.end(), target_proximity_compare);
+
+
+
 }
 
 

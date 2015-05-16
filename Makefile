@@ -127,6 +127,7 @@ CPPSRC+=sight_data_command_actions.cpp
 CPPSRC+=specificities.cpp
 
 # (Subset of) Astronomical Algorithms Source Files
+CPPSRC+=$(AA_SRCDIR)/AAAngularSeparation.cpp
 CPPSRC+=$(AA_SRCDIR)/AACoordinateTransformation.cpp
 CPPSRC+=$(AA_SRCDIR)/AARefraction.cpp
 CPPSRC+=$(AA_SRCDIR)/stdafx.cpp
