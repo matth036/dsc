@@ -114,6 +114,7 @@ CPPSRC+=matrix_keypad.cpp
 CPPSRC+=input_views.cpp
 CPPSRC+=menu_views.cpp
 CPPSRC+=output_views.cpp
+CPPSRC+=proximity_views.cpp
 CPPSRC+=horizontal_equatorial.cpp
 CPPSRC+=alignment_sight_info.cpp
 CPPSRC+=linear_algebra_facilities.cpp

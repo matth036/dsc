@@ -15,7 +15,6 @@
 #include "ngc_list_access.h"
 #include "starlist_access.h"
 #include "extra_solar_transforms.h"
-#include "keypad_layout.h"
 #include "AACoordinateTransformation.h"
 #include "refraction_temperature_pressure.h"
 /*********************************************

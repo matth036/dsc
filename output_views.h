@@ -344,4 +344,6 @@ class NGC_Details_View:Character_Reciever {
 
 
 
+
+
 #endif				/*  _OUTPUT_VIEWS_H  */
