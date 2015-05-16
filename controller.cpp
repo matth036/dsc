@@ -99,3 +99,7 @@ std::string dsc_controller::pop_cmd_buffer(){
   return item;
 }
 
+void dsc_controller::push_cmd_buffer(std::string cmd){
+  dsc_controller::cmd_buffer.push_back(cmd);
+}
+

@@ -35,6 +35,8 @@ void long_lat_dialog();
 void countdown_to_Saint_Patricks_Day();
 
 void proximate_stars_view();
+void proximate_messier_objects_view();
+
 void debug_action();
 
 

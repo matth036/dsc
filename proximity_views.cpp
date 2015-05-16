@@ -5,9 +5,11 @@
 #include "char_lcd_stm32f4.h"
 #include "rtc_management.h"
 #include "starlist_access.h"
+#include "messier.h"
 #include "AAAngularSeparation.h"
 #include "AACoordinateTransformation.h"
-
+#include "sexagesimal.h"
+#include "controller.h"
 
 /* 
  * single precision version of CAAAngularSeparation::Separation( ,,, )
@@ -148,97 +150,250 @@ std::unique_ptr < CharLCD_STM32F > Proximate_Stars_View::write_first_line(std::u
   JD = JD_timestamp_pretty_good_000();
   RA_and_Dec = telescope->current_RA_and_Dec();
   run_algorithm();
-  int n = 0;
-  n += lcd->print( position + 1 );
-  while (n < 3) {
-    n += lcd->print(' ');
-  } 
-  n += lcd->print( starlist_access::bsc_number(stars[0+position]) );
-  while (n < 8) {
-    n += lcd->print(' ');
-  } 
-  n += lcd->print( starlist_access::magnitude(stars[0+position]), 2);
-  n += lcd->print( 'm' );
-  while (n < width_) {
-    n += lcd->print(' ');
-  } 
-  return std::move(lcd);
+  return std::move(write_line_n( std::move(lcd), 1) );
 }
 
 std::unique_ptr < CharLCD_STM32F > Proximate_Stars_View::write_second_line(std::unique_ptr <
 									      CharLCD_STM32F > lcd)
 {
-  int n = 0;
-  n += lcd->print( position + 2 );
-  while (n < 3) {
-    n += lcd->print(' ');
-  } 
-    n += lcd->print( starlist_access::bsc_number(stars[1+position]) );
-  while (n < 8) {
-    n += lcd->print(' ');
-  } 
-  n += lcd->print( starlist_access::magnitude(stars[1+position]), 2);
-  n += lcd->print( 'm' );
-  while (n < width_) {
-    n += lcd->print(' ');
-  } 
-  return std::move(lcd);
+  return std::move(write_line_n( std::move(lcd), 2) );
 }
 
 
 std::unique_ptr < CharLCD_STM32F > Proximate_Stars_View::write_third_line(std::unique_ptr <
 									      CharLCD_STM32F > lcd)
 {
-  int n = 0;
-  n += lcd->print( position + 3 );
-  while (n < 3) {
-    n += lcd->print(' ');
-  } 
-  n += lcd->print( starlist_access::bsc_number(stars[2+position]) );
-  while (n < 8) {
-    n += lcd->print(' ');
-  } 
-  n += lcd->print( starlist_access::magnitude(stars[2+position]), 2);
-  n += lcd->print( 'm' );
-  while (n < width_) {
-    n += lcd->print(' ');
-  } 
-  return std::move(lcd);
+  return std::move(write_line_n( std::move(lcd), 3) );
 }
 
 std::unique_ptr < CharLCD_STM32F > Proximate_Stars_View::write_fourth_line(std::unique_ptr <
 									      CharLCD_STM32F > lcd)
 {
+  return std::move(write_line_n( std::move(lcd), 4) );
+}
+
+
+std::unique_ptr < CharLCD_STM32F > Proximate_Stars_View::write_line_n(std::unique_ptr <
+  CharLCD_STM32F > lcd, uint32_t line_number )
+{
+  double target_RA = RA_and_Dec.X;
+  double target_Dec = RA_and_Dec.Y;
+  auto distance_from_target = [target_RA, target_Dec]( double subject_RA, double subject_Dec ){
+    return CAAAngularSeparation::Separation(target_RA, target_Dec, subject_RA, subject_Dec );
+  };
+  double JD = this->JD;
+  auto bsc_distance_from_target = [JD, distance_from_target]( uint32_t index ){
+    CAA2DCoordinate position = starlist_access::proper_motion_adjusted_position( index, JD);
+    return distance_from_target( position.X, position.Y );
+  };
+
+
+
   int n = 0;
-#if 1
-  n += lcd->print( position + 4 );
+  n += lcd->print( position + line_number );
   while (n < 3) {
     n += lcd->print(' ');
   } 
-  n += lcd->print( starlist_access::bsc_number(stars[3+position]) );
+    n += lcd->print( starlist_access::bsc_number(stars[position + line_number - 1]) );
   while (n < 8) {
     n += lcd->print(' ');
   } 
-  n += lcd->print( starlist_access::magnitude(stars[3+position]), 2);
-  n += lcd->print( 'm' );
+  n += lcd->print( starlist_access::magnitude(stars[position + line_number - 1]), 2);
+  n += lcd->print( "m " );
+  while (n < 14) {
+    n += lcd->print(' ');
+  } 
+  n += lcd->print( bsc_distance_from_target( stars[position + line_number - 1]), 1);
   while (n < width_) {
     n += lcd->print(' ');
   } 
-#else 
-  n += lcd->print( "sizeof( ... ) = " );
-  n += lcd->print( lambda_size );
-
-  while (n < width_) {
-    n += lcd->print(' ');
-  } 
-#endif
   return std::move(lcd);
 }
 
 
+/*************************************************************************/
 
 
+Proximate_Messier_Objects_View::Proximate_Messier_Objects_View( Simple_Altazimuth_Scope* scope){
+  telescope = scope;
+  finished = false;
+  width_ = PROXIMITY_VIEW_DEFAULT_WIDTH;
 
+  saved_cr = dsc_controller::get_character_reciever();
+  dsc_controller::set_character_reciever(this);
+}
+
+Proximate_Messier_Objects_View::~Proximate_Messier_Objects_View( ){
+  dsc_controller::set_character_reciever(saved_cr);
+}
+
+void Proximate_Messier_Objects_View::put_char( char c ){
+  switch( c ){
+  case keypad_return_char:
+    dismiss_action();
+    return;
+  case scroll_up_char:
+    decrement_position();
+    return;
+  case scroll_down_char:
+    increment_position();
+    return;
+  case '*':
+  case 'B':
+    push_pushto_command();
+    return;
+  }
+}
+
+void Proximate_Messier_Objects_View::dismiss_action(){
+  finished = true;
+}
+
+void Proximate_Messier_Objects_View::set_size( uint32_t s){
+  if( size < 4 ){
+    return;
+  }
+  size = s;
+  if( position >= size ){
+    position = size - 1;
+  }
+}
+
+void Proximate_Messier_Objects_View::increment_position(){
+  if( position + 4 < size ){
+    ++position;
+  }
+}
+
+void Proximate_Messier_Objects_View::decrement_position(){
+  if( position > 0 ){
+    --position;
+  }
+}
+
+void Proximate_Messier_Objects_View::push_pushto_command(){
+  std::string cmd = "AAC";
+  cmd += sexagesimal::to_string_hack( messier_selection );
+  dsc_controller::push_cmd_buffer(cmd);
+  dismiss_action();
+}
+
+
+void Proximate_Messier_Objects_View::run_algorithm(){
+  objects.clear();
+  uint32_t messier_number = 1;
+  while( objects.size() < size && messier_number <= 110 ){
+    /* We may want to filter for magnitude here. */
+    objects.push_back( messier_number );
+    ++messier_number;
+  }
+  /* @TODO convert to J2000 RA and Declination */
+  float target_RA = RA_and_Dec.X;
+  float target_Dec = RA_and_Dec.Y;
+  auto distance_from_target = [target_RA, target_Dec]( float subject_RA, float subject_Dec ){
+    return separation(target_RA, target_Dec, subject_RA, subject_Dec );
+  };
+  auto messier_distance_from_target = [distance_from_target]( uint32_t m_number ){
+    bool OK = false;
+    CAA2DCoordinate position;
+    while( !OK ){
+      position = messier_numbers::messier_J2000_RA_and_Dec( m_number, OK );
+    }
+    return distance_from_target( position.X, position.Y );
+  };
+  auto target_proximity_compare = [messier_distance_from_target]( const uint32_t a, const uint32_t b ){
+    auto distance_a = messier_distance_from_target( a );
+    auto distance_b = messier_distance_from_target( b );
+    return distance_a < distance_b;
+  };
+  lambda_size = sizeof( target_proximity_compare );
+  /* The algoritm proper begins here. */
+  make_heap( objects.begin(), objects.end(), target_proximity_compare);
+  /* 
+   *   Now *objects.begin() has the largest distance_from_target() 
+   *   and, the rest of the list has the heap propery.
+   */
+  while( messier_number <= 110 ){
+    if( target_proximity_compare( messier_number, *objects.begin() )){
+      pop_heap( objects.begin(), objects.end(), target_proximity_compare);
+      objects.pop_back();
+      objects.push_back(messier_number);
+      push_heap( objects.begin(), objects.end(), target_proximity_compare);
+    }
+    ++messier_number;
+  }
+  sort_heap( objects.begin(), objects.end(), target_proximity_compare);
+  messier_selection = objects[position];
+}
+
+
+std::unique_ptr < CharLCD_STM32F > Proximate_Messier_Objects_View::write_first_line(std::unique_ptr < CharLCD_STM32F > lcd)
+{
+  JD = JD_timestamp_pretty_good_000();
+  RA_and_Dec = telescope->current_RA_and_Dec();
+  run_algorithm();
+  return std::move(write_line_n( std::move(lcd), 1) );
+}
+
+std::unique_ptr < CharLCD_STM32F > Proximate_Messier_Objects_View::write_second_line(std::unique_ptr <
+									      CharLCD_STM32F > lcd)
+{
+  return std::move(write_line_n( std::move(lcd), 2) );
+}
+
+
+std::unique_ptr < CharLCD_STM32F > Proximate_Messier_Objects_View::write_third_line(std::unique_ptr <
+									      CharLCD_STM32F > lcd)
+{
+  return std::move(write_line_n( std::move(lcd), 3) );
+}
+
+std::unique_ptr < CharLCD_STM32F > Proximate_Messier_Objects_View::write_fourth_line(std::unique_ptr <
+									      CharLCD_STM32F > lcd)
+{
+  return std::move(write_line_n( std::move(lcd), 4) );
+}
+
+
+std::unique_ptr < CharLCD_STM32F > Proximate_Messier_Objects_View::write_line_n(std::unique_ptr <
+  CharLCD_STM32F > lcd, uint32_t line_number )
+{
+  double target_RA = RA_and_Dec.X;
+  double target_Dec = RA_and_Dec.Y;
+  auto distance_from_target = [target_RA, target_Dec]( double subject_RA, double subject_Dec ){
+    return CAAAngularSeparation::Separation(target_RA, target_Dec, subject_RA, subject_Dec );
+  };
+  auto messier_distance_from_target = [distance_from_target]( uint32_t m_number ){
+    bool OK = false;
+    CAA2DCoordinate position;
+    while( !OK ){
+      position = messier_numbers::messier_J2000_RA_and_Dec( m_number, OK );
+    }
+    return distance_from_target( position.X, position.Y );
+  };
+  int n = 0;
+  n += lcd->print( position + line_number );
+  while (n < 3) {
+    n += lcd->print(' ');
+  } 
+  std::string str = "M";
+  str += sexagesimal::to_string_hack( objects[position + line_number - 1] );
+  while( str.length() < 4 ){
+    str = " " + str; // front pad with spaces.
+  }
+  n += lcd->print( str );
+  while (n < 9) {
+    n += lcd->print(' ');
+  } 
+  while (n < 9) {
+    n += lcd->print(' ');
+  } 
+  n += lcd->print( messier_distance_from_target( objects[position + line_number - 1]), 1);
+  while (n < width_) {
+    n += lcd->print(' ');
+  } 
+  return std::move(lcd);
+}
 
 
 

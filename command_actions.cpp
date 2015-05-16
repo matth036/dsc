@@ -1099,3 +1099,24 @@ void proximate_stars_view(){
   check_in_main_lcd(std::move(lcd));
 }
 
+
+void proximate_messier_objects_view(){
+  auto lcd = check_out_main_lcd();
+  Simple_Altazimuth_Scope* scope = get_main_simple_telescope();
+  std::unique_ptr<Proximate_Messier_Objects_View> view = 
+    std::unique_ptr<Proximate_Messier_Objects_View>( new Proximate_Messier_Objects_View( scope ) );
+  
+  while( !view->is_finished() ){
+    lcd->setCursor(0,0);
+    lcd = view->write_first_line(std::move(lcd));
+    lcd->setCursor(0,1);
+    lcd = view->write_second_line(std::move(lcd));
+    lcd->setCursor(0,2);
+    lcd = view->write_third_line(std::move(lcd));
+    lcd->setCursor(0,3);
+    lcd = view->write_fourth_line(std::move(lcd));
+  }
+
+  check_in_main_lcd(std::move(lcd));
+}
+
