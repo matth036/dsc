@@ -2,64 +2,71 @@
 #include "ngc_list_access.h"
 
 /* A helper function not declared in header messier.h  */
-bool is_messier_with_no_ngc( int messier_number ){
-  if( messier_number < 1 )return false;
-  if( messier_number > 110 )return false;
-  if( messier_numbers::messier_to_ngc( messier_number ) == -1 ){
+bool is_messier_with_no_ngc(int messier_number)
+{
+  if (messier_number < 1)
+    return false;
+  if (messier_number > 110)
+    return false;
+  if (messier_numbers::messier_to_ngc(messier_number) == -1) {
     return true;
   }
   return false;
 }
 
 /* A helper function not declared in header messier.h  */
-CAA2DCoordinate messier_with_no_ngc_J2000_RA_and_Dec( int number ){
+CAA2DCoordinate messier_with_no_ngc_J2000_RA_and_Dec(int number)
+{
   CAA2DCoordinate result;
   sexagesimal::Sexagesimal RA;
   sexagesimal::Sexagesimal Dec;
-  switch( number ){
-  case 25:    /* M25, IC 4725   18h 31m 47s  -19:07:00 J2000   */
-    RA = sexagesimal::Sexagesimal( 18, 31, 47, 0 );
-    Dec = sexagesimal::Sexagesimal( -19, 7, 0, 0 );
+  switch (number) {
+  case 25:                     /* M25, IC 4725   18h 31m 47s  -19:07:00 J2000   */
+    RA = sexagesimal::Sexagesimal(18, 31, 47, 0);
+    Dec = sexagesimal::Sexagesimal(-19, 7, 0, 0);
     result.X = RA.to_double();
     result.Y = Dec.to_double();
     return result;
-  case 40:    /* M40, Winnecke 4,  Double star in Ursa Major.   12h22m13s 58:04:59  */
-    RA = sexagesimal::Sexagesimal( 12, 23, 13, 0 );
-    Dec = sexagesimal::Sexagesimal( 58, 4, 59, 0 );
+  case 40:                     /* M40, Winnecke 4,  Double star in Ursa Major.   12h22m13s 58:04:59  */
+    RA = sexagesimal::Sexagesimal(12, 23, 13, 0);
+    Dec = sexagesimal::Sexagesimal(58, 4, 59, 0);
     result.X = RA.to_double();
     result.Y = Dec.to_double();
     return result;
     return result;
-  case 45:  /* Once thought to be missing.  */
-  case 102: /* Once thought to be missing.  */
+  case 45:                     /* Once thought to be missing.  */
+  case 102:                    /* Once thought to be missing.  */
   default:
-  return CAA2DCoordinate{};
+    return CAA2DCoordinate {
+    };
   }
-  return CAA2DCoordinate{};
+  return CAA2DCoordinate {
+  };
 }
 
 /* Intended for pointing to Messier objects. */
-CAA2DCoordinate messier_numbers::messier_J2000_RA_and_Dec( int number, bool &OK ){
-  if( is_messier_with_no_ngc(number) ){
+CAA2DCoordinate messier_numbers::messier_J2000_RA_and_Dec(int number, bool & OK)
+{
+  if (is_messier_with_no_ngc(number)) {
     /*
      * Recording success only because  
      * messier_with_no_ngc_J2000_RA_and_Dec( number ); 
      * has been tested.  Test again if re-written.
      */
     OK = true;
-    return messier_with_no_ngc_J2000_RA_and_Dec( number );
+    return messier_with_no_ngc_J2000_RA_and_Dec(number);
   }
   CAA2DCoordinate result;
   int ngc_number = messier_to_ngc(number);
-  if( ngc_number == -1 ){
+  if (ngc_number == -1) {
     OK = false;
-    return result;  /* returns {0.0,0.0} */
+    return result;              /* returns {0.0,0.0} */
   }
-  int index = ngc_list_access::get_index( ngc_number );
-  if( index == -1 ){
+  int index = ngc_list_access::get_index(ngc_number);
+  if (index == -1) {
     OK = false;
     /* Also returns {0.0,0.0},  Return via this statement may indicate a deficiency in ngc_list.h (which is machine generated.)  */
-    return result;  
+    return result;
   }
   result.X = ngc_list_access::get_RA_i(index).to_double();
   result.Y = ngc_list_access::get_Dec_i(index).to_double();
@@ -67,10 +74,10 @@ CAA2DCoordinate messier_numbers::messier_J2000_RA_and_Dec( int number, bool &OK 
   return result;
 }
 
-
 /* Big old switch statement.  Wouldn't hurt to proof read. */
-int messier_numbers::messier_to_ngc( int messier_number ){
-  switch( messier_number ){
+int messier_numbers::messier_to_ngc(int messier_number)
+{
+  switch (messier_number) {
   case 1:
     return 1952;
   case 2:
@@ -98,7 +105,7 @@ int messier_numbers::messier_to_ngc( int messier_number ){
   case 13:
     return 6205;
   case 14:
-    return 6402;    
+    return 6402;
   case 15:
     return 7078;
   case 16:
@@ -118,9 +125,9 @@ int messier_numbers::messier_to_ngc( int messier_number ){
   case 23:
     return 6494;
   case 24:
-    return 6603;  /* NGC 6603 and surrounding Milky Way star cloud */
+    return 6603;                /* NGC 6603 and surrounding Milky Way star cloud */
   case 25:
-    return -1;  /* M25, IC 4725   18h 31m 47s  -19:07:00 J2000  4.6m 32.0' radius  */
+    return -1;                  /* M25, IC 4725   18h 31m 47s  -19:07:00 J2000  4.6m 32.0' radius  */
   case 26:
     return 6694;
   case 27:
@@ -150,7 +157,7 @@ int messier_numbers::messier_to_ngc( int messier_number ){
   case 39:
     return 7092;
   case 40:
-    return -1;  /* M40, Winnecke 4,  Double star in Ursa Major.   12h22m13s 58:04:59  9.65m and 10.1m */
+    return -1;                  /* M40, Winnecke 4,  Double star in Ursa Major.   12h22m13s 58:04:59  9.65m and 10.1m */
   case 41:
     return 2287;
   case 42:
@@ -160,7 +167,7 @@ int messier_numbers::messier_to_ngc( int messier_number ){
   case 44:
     return 2632;
   case 45:
-    return 1435;   /* Pleadies.  Number is the Merope Nebula. */
+    return 1435;                /* Pleadies.  Number is the Merope Nebula. */
   case 46:
     return 2437;
   case 47:
@@ -252,7 +259,7 @@ int messier_numbers::messier_to_ngc( int messier_number ){
   case 90:
     return 4569;
   case 91:
-    return 4548; /* Thought to be an error in Messier Catalog. */
+    return 4548;                /* Thought to be an error in Messier Catalog. */
   case 92:
     return 6341;
   case 93:
@@ -274,7 +281,7 @@ int messier_numbers::messier_to_ngc( int messier_number ){
   case 101:
     return 5457;
   case 102:
-    return 5866;   /* This or a duplicate observation of M101? */
+    return 5866;                /* This or a duplicate observation of M101? */
   case 103:
     return 561;
   case 104:
