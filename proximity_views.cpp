@@ -76,6 +76,22 @@ void Proximate_Stars_View::put_char(char c)
   case scroll_down_char:
     increment_position();
     return;
+  case '*':
+  case 'B':
+    push_pushto_command();
+    return;
+  case '1':
+  case '2':
+  case '3':
+  case '4':
+  case '5':
+  case '6':
+  case '7':
+  case '8':
+  case '9':
+  case '0':
+    input_magnitude_limit( c );
+    return;
   }
 }
 
@@ -109,6 +125,17 @@ void Proximate_Stars_View::decrement_position()
   }
 }
 
+void Proximate_Stars_View::push_pushto_command(){
+  std::string cmd = "B*C";
+  cmd += sexagesimal::to_string_hack(bsc_selection);
+  dsc_controller::push_cmd_buffer(cmd);
+  dismiss_action();
+}
+
+void Proximate_Stars_View::input_magnitude_limit( char c ){
+
+}
+
 void Proximate_Stars_View::run_algorithm()
 {
   stars.clear();
@@ -137,7 +164,6 @@ void Proximate_Stars_View::run_algorithm()
     auto distance_b = bsc_distance_from_target(b);
     return distance_a < distance_b;
   };
-  lambda_size = sizeof(target_proximity_compare);
   /* The algoritm proper begins here. */
   make_heap(stars.begin(), stars.end(), target_proximity_compare);
   /* 
@@ -154,6 +180,7 @@ void Proximate_Stars_View::run_algorithm()
     ++index;
   }
   sort_heap(stars.begin(), stars.end(), target_proximity_compare);
+  bsc_selection = stars[position];
 }
 
 std::unique_ptr < CharLCD_STM32F >
