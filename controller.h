@@ -1,5 +1,5 @@
-#ifndef _CONTROLLER_H
-#define _CONTROLLER_H
+#ifndef CONTROLLER_H_
+#define CONTROLLER_H_
 
 #include <string>
 #include <vector>
@@ -32,4 +32,4 @@ namespace dsc_controller {
   void do_execute_command(std::string & cmd);
 
 }
-#endif				/*  _CONTROLLER_H */
+#endif  // CONTROLLER_H_
