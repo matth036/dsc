@@ -6,6 +6,7 @@
 #include "rtc_management.h"
 #include "starlist_access.h"
 #include "messier.h"
+#include "navigation_star.h"
 #include "AAAngularSeparation.h"
 #include "AACoordinateTransformation.h"
 #include "sexagesimal.h"
@@ -204,6 +205,185 @@ std::unique_ptr < CharLCD_STM32F > Proximate_Stars_View::write_line_n(std::uniqu
     n += lcd->print(' ');
   } 
   n += lcd->print( bsc_distance_from_target( stars[position + line_number - 1]), 1);
+  while (n < width_) {
+    n += lcd->print(' ');
+  } 
+  return std::move(lcd);
+}
+
+
+/*************************************************************************/
+
+Proximate_Navigation_Stars_View::Proximate_Navigation_Stars_View( Simple_Altazimuth_Scope* scope){
+  telescope = scope;
+  finished = false;
+  width_ = PROXIMITY_VIEW_DEFAULT_WIDTH;
+
+  saved_cr = dsc_controller::get_character_reciever();
+  dsc_controller::set_character_reciever(this);
+}
+
+Proximate_Navigation_Stars_View::~Proximate_Navigation_Stars_View( ){
+  dsc_controller::set_character_reciever(saved_cr);
+}
+
+void Proximate_Navigation_Stars_View::put_char( char c ){
+  switch( c ){
+  case keypad_return_char:
+    dismiss_action();
+    return;
+  case scroll_up_char:
+    decrement_position();
+    return;
+  case scroll_down_char:
+    increment_position();
+    return;
+  case '*':
+  case 'B':
+    push_pushto_command();
+    return;
+  }
+}
+
+void Proximate_Navigation_Stars_View::dismiss_action(){
+  finished = true;
+}
+
+void Proximate_Navigation_Stars_View::set_size( uint32_t s){
+  if( size < 4 ){
+    return;
+  }
+  size = s;
+  if( position >= size ){
+    position = size - 1;
+  }
+}
+
+void Proximate_Navigation_Stars_View::increment_position(){
+  if( position + 4 < size ){
+    ++position;
+  }
+}
+
+void Proximate_Navigation_Stars_View::decrement_position(){
+  if( position > 0 ){
+    --position;
+  }
+}
+
+void Proximate_Navigation_Stars_View::push_pushto_command(){
+  std::string cmd = "A*";
+  cmd += sexagesimal::to_string_hack( navstar_selection );
+  dsc_controller::push_cmd_buffer(cmd);
+  dismiss_action();
+}
+
+void Proximate_Navigation_Stars_View::run_algorithm(){
+  stars.clear();
+  uint32_t navstar_number = 0;
+  while( stars.size() < size && navstar_number <= navigation_star::NAVIGATION_LIST_MAX ){
+    stars.push_back( navstar_number );
+    ++navstar_number;
+  }
+  /* @TODO convert to J2000 RA and Declination */
+  float target_RA = RA_and_Dec.X;
+  float target_Dec = RA_and_Dec.Y;
+
+  auto distance_from_target = [target_RA, target_Dec]( float subject_RA, float subject_Dec ){
+    return separation(target_RA, target_Dec, subject_RA, subject_Dec );
+  };
+
+  double JD = this->JD;
+
+  auto navstar_distance_from_target = [JD, distance_from_target]( uint32_t navstar ){
+    uint32_t bsc = navigation_star::nav2bsc[navstar];
+    uint32_t index = starlist_access::get_index( bsc );
+    CAA2DCoordinate position = starlist_access::proper_motion_adjusted_position( index, JD);
+    return distance_from_target( position.X, position.Y );
+  };
+
+  auto target_proximity_compare = [navstar_distance_from_target]( const uint32_t a, const uint32_t b ){
+    auto distance_a = navstar_distance_from_target( a );
+    auto distance_b = navstar_distance_from_target( b );
+    return distance_a < distance_b;
+  };
+
+  /* The algoritm proper begins here. */
+  make_heap( stars.begin(), stars.end(), target_proximity_compare);
+  /* 
+   *   Now *stars.begin() has the largest distance_from_target() 
+   *   and the entire list has the heap propery.
+   */
+  while( navstar_number <= navigation_star::NAVIGATION_LIST_MAX ){
+    if( target_proximity_compare( navstar_number, *stars.begin() )){
+      pop_heap( stars.begin(), stars.end(), target_proximity_compare);
+      stars.pop_back();
+      stars.push_back(navstar_number);
+      push_heap( stars.begin(), stars.end(), target_proximity_compare);
+    }
+    ++navstar_number;
+  }
+  sort_heap( stars.begin(), stars.end(), target_proximity_compare);
+  navstar_selection = stars[position];
+}
+
+
+std::unique_ptr < CharLCD_STM32F > Proximate_Navigation_Stars_View::write_first_line(std::unique_ptr < CharLCD_STM32F > lcd)
+{
+  JD = JD_timestamp_pretty_good_000();
+  RA_and_Dec = telescope->current_RA_and_Dec();
+  run_algorithm();
+  return std::move(write_line_n( std::move(lcd), 1) );
+}
+
+std::unique_ptr < CharLCD_STM32F > Proximate_Navigation_Stars_View::write_second_line(std::unique_ptr <
+									      CharLCD_STM32F > lcd)
+{
+  return std::move(write_line_n( std::move(lcd), 2) );
+}
+
+std::unique_ptr < CharLCD_STM32F > Proximate_Navigation_Stars_View::write_third_line(std::unique_ptr <
+									      CharLCD_STM32F > lcd)
+{
+  return std::move(write_line_n( std::move(lcd), 3) );
+}
+
+std::unique_ptr < CharLCD_STM32F > Proximate_Navigation_Stars_View::write_fourth_line(std::unique_ptr <
+									      CharLCD_STM32F > lcd)
+{
+  return std::move(write_line_n( std::move(lcd), 4) );
+}
+
+std::unique_ptr < CharLCD_STM32F > Proximate_Navigation_Stars_View::write_line_n(std::unique_ptr <
+  CharLCD_STM32F > lcd, uint32_t line_number )
+{
+#if 0
+  double target_RA = RA_and_Dec.X;
+  double target_Dec = RA_and_Dec.Y;
+  auto distance_from_target = [target_RA, target_Dec]( double subject_RA, double subject_Dec ){
+    return CAAAngularSeparation::Separation(target_RA, target_Dec, subject_RA, subject_Dec );
+  };
+  double JD = this->JD;
+  auto navstar_distance_from_target = [JD, distance_from_target]( uint32_t navstar ){
+    uint32_t bsc = navigation_star::nav2bsc[navstar];
+    uint32_t index = starlist_access::get_index( bsc );
+    CAA2DCoordinate position = starlist_access::proper_motion_adjusted_position( index, JD);
+    return distance_from_target( position.X, position.Y );
+  };
+#endif
+  int n = 0;
+  n += lcd->print( position + line_number );
+  while (n < 3) {
+    n += lcd->print(' ');
+  } 
+    n += lcd->print( stars[position + line_number - 1] );
+  while (n < 6) {
+    n += lcd->print(' ');
+  } 
+  /* 6 chars plus "Rigel Kentaurus" will overflow the 20 character width.
+   * All others fit.
+   */
+  n += lcd->print( navigation_star::get_navigation_star_name( stars[position + line_number - 1]) );
   while (n < width_) {
     n += lcd->print(' ');
   } 

@@ -40,15 +40,14 @@ CA{DIGIT}{1,4}               ngc_point_to_action( yytext, yyleng );
 ACA{DIGIT}{1,4}              ngc_details_view_action( yytext, yyleng );
 
 B{STAR}C{DIGIT}{1,4}         bsc_point_to_action( yytext, yyleng );
-
 AB{STAR}C{DIGIT}{1,4}        bsc_details_view_action( yytext, yyleng );
-
 B{STAR}C                     proximate_stars_view();
 
 B{DIGIT}{1}                  solar_system_point_to_action(  yytext, yyleng );
 AB{DIGIT}{1}                 planetary_details_view_action( yytext, yyleng );
 
 A{STAR}{DIGIT}{1,2}          almanac_star_point_to_action( yytext, yyleng );
+A{STAR}                      proximate_navigation_stars_view();
 
 CC2490                       RA_and_Declination_dialog();  /* Celestial Coordinates point to. 0-24 Hours right ascension, (+-)0-90 Degrees declination. */
 BCC                          Burnham_Handbook_Point_To();  /* Burnham Celestial Coordinates point to.  */

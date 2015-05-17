@@ -102,6 +102,50 @@ class Proximate_Messier_Objects_View:Character_Reciever {
 };
 
 
+class Proximate_Navigation_Stars_View:Character_Reciever {
+ public:
+  Proximate_Navigation_Stars_View( Simple_Altazimuth_Scope* );
+  ~Proximate_Navigation_Stars_View( );
+  void put_char(char);
+  std::unique_ptr < CharLCD_STM32F > write_first_line(std::unique_ptr <
+						      CharLCD_STM32F >);
+  std::unique_ptr < CharLCD_STM32F > write_second_line(std::unique_ptr <
+						       CharLCD_STM32F >);
+  std::unique_ptr < CharLCD_STM32F > write_third_line(std::unique_ptr <
+						      CharLCD_STM32F >);
+  std::unique_ptr < CharLCD_STM32F > write_fourth_line(std::unique_ptr <
+						       CharLCD_STM32F >);
+
+  void dismiss_action();
+  inline bool is_finished(){
+    return finished;
+  }
+
+  void increment_position();
+  void decrement_position();
+  void set_size( uint32_t s );
+
+ private:
+  std::unique_ptr < CharLCD_STM32F > write_line_n(std::unique_ptr <
+						  CharLCD_STM32F >, uint32_t n);
+
+  void run_algorithm();
+  void push_pushto_command();
+  std::vector<uint32_t> stars;
+  double JD;
+  size_t lambda_size;
+  Character_Reciever* saved_cr;
+  uint32_t size = 58;
+  uint32_t position = 0;
+  uint32_t navstar_selection;
+  int32_t width_;
+  Simple_Altazimuth_Scope* telescope;
+  CAA2DCoordinate RA_and_Dec;
+  bool finished;
+};
+
+
+
 
 
 

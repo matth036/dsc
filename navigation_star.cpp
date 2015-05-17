@@ -3,7 +3,7 @@
 int
  navigation_star::is_navigation_star(int bscnum)
 {
-  int i;
+  uint32_t i;
   for (i = 0; i <= NAVIGATION_LIST_MAX; ++i) {
     if (bscnum == navigation_star::nav2bsc[i]) {
       return 1;
@@ -14,7 +14,7 @@ int
 
 int navigation_star::get_navigation_star_num(int bscnum)
 {
-  int i;
+  uint32_t i;
   for (i = 0; i <= NAVIGATION_LIST_MAX; ++i) {
     if (bscnum == nav2bsc[i]) {
       return i;

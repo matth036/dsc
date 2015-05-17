@@ -33,15 +33,22 @@
 
 static Character_Reciever* current_character_reciever = nullptr;
 
-/* This may be called by any funtion with arguemnt a pointer to any class implementing
+/* 
+ * This may be called by any funtion with arguemnt a pointer to any class implementing
  * the Character_Reciever interface.  That is, at any time the 
  * stream of input characters may be usurped.  This is not expected to 
  * be a problem.  If this becomes a problem the plan is to deal with it 
  * by implementing a subscriber pattern.
  * 
+ * AN EFFECTIVE PRACTICE is this.  When writing a class implementing
+ * Character reciever:
+ * 1) get_character_reciever() and save the value in the consructor.
+ * 2) set_character_reciever( this ) in the constructor.
+ * 3) In the desructor, restore the saved value.
+ *
  * This lax treatment stands in contrast to the controlled 
- * treatment of the main LCD display where conflicting print() calls 
- * would be chaotic.
+ * treatment of the main LCD display where move semanitics
+ * transfer a unique_ptr.
  **/
 void dsc_controller::set_character_reciever(Character_Reciever* cr){
   current_character_reciever = cr;

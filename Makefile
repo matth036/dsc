@@ -3,8 +3,8 @@ TARGET:=$(notdir $(lastword $(CURDIR)))
 
 
 TOOLCHAIN_PATH:=/opt/cross/microcontroller/arm/4.8.4-release-candidate-2015-04-09_184647/bin
-#TOOLCHAIN_PATH:=/opt/cross/microcontroller/arm/4.9.2-release-candidate-2015-04-09_110954/bin
-#TOOLCHAIN_PATH:=/opt/cross/microcontroller/arm/5-20150405-release-candidate-2015-04-09_094306/bin
+# TOOLCHAIN_PATH:=/opt/cross/microcontroller/arm/4.9.2-release-candidate-2015-04-09_110954/bin
+# TOOLCHAIN_PATH:=/opt/cross/microcontroller/arm/5.1.0-release-candidate-2015-05-15_144212/bin
 
 
 

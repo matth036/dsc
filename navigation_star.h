@@ -16,7 +16,7 @@ namespace navigation_star {
   const char *getNAVSTARNAME(int nav_number);
 
     /* Map the 57 navigational stars to Bright Star Catalog number. */
-  constexpr int NAVIGATION_LIST_MAX = 57;
+  constexpr uint32_t NAVIGATION_LIST_MAX = 57;
 
 #define GIENAH 4662
   /*  @TODO Check ID of star 29 Gienah.
