@@ -51,6 +51,37 @@ class Integer_Input_View:Character_Reciever {
   bool finished;
 };
 
+class Float_Input_View:Character_Reciever {
+ public:
+  Float_Input_View(std::string label);
+  ~Float_Input_View();
+  void put_char(char);
+
+  void set_value(int32_t);
+  const int32_t get_value();
+  void change_sign();
+  void set_width(int32_t);
+  void enter_char_action();
+  void backspace_char_action();
+   std::unique_ptr < CharLCD_STM32F > write_first_line(std::unique_ptr <
+						       CharLCD_STM32F >);
+   std::unique_ptr < CharLCD_STM32F > write_second_line(std::unique_ptr <
+							CharLCD_STM32F >);
+
+  inline bool is_finished() {
+    return finished;
+  } 
+
+ private:
+  Character_Reciever* saved_cr;
+  int32_t _width;
+  int32_t _value;
+  std::string _label;
+  bool is_two_line;
+  bool finished;
+};
+
+
 
 class Confirm_Input_View:Character_Reciever {
  public:
