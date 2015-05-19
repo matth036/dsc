@@ -1,5 +1,5 @@
-#ifndef _MATRIX_KEYPAD_H
-#define _MATRIX_KEYPAD_H
+#ifndef MATRIX_KEYPAD_H_
+#define MATRIX_KEYPAD_H_
 
 /* @TODO Remove this board specific include. (If necesary, use a chip specific include.) */
 
@@ -22,15 +22,15 @@ extern "C" {
 #ifdef __cplusplus
 
   using pin = uint16_t;         /* A bitmask. */
-  using port = GPIO_TypeDef *;	/* A pointer to a struct. */
+  using port = GPIO_TypeDef *;  /* A pointer to a struct. */
   using std::initializer_list;
 
   class Matrix_Keypad {
  public:
     Matrix_Keypad(initializer_list < pin > row_pins,
-		  initializer_list < port > row_ports,
-		  initializer_list < pin > col_pins,
-		  initializer_list < port > col_ports);
+                  initializer_list < port > row_ports,
+                  initializer_list < pin > col_pins,
+                  initializer_list < port > col_ports);
     ~Matrix_Keypad();
     const static uint8_t hi_limit = 50;
     const static uint8_t lo_limit = 5;
@@ -53,7 +53,6 @@ extern "C" {
     void VARIOUS_HACKS();
     void write_rows();
     void write_cols();
- private:
     int nrows;
     int ncols;
     int row;
@@ -74,5 +73,4 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
-
-#endif				/* _MATRIX_KEYPAD_H */
+#endif  // MATRIX_KEYPAD_H_

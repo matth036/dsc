@@ -31,6 +31,20 @@ void scan_for_action(std::string command)
 }
 
 /* These test functions will not appear in header files. For now. */
+void float_input_test(){
+  auto lcd = check_out_main_lcd();
+  auto view = std::unique_ptr < Float_Input_View > (new Float_Input_View( "Test of Float Input") );
+
+
+  while( !view->is_finished() ){
+    lcd->setCursor(0,0);
+    lcd = view->write_first_line(std::move(lcd));
+    lcd->setCursor(0,1);
+    lcd = view->write_second_line(std::move(lcd));
+  }
+  check_in_main_lcd(std::move(lcd));
+}
+
 void information_view_test(){
   auto lcd = check_out_main_lcd();
   auto view = std::unique_ptr < Information_View > (new Information_View());
@@ -51,6 +65,8 @@ void information_view_test(){
   }
   check_in_main_lcd(std::move(lcd));
 }
+
+
 
 
 void moon_parallax_test(){
@@ -119,16 +135,7 @@ void debug_action(){
   //  information_view_test();
   //  moon_parallax_test();
   //  point_to_where_already_pointed_action();
-  uint32_t max_depth = 1000;
-  uint32_t d;
-  for( uint32_t depth = 0; depth <= max_depth; ++depth ){
-    d = sram_stack_heap_probulate(depth);
-    if( d ){
-
-    }else{
-
-    }
-  }
+  float_input_test();
 }
 
 

@@ -1,14 +1,15 @@
 #include "input_views.h"
+
+#include <string>
+#include <cmath>
 #include "matrix_keypad.h"
 #include "char_lcd_stm32f4.h"
-#include "telescope_model.h"
 #include "controller.h"
 #include "rtc_management.h"
 #include "telescope_model.h"
-#include <cmath>
 
 /****************************************
-Integer_Input_View methods
+ * Integer_Input_View methods
  ****************************************/
 Integer_Input_View::Integer_Input_View(std::string label)
 {
@@ -101,12 +102,158 @@ std::unique_ptr < CharLCD_STM32F >
 
 std::unique_ptr < CharLCD_STM32F >
     Integer_Input_View::write_second_line(std::unique_ptr < CharLCD_STM32F >
-					  lcd)
+                                          lcd)
 {
   /* Assumes the lcd position is at the start of the line. */
   int n = 0;
-  n += lcd->print(":=");	/* A command line symbol. */
+  n += lcd->print(":=");        /* A command line symbol. */
   n += lcd->print(_value);
+  while (n < _width) {
+    n += lcd->print(' ');
+  }
+  return std::move(lcd);
+}
+
+/****************************************
+ * Float_Input_View methods
+ ****************************************/
+Float_Input_View::Float_Input_View(std::string label)
+{
+  _label = label;
+  _width = INPUT_VIEW_DEFAULT_WIDTH;
+  is_two_line = true;
+  finished = false;
+  saved_cr = dsc_controller::get_character_reciever();
+  dsc_controller::set_character_reciever(this);
+}
+
+Float_Input_View::~Float_Input_View()
+{
+  dsc_controller::set_character_reciever(saved_cr);
+}
+
+void Float_Input_View::put_char(char c)
+{
+  switch (c) {
+  case keypad_enter_char:
+    enter_char_action();
+    return;
+  case keypad_backspace_char:
+    backspace_char_action();
+    return;
+  case '*':
+    put_decimal_separator();
+    return;
+  case '0':
+  case '1':
+  case '2':
+  case '3':
+  case '4':
+  case '5':
+  case '6':
+  case '7':
+  case '8':
+  case '9':
+    put_digit(c);
+    return;
+  case 'B':
+    change_sign();
+    return;
+  }
+}
+
+void Float_Input_View::enter_char_action()
+{
+  finished = true;
+}
+
+void Float_Input_View::put_decimal_separator()
+{
+  has_separator = true;
+}
+
+void Float_Input_View::put_digit(char d)
+{
+  if (has_separator) {
+    fraction_digits.push_back(d);
+  } else {
+    integer_digits.push_back(d);
+  }
+}
+
+void Float_Input_View::backspace_char_action()
+{
+  if (has_separator) {
+    if (fraction_digits.size() > 0) {
+      fraction_digits.pop_back();
+    } else {
+      has_separator = false;
+    }
+  } else {
+    if (integer_digits.size() > 0) {
+      integer_digits.pop_back();
+    }
+  }
+}
+
+const double Float_Input_View::get_value()
+{
+  double value = 0.0;
+  int i;
+  for (i = fraction_digits.size() - 1; i >= 0; --i) {
+    value += static_cast < double >(fraction_digits[i] - '0');
+    value /= 10.0;
+  }
+  double place = 1.0;
+  for (i = integer_digits.size() - 1; i >= 0; --i) {
+    value += place * static_cast < double >(fraction_digits[i] - '0');
+    place *= 10.0;;
+  }
+  return value;
+}
+
+void Float_Input_View::change_sign()
+{
+  is_negative = !is_negative;
+}
+
+void Float_Input_View::set_width(int32_t w)
+{
+  _width = w;
+}
+
+std::unique_ptr < CharLCD_STM32F >
+    Float_Input_View::write_first_line(std::unique_ptr < CharLCD_STM32F > lcd)
+{
+  /* Assumes the lcd position is at the start of the line. */
+  int space = _width - _label.size();
+  int n = 0;
+  while (n < space / 2) {
+    n += lcd->print(' ');
+  }
+  n += lcd->print(_label);
+  while (n < _width) {
+    n += lcd->print(' ');
+  }
+  return std::move(lcd);
+}
+
+std::unique_ptr < CharLCD_STM32F >
+    Float_Input_View::write_second_line(std::unique_ptr < CharLCD_STM32F > lcd)
+{
+
+  int n = 0;
+  n += lcd->print(":=");
+  if (is_negative) {
+    n += lcd->print('-');
+  } else {
+    n += lcd->print(' ');
+  }
+  n += lcd->print(integer_digits);
+  if (has_separator) {
+    n += lcd->print('.');
+    n += lcd->print(fraction_digits);
+  }
   while (n < _width) {
     n += lcd->print(' ');
   }
@@ -126,7 +273,8 @@ Sexagesimal_Input_View::Sexagesimal_Input_View(std::string label)
   subseconds = 0.0;
   position = 0;
   _width = INPUT_VIEW_DEFAULT_WIDTH;
-  is_two_line = true;  is_negative = false;
+  is_two_line = true;
+  is_negative = false;
   finished = false;
   plus_char = ' ';
   minus_char = '-';
@@ -220,28 +368,28 @@ void Sexagesimal_Input_View::stuff_digit(char d)
     if (hhh_str.size() < msd_digits) {
       hhh_str += d;
       if (hhh_str.size() >= msd_digits) {
-	position = 1;
+        position = 1;
       }
     }
-    //hhh_read();
+    // hhh_read();
     return;
   case 1:
     if (mm_str.size() < 2) {
       mm_str += d;
       if (mm_str.size() >= 2) {
-	position = 2;
+        position = 2;
       }
     }
-    //mm_read();
+    // mm_read();
     return;
   case 2:
     if (ss_str.size() < 2) {
       ss_str += d;
       if (ss_str.size() >= 2) {
-	position = 3;
+        position = 3;
       }
     }
-    //ss_read();
+    // ss_read();
     return;
   case 3:
     if (subseconds_str.size() < 6) {
@@ -349,7 +497,8 @@ void Sexagesimal_Input_View::set_msd_digits(uint8_t d)
   msd_digits = d;
 }
 
-void Sexagesimal_Input_View::set_center_label(bool value){
+void Sexagesimal_Input_View::set_center_label(bool value)
+{
   center_label = value;
 }
 
@@ -379,16 +528,14 @@ std::string lead_zeros_to_space(std::string input)
   return output;
 }
 
-
-
 std::unique_ptr < CharLCD_STM32F >
     Sexagesimal_Input_View::write_first_line(std::unique_ptr < CharLCD_STM32F >
-					     lcd)
+                                             lcd)
 {
   /* Assumes the lcd position is at the start of the line. */
   int space = _width - _label.size();
   int n = 0;
-  if( center_label ){
+  if (center_label) {
     while (n < space / 2) {
       n += lcd->print(' ');
     }
@@ -402,7 +549,7 @@ std::unique_ptr < CharLCD_STM32F >
 
 std::unique_ptr < CharLCD_STM32F >
     Sexagesimal_Input_View::write_second_line(std::unique_ptr < CharLCD_STM32F >
-					      lcd)
+                                              lcd)
 {
   char cursor_char = '_';
   int n = 0;
@@ -485,13 +632,13 @@ std::unique_ptr < CharLCD_STM32F >
 
 std::unique_ptr < CharLCD_STM32F >
     Sexagesimal_Input_View::write_third_line(std::unique_ptr < CharLCD_STM32F >
-					     lcd)
+                                             lcd)
 {
   int n = 0;
   n += lcd->print(":=");
   int pad = 4 - static_cast < int >(hhh_str.size());
   if (hhh_str.size() == 0) {
-    --pad;			/* Account for printing a zero. */
+    --pad;                      /* Account for printing a zero. */
   }
   int half_pad = pad / 2;
   while (pad > half_pad) {
@@ -554,11 +701,11 @@ std::unique_ptr < CharLCD_STM32F >
     ++end_pad;
   }
   while (end_pad >= 0) {
-    lcd->command(0x10);		// Shift cursor to the left.
+    lcd->command(0x10);         // Shift cursor to the left.
     --end_pad;
   }
   for (int n = 1; n <= 20; ++n) {
-    lcd->command(0x10);		// Shift cursor to the left.
+    lcd->command(0x10);         // Shift cursor to the left.
   }
   return std::move(lcd);
 }
@@ -566,7 +713,7 @@ std::unique_ptr < CharLCD_STM32F >
 /* This works for an initially empty entry but it is slow. */
 std::unique_ptr < CharLCD_STM32F >
     Sexagesimal_Input_View::write_fourth_line(std::unique_ptr < CharLCD_STM32F >
-					      lcd)
+                                              lcd)
 {
   int n = 0;
   n += lcd->print(":= ");
@@ -679,12 +826,14 @@ Confirm_Input_View::Confirm_Input_View()
   dsc_controller::set_character_reciever(this);
 }
 
-Confirm_Input_View::~Confirm_Input_View(){
+Confirm_Input_View::~Confirm_Input_View()
+{
   dsc_controller::set_character_reciever(saved_cr);
 }
 
-void Confirm_Input_View::put_char(char c){
-  switch( c ){
+void Confirm_Input_View::put_char(char c)
+{
+  switch (c) {
   case keypad_enter_char:
     is_okay = true;
     finished = true;
@@ -696,23 +845,25 @@ void Confirm_Input_View::put_char(char c){
   }
 }
 
-
-void Confirm_Input_View::set_text( std::string text ){
+void Confirm_Input_View::set_text(std::string text)
+{
   text_ = text;
 }
 
-void Confirm_Input_View::set_true_text( std::string text ){
+void Confirm_Input_View::set_true_text(std::string text)
+{
   true_text_ = text;
 }
 
-void Confirm_Input_View::set_false_text( std::string text ){
+void Confirm_Input_View::set_false_text(std::string text)
+{
   false_text_ = text;
 }
- 
-bool Confirm_Input_View::get_is_okay(){
+
+bool Confirm_Input_View::get_is_okay()
+{
   return is_okay;
 }
-
 
 std::unique_ptr < CharLCD_STM32F >
     Confirm_Input_View::write_first_line(std::unique_ptr < CharLCD_STM32F > lcd)
@@ -722,7 +873,7 @@ std::unique_ptr < CharLCD_STM32F >
   while (n < space / 2) {
     n += lcd->print(' ');
   }
-  n += lcd->print( text_ );
+  n += lcd->print(text_);
   while (n < width_) {
     n += lcd->print(' ');
   }
@@ -731,25 +882,23 @@ std::unique_ptr < CharLCD_STM32F >
 
 std::unique_ptr < CharLCD_STM32F >
     Confirm_Input_View::write_second_line(std::unique_ptr < CharLCD_STM32F >
-					  lcd)
+                                          lcd)
 {
   int n = 0;
-  n += lcd->print( keypad_backspace_char );
-  n += lcd->print( ") " );
-  n += lcd->print( false_text_ );
-  while ( n < width_/2 ) {
+  n += lcd->print(keypad_backspace_char);
+  n += lcd->print(") ");
+  n += lcd->print(false_text_);
+  while (n < width_ / 2) {
     n += lcd->print(' ');
   }
-  n += lcd->print( keypad_enter_char );
-  n += lcd->print( ") " );
-  n += lcd->print( true_text_ );
-  while ( n < width_ ) {
+  n += lcd->print(keypad_enter_char);
+  n += lcd->print(") ");
+  n += lcd->print(true_text_);
+  while (n < width_) {
     n += lcd->print(' ');
   }
   return std::move(lcd);
 }
-
-
 
 /****************************************
  *
@@ -757,8 +906,8 @@ std::unique_ptr < CharLCD_STM32F >
  *
  ****************************************/
 
-Burnham_Format_Input_View::Burnham_Format_Input_View(){
-
+Burnham_Format_Input_View::Burnham_Format_Input_View()
+{
   cursor_char = '_';
   plus_char = 'n';
   minus_char = 's';
@@ -773,12 +922,14 @@ Burnham_Format_Input_View::Burnham_Format_Input_View(){
   label_ = "Burnham RA and Dec.";
 }
 
-Burnham_Format_Input_View::~Burnham_Format_Input_View(){
+Burnham_Format_Input_View::~Burnham_Format_Input_View()
+{
   dsc_controller::set_character_reciever(saved_cr);
 }
 
-void Burnham_Format_Input_View::put_char(char c){
-  switch( c ){
+void Burnham_Format_Input_View::put_char(char c)
+{
+  switch (c) {
   case keypad_enter_char:
     finished = true;
     return;
@@ -804,106 +955,114 @@ void Burnham_Format_Input_View::put_char(char c){
   case '7':
   case '8':
   case '9':
-    put_digit( c );
+    put_digit(c);
     return;
   default:
     return;
   }
 }
 
-void Burnham_Format_Input_View::put_digit(char d){
-  if( position < 10 ){
+void Burnham_Format_Input_View::put_digit(char d)
+{
+  if (position < 10) {
     char_buffer[position] = d;
   }
-  increment_position(); /* positon is the rightmost unset character. */
+  increment_position();         /* positon is the rightmost unset character. */
 }
 
-void Burnham_Format_Input_View::increment_position(){
-  if( position >= 10 ){
+void Burnham_Format_Input_View::increment_position()
+{
+  if (position >= 10) {
     position = 10;
     char_buffer[10] = '\0';
     return;
   }
   ++position;
-  if( position == 5 ){
-    ++position; // Skip over the [ns] character.
+  if (position == 5) {
+    ++position;                 // Skip over the [ns] character.
   }
   char_buffer[position] = '\0';
 }
 
-void Burnham_Format_Input_View::decrement_position(){
-  if( position == 0 ){
+void Burnham_Format_Input_View::decrement_position()
+{
+  if (position == 0) {
     return;
   }
   char_buffer[position] = '\0';
   --position;
-  if( position == 5 ){
-    --position; // Skip over the [ns] character.
+  if (position == 5) {
+    --position;                 // Skip over the [ns] character.
   }
   char_buffer[position] = '\0';
 }
 
-void Burnham_Format_Input_View::toggle_plus_minus(){
-  if( char_buffer[5] == plus_char ){
+void Burnham_Format_Input_View::toggle_plus_minus()
+{
+  if (char_buffer[5] == plus_char) {
     char_buffer[5] = minus_char;
-  }else{
+  } else {
     char_buffer[5] = plus_char;
   }
 }
 
-void Burnham_Format_Input_View::make_positive(){
+void Burnham_Format_Input_View::make_positive()
+{
   char_buffer[5] = plus_char;
 }
 
-void Burnham_Format_Input_View::make_negative(){
+void Burnham_Format_Input_View::make_negative()
+{
   char_buffer[5] = minus_char;
 }
 
-double Burnham_Format_Input_View::get_RA(){
+double Burnham_Format_Input_View::get_RA()
+{
   double RA = 0;
   unsigned int scan_value;
   int n;
   scan_value = 0;
-  n = sscanf( char_buffer, "%2u", &scan_value  );
-  if( n == 1 ){
-    RA += static_cast<double>( scan_value );
+  n = sscanf(char_buffer, "%2u", &scan_value);
+  if (n == 1) {
+    RA += static_cast < double >(scan_value);
   }
   scan_value = 0;
-  n = sscanf( char_buffer + 2, "%2u", &scan_value  );
-  if( n == 1 ){
-    RA += (1.0/60.0)*static_cast<double>( scan_value );
+  n = sscanf(char_buffer + 2, "%2u", &scan_value);
+  if (n == 1) {
+    RA += (1.0 / 60.0) * static_cast < double >(scan_value);
   }
   scan_value = 0;
-  n = sscanf( char_buffer + 4, "%1u", &scan_value  );
-  if( n == 1 ){
-    RA += (1.0/600.0)*static_cast<double>( scan_value );
+  n = sscanf(char_buffer + 4, "%1u", &scan_value);
+  if (n == 1) {
+    RA += (1.0 / 600.0) * static_cast < double >(scan_value);
   }
   return RA;
 }
 
-
-double Burnham_Format_Input_View::get_Declination(){
+double Burnham_Format_Input_View::get_Declination()
+{
   double dec = 0;
   unsigned int scan_value;
   int n;
   scan_value = 0;
-  n = sscanf( char_buffer + 6, "%2u", &scan_value  );
-  if( n == 1 ){
-    dec += static_cast<double>( scan_value );
+  n = sscanf(char_buffer + 6, "%2u", &scan_value);
+  if (n == 1) {
+    dec += static_cast < double >(scan_value);
   }
   scan_value = 0;
-  n = sscanf( char_buffer + 8, "%2u", &scan_value  );
-  if( n == 1 ){
-    dec += (1.0/60.0)*static_cast<double>( scan_value );
+  n = sscanf(char_buffer + 8, "%2u", &scan_value);
+  if (n == 1) {
+    dec += (1.0 / 60.0) * static_cast < double >(scan_value);
   }
-  if( char_buffer[5] == minus_char ){
+  if (char_buffer[5] == minus_char) {
     return -dec;
-  }else{
+  } else {
     return dec;
   }
 }
 
-CAA2DCoordinate Burnham_Format_Input_View::get_RA_and_Dec(){
+CAA2DCoordinate Burnham_Format_Input_View::get_RA_and_Dec()
+{
   CAA2DCoordinate RA_and_Dec;
   RA_and_Dec.X = get_RA();
   RA_and_Dec.Y = get_Declination();
@@ -911,7 +1070,8 @@ CAA2DCoordinate Burnham_Format_Input_View::get_RA_and_Dec(){
 }
 
 std::unique_ptr < CharLCD_STM32F >
-    Burnham_Format_Input_View::write_first_line(std::unique_ptr < CharLCD_STM32F > lcd)
+    Burnham_Format_Input_View::write_first_line(std::unique_ptr <
+                                                CharLCD_STM32F > lcd)
 {
   int32_t space = width_ - label_.size();
   int32_t n = 0;
@@ -919,22 +1079,23 @@ std::unique_ptr < CharLCD_STM32F >
     n += lcd->print(' ');
   }
   n += lcd->print(label_);
-  while ( n < width_ ) {
+  while (n < width_) {
     n += lcd->print(' ');
   }
   return std::move(lcd);
 }
 
 std::unique_ptr < CharLCD_STM32F >
-    Burnham_Format_Input_View::write_second_line(std::unique_ptr < CharLCD_STM32F > lcd)
+    Burnham_Format_Input_View::write_second_line(std::unique_ptr <
+                                                 CharLCD_STM32F > lcd)
 {
   int32_t n = 0;
-  n += lcd->print( " > " );
-  n += lcd->print( char_buffer );
-  if( position <= 10 ){
-    n += lcd->print( cursor_char );
+  n += lcd->print(" > ");
+  n += lcd->print(char_buffer);
+  if (position <= 10) {
+    n += lcd->print(cursor_char);
   }
-  while ( n < width_ ) {
+  while (n < width_) {
     n += lcd->print(' ');
   }
   return std::move(lcd);
@@ -946,7 +1107,9 @@ std::unique_ptr < CharLCD_STM32F >
  *
  ******************************************/
 
-Alignment_Timestamp_Prompt::Alignment_Timestamp_Prompt(  Simple_Altazimuth_Scope* tele, std::string object){
+Alignment_Timestamp_Prompt::Alignment_Timestamp_Prompt(Simple_Altazimuth_Scope *
+                                                       tele, std::string object)
+{
   prompt_text_1 = "Center telescope on";
   object_name = object;
   prompt_text_3 = "  #| Timestamp";
@@ -960,21 +1123,24 @@ Alignment_Timestamp_Prompt::Alignment_Timestamp_Prompt(  Simple_Altazimuth_Scope
   dsc_controller::set_character_reciever(this);
 }
 
-Alignment_Timestamp_Prompt::~Alignment_Timestamp_Prompt(){
+Alignment_Timestamp_Prompt::~Alignment_Timestamp_Prompt()
+{
   dsc_controller::set_character_reciever(saved_cr);
 }
 
-void Alignment_Timestamp_Prompt::grab_timestamp_data(){
+void Alignment_Timestamp_Prompt::grab_timestamp_data()
+{
   /* Possibly the telescope is moving. It is easier to average the time than the position data. */
   double t0 = JD_timestamp_pretty_good_000();
   encoder_data = telescope->get_snapshot();
   double t1 = JD_timestamp_pretty_good_000();
-  timestamp = (t0 + t1)/2.0;
+  timestamp = (t0 + t1) / 2.0;
   _has_data = true;
 }
 
-void Alignment_Timestamp_Prompt::put_char(char c){
-  switch( c ){
+void Alignment_Timestamp_Prompt::put_char(char c)
+{
+  switch (c) {
   case keypad_enter_char:
     grab_timestamp_data();
     finished = true;
@@ -985,65 +1151,74 @@ void Alignment_Timestamp_Prompt::put_char(char c){
   }
 }
 
-double Alignment_Timestamp_Prompt::get_timestamp(){
+double Alignment_Timestamp_Prompt::get_timestamp()
+{
   return timestamp;
 }
 
-Alt_Azi_Snapshot_t Alignment_Timestamp_Prompt::get_encoder_data(){
+Alt_Azi_Snapshot_t Alignment_Timestamp_Prompt::get_encoder_data()
+{
   return encoder_data;
 }
 
-std::string Alignment_Timestamp_Prompt::get_object_name(){
+std::string Alignment_Timestamp_Prompt::get_object_name()
+{
   return object_name;
 }
 
-bool Alignment_Timestamp_Prompt::has_data(){
+bool Alignment_Timestamp_Prompt::has_data()
+{
   return _has_data;
 }
 
-
-
-std::unique_ptr < CharLCD_STM32F > Alignment_Timestamp_Prompt::write_first_line(std::unique_ptr <
-										CharLCD_STM32F > lcd){
+std::unique_ptr < CharLCD_STM32F >
+    Alignment_Timestamp_Prompt::write_first_line(std::unique_ptr <
+                                                 CharLCD_STM32F > lcd)
+{
   int n = 0;
-  n += lcd->print( prompt_text_1 );
+  n += lcd->print(prompt_text_1);
   while (n < _width) {
     n += lcd->print(' ');
   }
   return std::move(lcd);
 }
 
-std::unique_ptr < CharLCD_STM32F > Alignment_Timestamp_Prompt::write_second_line(std::unique_ptr <
-										 CharLCD_STM32F > lcd){
+std::unique_ptr < CharLCD_STM32F >
+    Alignment_Timestamp_Prompt::write_second_line(std::unique_ptr <
+                                                  CharLCD_STM32F > lcd)
+{
   int n = 0;
   int space = _width - object_name.size();
-  for( int i=1; i<space/2; ++i  ){
-    n += lcd->print( ' ' );
+  for (int i = 1; i < space / 2; ++i) {
+    n += lcd->print(' ');
   }
-  n += lcd->print( object_name );
+  n += lcd->print(object_name);
   while (n < _width) {
     n += lcd->print(' ');
   }
   return std::move(lcd);
 }
 
-std::unique_ptr < CharLCD_STM32F > Alignment_Timestamp_Prompt::write_third_line(std::unique_ptr <
-										CharLCD_STM32F > lcd){
+std::unique_ptr < CharLCD_STM32F >
+    Alignment_Timestamp_Prompt::write_third_line(std::unique_ptr <
+                                                 CharLCD_STM32F > lcd)
+{
   int n = 0;
-  n += lcd->print( prompt_text_3 );
+  n += lcd->print(prompt_text_3);
   while (n < _width) {
     n += lcd->print(' ');
   }
   return std::move(lcd);
 }
 
-std::unique_ptr < CharLCD_STM32F > Alignment_Timestamp_Prompt::write_fourth_line(std::unique_ptr <
-										 CharLCD_STM32F > lcd){
+std::unique_ptr < CharLCD_STM32F >
+    Alignment_Timestamp_Prompt::write_fourth_line(std::unique_ptr <
+                                                  CharLCD_STM32F > lcd)
+{
   int n = 0;
-  n += lcd->print( prompt_text_4 );
+  n += lcd->print(prompt_text_4);
   while (n < _width) {
     n += lcd->print(' ');
   }
   return std::move(lcd);
 }
-

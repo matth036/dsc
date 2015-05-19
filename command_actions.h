@@ -27,6 +27,7 @@ void angular_coordinate_view();
 
 void navigation_star_menu_test();
 void sexagesimal_test_dialog();
+void float_input_test();
 
 void display_current_time_view();
 void add_seconds_dialog();

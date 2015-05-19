@@ -24,7 +24,7 @@ void config_keypad_timer()
    * TIM12 runs at 42MHz.  (Max interface clock in chip documentation)
    * (Counter frequency) = (Clock frequncy)/(Prescaler + 1)
    */
-  uint16_t TIM12_PrescalerValue = 41;	// 1MHz clock.
+  uint16_t TIM12_PrescalerValue = 41;   // 1MHz clock.
   TIM_TimeBaseStructure.TIM_Period = 0xFFFF;
   TIM_TimeBaseStructure.TIM_Prescaler = TIM12_PrescalerValue;
   TIM_TimeBaseStructure.TIM_ClockDivision = 0;
@@ -62,11 +62,10 @@ void Matrix_Keypad::time_tick_action()
 }
 
 Matrix_Keypad::Matrix_Keypad(initializer_list < pin > row_pins,
-			     initializer_list < port > row_ports,
-			     initializer_list < pin > col_pins,
-			     initializer_list < port > col_ports)
+                             initializer_list < port > row_ports,
+                             initializer_list < pin > col_pins,
+                             initializer_list < port > col_ports)
 {
-
   for (auto p = row_ports.begin(); p != row_ports.end(); ++p) {
     enable_port(*p);
   }
@@ -90,7 +89,7 @@ Matrix_Keypad::Matrix_Keypad(initializer_list < pin > row_pins,
     row_ports_[i] = *it;
     ++i;
   }
-  while (i < nrows) {		/* Use the last port listed for other ports in the row. */
+  while (i < nrows) {           /* Use the last port listed for other ports in the row. */
     row_ports_[i] = row_ports_[i - 1];
     ++i;
   }
@@ -106,7 +105,7 @@ Matrix_Keypad::Matrix_Keypad(initializer_list < pin > row_pins,
     col_ports_[i] = *it;
     ++i;
   }
-  while (i < ncols) {		/* Use the last port listed for other ports in the col. */
+  while (i < ncols) {           /* Use the last port listed for other ports in the col. */
     col_ports_[i] = col_ports_[i - 1];
     ++i;
   }
@@ -182,7 +181,7 @@ void Matrix_Keypad::write_row_read_col_time_tick_action()
     read_values[c] = data & col_pins_[c];
   }
   for (int c = 0; c < ncols; ++c) {
-    col = c;			/* One of the implicit arguments of increment_sum() and decrement_sum() */
+    col = c;                    /* One of the implicit arguments of increment_sum() and decrement_sum() */
     if (read_values[c]) {
       increment_sum();
     } else {
@@ -210,7 +209,7 @@ void Matrix_Keypad::VARIOUS_HACKS()
 }
 
 // GPIO_ResetBits(KEYPAD_WRITE_PORT, KEYPAD_WRITE_PIN_0 );
-//  GPIO_SetBits(KEYPAD_WRITE_PORT, KEYPAD_WRITE_PIN_1 ); 
+// GPIO_SetBits(KEYPAD_WRITE_PORT, KEYPAD_WRITE_PIN_1 ); 
 void Matrix_Keypad::write_rows()
 {
   for (int r = 0; r < nrows; ++r) {
@@ -276,7 +275,6 @@ void Matrix_Keypad::init_row_write()
   GPIO_InitTypeDef GPIO_InitStructure;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
   GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-  //GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
   GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
   for (int r = 0; r < nrows; ++r) {
@@ -303,7 +301,6 @@ void Matrix_Keypad::init_col_write()
   GPIO_InitTypeDef GPIO_InitStructure;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
   GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-  // GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
   GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
   for (int c = 0; c < ncols; ++c) {

@@ -1,23 +1,22 @@
-#ifndef _INPUT_VIEWS_H
-#define _INPUT_VIEWS_H
+#ifndef INPUT_VIEWS_H_
+#define INPUT_VIEWS_H_
 
-#include "character_reciever.h"
+
 #include <string>
 #include <memory>
 #include <vector>
+#include "character_reciever.h"
 #include "sexagesimal.h"
 #include "telescope_model.h"
 
-// #include "CharLCD_STM32F.h"
 class CharLCD_STM32F;
 class Telescope_Model;
 
-/* Widgetoid for inputing an integer, showing the partial 
- * entry on an LCD
+/*
+ * View for inputing an integer.
  **/
 
-constexpr uint32_t INPUT_VIEW_DEFAULT_WIDTH = 20;  /* The width of the display in characters */
-
+constexpr uint32_t INPUT_VIEW_DEFAULT_WIDTH = 20;       /* The width of the display in characters */
 
 class Integer_Input_View:Character_Reciever {
  public:
@@ -33,17 +32,14 @@ class Integer_Input_View:Character_Reciever {
   void enter_char_action();
   void backspace_char_action();
    std::unique_ptr < CharLCD_STM32F > write_first_line(std::unique_ptr <
-						       CharLCD_STM32F >);
+                                                       CharLCD_STM32F >);
    std::unique_ptr < CharLCD_STM32F > write_second_line(std::unique_ptr <
-							CharLCD_STM32F >);
+                                                        CharLCD_STM32F >);
 
-  //void write_second_line(CharLCD_STM32F*);
   inline bool is_finished() {
     return finished;
-  } 
-
- private:
-  Character_Reciever* saved_cr;
+ } private:
+   Character_Reciever * saved_cr;
   int32_t _width;
   int32_t _value;
   std::string _label;
@@ -56,57 +52,54 @@ class Float_Input_View:Character_Reciever {
   Float_Input_View(std::string label);
   ~Float_Input_View();
   void put_char(char);
-
-  void set_value(int32_t);
-  const int32_t get_value();
+  const double get_value();
   void change_sign();
   void set_width(int32_t);
   void enter_char_action();
   void backspace_char_action();
    std::unique_ptr < CharLCD_STM32F > write_first_line(std::unique_ptr <
-						       CharLCD_STM32F >);
+                                                       CharLCD_STM32F >);
    std::unique_ptr < CharLCD_STM32F > write_second_line(std::unique_ptr <
-							CharLCD_STM32F >);
+                                                        CharLCD_STM32F >);
 
   inline bool is_finished() {
     return finished;
-  } 
-
- private:
-  Character_Reciever* saved_cr;
+ } private:
+  void put_decimal_separator();
+  void put_digit(char c);
+  Character_Reciever *saved_cr;
   int32_t _width;
-  int32_t _value;
   std::string _label;
+  std::string integer_digits;
+  std::string fraction_digits;
+  bool has_separator = false;
   bool is_two_line;
+  bool is_negative = false;
   bool finished;
 };
-
-
 
 class Confirm_Input_View:Character_Reciever {
  public:
   Confirm_Input_View();
   ~Confirm_Input_View();
   void put_char(char c);
-  void set_text( std::string text );
-  void set_true_text( std::string text );
-  void set_false_text( std::string text );
+  void set_text(std::string text);
+  void set_true_text(std::string text);
+  void set_false_text(std::string text);
 
   void enter_char_action();
   void backspace_char_action();
    std::unique_ptr < CharLCD_STM32F > write_first_line(std::unique_ptr <
-						       CharLCD_STM32F >);
+                                                       CharLCD_STM32F >);
    std::unique_ptr < CharLCD_STM32F > write_second_line(std::unique_ptr <
-							CharLCD_STM32F >);
+                                                        CharLCD_STM32F >);
 
   inline bool is_finished() {
     return finished;
-  } 
-  bool get_is_okay();
-
+  } bool get_is_okay();
 
  private:
-  Character_Reciever* saved_cr;
+  Character_Reciever * saved_cr;
   bool is_okay;
   int32_t width_;
   std::string text_;
@@ -115,17 +108,13 @@ class Confirm_Input_View:Character_Reciever {
   bool finished;
 };
 
-
-
-
-
 //     Sexagesimal( int32_t hhh, uint8_t mm, uint8_t ss, uint16_t xxx);
 class Sexagesimal_Input_View:Character_Reciever {
  public:
   Sexagesimal_Input_View(std::string label);
   ~Sexagesimal_Input_View();
   void put_char(char);
-  sexagesimal::Sexagesimal get_value();
+   sexagesimal::Sexagesimal get_value();
   void change_sign();
   void make_negative();
   void make_positive();
@@ -139,21 +128,21 @@ class Sexagesimal_Input_View:Character_Reciever {
   void set_msd_digits(uint8_t);
   void set_center_label(bool);
    std::unique_ptr < CharLCD_STM32F > write_first_line(std::unique_ptr <
-						       CharLCD_STM32F >);
+                                                       CharLCD_STM32F >);
    std::unique_ptr < CharLCD_STM32F > write_second_line(std::unique_ptr <
-							CharLCD_STM32F >);
+                                                        CharLCD_STM32F >);
    std::unique_ptr < CharLCD_STM32F > write_third_line(std::unique_ptr <
-						       CharLCD_STM32F >);
+                                                       CharLCD_STM32F >);
    std::unique_ptr < CharLCD_STM32F > write_fourth_line(std::unique_ptr <
-							CharLCD_STM32F >);
+                                                        CharLCD_STM32F >);
   inline bool is_finished() {
     return finished;
-  } 
-  inline int32_t get_cursor_column() {
+  } inline int32_t get_cursor_column() {
     return cursor_column;
   }
+
  private:
-  Character_Reciever* saved_cr;
+  Character_Reciever * saved_cr;
   void stuff_digit(char);
   void hhh_read();
   void mm_read();
@@ -171,11 +160,7 @@ class Sexagesimal_Input_View:Character_Reciever {
   std::string mm_str;
   std::string ss_str;
   std::string subseconds_str;
-  //std::string hhh_write_str;
-  //std::string mm_write_str;
-  //std::string ss_write_str;
-  //std::string subseconds_write_str;
-  uint8_t position;		/* 0 for hours, 1 for minutes, 2 for seconds, 3 for subseconds. */
+  uint8_t position;             /* 0 for hours, 1 for minutes, 2 for seconds, 3 for subseconds. */
   bool is_negative;
   char plus_char;
   char minus_char;
@@ -197,26 +182,25 @@ class Sexagesimal_Input_View:Character_Reciever {
  * 1950 to the present epoch should be applied.
  ***************************************************/
 
-class Burnham_Format_Input_View: public Character_Reciever{
+class Burnham_Format_Input_View:public Character_Reciever {
  public:
   Burnham_Format_Input_View();
   ~Burnham_Format_Input_View();
   std::unique_ptr < CharLCD_STM32F > write_first_line(std::unique_ptr <
-						      CharLCD_STM32F >);
+                                                      CharLCD_STM32F >);
   std::unique_ptr < CharLCD_STM32F > write_second_line(std::unique_ptr <
-						       CharLCD_STM32F >);
-  void put_char( char );
+                                                       CharLCD_STM32F >);
+  void put_char(char);
 
   inline bool is_finished() {
     return finished;
-  }
-  double get_RA();
+  } double get_RA();
   double get_Declination();
   CAA2DCoordinate get_RA_and_Dec();
  private:
   std::string label_;
   int32_t width_;
-  void put_digit( char );
+  void put_digit(char);
   char cursor_char;
   char plus_char;
   char minus_char;
@@ -228,11 +212,8 @@ class Burnham_Format_Input_View: public Character_Reciever{
   uint32_t position;
   void increment_position();
   void decrement_position();
-  Character_Reciever* saved_cr;
+  Character_Reciever *saved_cr;
 };
-
-
-
 
 /* 
  * After the user has identified an object for a sight alignment this view 
@@ -242,31 +223,30 @@ class Burnham_Format_Input_View: public Character_Reciever{
  **/
 class Alignment_Timestamp_Prompt:public Character_Reciever {
  public:
-  Alignment_Timestamp_Prompt( Simple_Altazimuth_Scope*, std::string object);
+  Alignment_Timestamp_Prompt(Simple_Altazimuth_Scope *, std::string object);
   ~Alignment_Timestamp_Prompt();
   std::unique_ptr < CharLCD_STM32F > write_first_line(std::unique_ptr <
-						      CharLCD_STM32F >);
+                                                      CharLCD_STM32F >);
   std::unique_ptr < CharLCD_STM32F > write_second_line(std::unique_ptr <
-						       CharLCD_STM32F >);
+                                                       CharLCD_STM32F >);
   std::unique_ptr < CharLCD_STM32F > write_third_line(std::unique_ptr <
-						      CharLCD_STM32F >);
+                                                      CharLCD_STM32F >);
   std::unique_ptr < CharLCD_STM32F > write_fourth_line(std::unique_ptr <
-						       CharLCD_STM32F >);
+                                                       CharLCD_STM32F >);
   void put_char(char);
   void grab_timestamp_data();
   double get_timestamp();
   Alt_Azi_Snapshot_t get_encoder_data();
   inline bool is_finished() {
     return finished;
-  }
-  bool has_data();
+  } bool has_data();
   std::string get_object_name();
  private:
-  double timestamp;      /* Initialized to zero.  Set at timestamp. */
-  Simple_Altazimuth_Scope* telescope;
+  double timestamp;             /* Initialized to zero.  Set at timestamp. */
+  Simple_Altazimuth_Scope *telescope;
   int32_t _width;
-  Character_Reciever* saved_cr;
-  Alt_Azi_Snapshot_t encoder_data;  /* Set at timestamp. */
+  Character_Reciever *saved_cr;
+  Alt_Azi_Snapshot_t encoder_data;      /* Set at timestamp. */
   std::string prompt_text_1;
   std::string object_name;
   std::string prompt_text_3;
@@ -275,4 +255,4 @@ class Alignment_Timestamp_Prompt:public Character_Reciever {
   bool finished;
 };
 
-#endif				/*  _INPUT_VIEWS_H  */
+#endif  // INPUT_VIEWS_H_
