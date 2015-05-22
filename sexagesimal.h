@@ -25,6 +25,7 @@ namespace sexagesimal{
     const uint32_t minutes();
     const uint32_t msb(); // Degrees of angle or Hours time.
     const double to_double();
+    const float to_float();
     const std::string to_string();
 
     const std::string to_hmxxxx_string();

@@ -118,6 +118,24 @@ const double sexagesimal::Sexagesimal::to_double()
   }
 }
 
+const float sexagesimal::Sexagesimal::to_float()
+{
+  float value = 0.0;
+  value += millis();
+  value /= 1000.0;
+  value += seconds();
+  value /= 60.0;
+  value += minutes();
+  value /= 60;
+  value += msb();
+  if (data.ui & 1 << 31) {
+    return -value;
+  } else {
+    return value;
+  }
+}
+
+
 const uint32_t sexagesimal::Sexagesimal::get_data()
 {
   return data.ui;

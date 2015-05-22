@@ -23,6 +23,26 @@ int32_t starlist_access::bsc_number( int index ){
   return starlist[index].BSCnum;
 }
 
+/************************************8
+uint32_t get_data( int index ){
+  return starlist[index]
+}
+***********************************/
+
+float starlist_access::RA_f( int index ){
+  sexagesimal::Sexagesimal temp;
+  temp.set_binary_data( starlist[index].RAdata );
+  return temp.to_float();
+}
+
+float starlist_access::Dec_f( int index ){
+  sexagesimal::Sexagesimal temp;
+  temp.set_binary_data( starlist[index].DECdata );
+  return temp.to_float();
+}
+
+
+
 CAA2DCoordinate starlist_access::proper_motion_adjusted_position( int index, double JD){
   CAA2DCoordinate ra_dec;
   sexagesimal::Sexagesimal RA;

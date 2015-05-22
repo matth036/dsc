@@ -170,9 +170,9 @@ void Proximate_Stars_View::run_algorithm()
   };
   double JD = this->JD;
   auto bsc_distance_from_target =[JD, distance_from_target] (uint32_t index) {
-    CAA2DCoordinate position =
-        starlist_access::proper_motion_adjusted_position(index, JD);
-    return distance_from_target(position.X, position.Y);
+    float RA = starlist_access::RA_f( index );
+    float Dec = starlist_access::Dec_f( index );
+    return distance_from_target(RA, Dec);
   };
   auto target_proximity_compare =
       [bsc_distance_from_target] (const uint32_t a, const uint32_t b){

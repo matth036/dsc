@@ -30,12 +30,15 @@
  *
  */
 
-#include "AA2DCoordinate.h"
 #include <inttypes.h>
+#include "AA2DCoordinate.h"
+#include "sexagesimal.h"
 
 namespace starlist_access{
   int get_index( int bsc_number );
   int32_t bsc_number( int index );
+float RA_f( int index );
+  float Dec_f( int index );
   CAA2DCoordinate proper_motion_adjusted_position( int index, double JD);
   float magnitude( int index );
   int32_t bsc_number( int index );
