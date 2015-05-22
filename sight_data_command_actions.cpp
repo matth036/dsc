@@ -140,6 +140,14 @@ void alignment_sight_test(){
     lcd = sight_view->write_third_line(std::move(lcd));
     lcd->setCursor(0,3);
     lcd = sight_view->write_fourth_line(std::move(lcd));
+    /*
+     * This is the model to follow for transfering control from one view to 
+     * another.  Emulate this technique. The view being displayed
+     * has a method indicating that a subordinate view has been requested.
+     * The code invoking the subordinate view is a standalone function
+     * as opposed to a class method.  
+     *
+     **/
     if( sight_view->prompt_for_new_star_sight() ){
       check_in_main_lcd(std::move(lcd));
       navigation_star_menu();

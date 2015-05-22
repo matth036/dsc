@@ -1089,8 +1089,7 @@ void ngc_details_view_action( char* yytext, int yyleng ){
 void proximate_stars_view(){
   auto lcd = check_out_main_lcd();
   Simple_Altazimuth_Scope* scope = get_main_simple_telescope();
-  std::unique_ptr<Proximate_Stars_View> view = 
-    std::unique_ptr<Proximate_Stars_View>( new Proximate_Stars_View( scope ) );
+  auto view = std::unique_ptr<Proximate_Stars_View>( new Proximate_Stars_View( scope ) );
   
   while( !view->is_finished() ){
     lcd->setCursor(0,0);
@@ -1101,9 +1100,33 @@ void proximate_stars_view(){
     lcd = view->write_third_line(std::move(lcd));
     lcd->setCursor(0,3);
     lcd = view->write_fourth_line(std::move(lcd));
+    if( view->prompt_for_magnitude() ){
+      check_in_main_lcd(std::move(lcd));
+      char c = view->get_first_digit();
+      float mag = prompt_for_float( "Set Magnitude Limit", c );
+      view->set_magnitude_limit( mag );
+      view->clear_prompts();
+      lcd = check_out_main_lcd();
+    }
   }
 
   check_in_main_lcd(std::move(lcd));
+}
+
+float prompt_for_float( std::string prompt_text, char first_digit ){
+  auto lcd = check_out_main_lcd();
+
+  auto view = std::unique_ptr<Float_Input_View>( new Float_Input_View(prompt_text) );
+  view->put_char( first_digit );
+  while( !view->is_finished() ){
+    lcd->setCursor(0,2);
+    lcd = view->write_first_line(std::move(lcd));
+    lcd->setCursor(0,3);
+    lcd = view->write_second_line(std::move(lcd));  
+  }
+
+  check_in_main_lcd(std::move(lcd));
+  return view->get_value();
 }
 
 void proximate_navigation_stars_view(){

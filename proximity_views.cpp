@@ -77,8 +77,9 @@ void Proximate_Stars_View::put_char(char c)
     increment_position();
     return;
   case '*':
-  case 'B':
     push_pushto_command();
+    return;
+  case 'B':
     return;
   case '1':
   case '2':
@@ -90,7 +91,7 @@ void Proximate_Stars_View::put_char(char c)
   case '8':
   case '9':
   case '0':
-    input_magnitude_limit( c );
+    request_magnitude( c );
     return;
   }
 }
@@ -125,6 +126,14 @@ void Proximate_Stars_View::decrement_position()
   }
 }
 
+void Proximate_Stars_View::clear_prompts(){
+  _prompt_for_magnitude = false;
+}
+
+void Proximate_Stars_View::set_magnitude_limit( float mag ){
+  _magnitude_limit = mag;
+}
+
 void Proximate_Stars_View::push_pushto_command(){
   std::string cmd = "B*C";
   cmd += sexagesimal::to_string_hack(bsc_selection);
@@ -132,8 +141,13 @@ void Proximate_Stars_View::push_pushto_command(){
   dismiss_action();
 }
 
-void Proximate_Stars_View::input_magnitude_limit( char c ){
+void Proximate_Stars_View::request_magnitude( char c ){
+  _first_digit = c;
+  _prompt_for_magnitude = true;
+}
 
+char Proximate_Stars_View::get_first_digit(){
+  return _first_digit;
 }
 
 void Proximate_Stars_View::run_algorithm()
@@ -142,7 +156,9 @@ void Proximate_Stars_View::run_algorithm()
   uint32_t index = 0;
   while (stars.size() < size && index < starlist_access::starlist_size()) {
     /* We may want to filter for magnitude here. */
-    stars.push_back(index);
+    if( starlist_access::magnitude( index ) <= _magnitude_limit ){
+      stars.push_back(index);
+    }
     ++index;
   }
   /* @TODO convert to J2000 RA and Declination */
@@ -171,11 +187,13 @@ void Proximate_Stars_View::run_algorithm()
    *   and, the rest of the list has the heap propery.
    */
   while (index < starlist_access::starlist_size()) {
-    if (target_proximity_compare(index, *stars.begin())) {
-      pop_heap(stars.begin(), stars.end(), target_proximity_compare);
-      stars.pop_back();
-      stars.push_back(index);
-      push_heap(stars.begin(), stars.end(), target_proximity_compare);
+    if( starlist_access::magnitude( index ) <= _magnitude_limit ){
+      if (target_proximity_compare(index, *stars.begin())) {
+	pop_heap(stars.begin(), stars.end(), target_proximity_compare);
+	stars.pop_back();
+	stars.push_back(index);
+	push_heap(stars.begin(), stars.end(), target_proximity_compare);
+      }
     }
     ++index;
   }
@@ -237,19 +255,24 @@ std::unique_ptr < CharLCD_STM32F >
   while (n < 3) {
     n += lcd->print(' ');
   }
-  n += lcd->
+  if( position + line_number - 1 < stars.size() ){
+    n += lcd->
       print(starlist_access::bsc_number(stars[position + line_number - 1]));
-  while (n < 8) {
-    n += lcd->print(' ');
+    while (n < 8) {
+      n += lcd->print(' ');
+    }
+    n += lcd->print(starlist_access::magnitude(stars[position + line_number - 1]),
+		    2);
+    n += lcd->print("m ");
+    while (n < 14) {
+      n += lcd->print(' ');
+    }
+    n += lcd->print(bsc_distance_from_target(stars[position + line_number - 1]),
+		    1);
+  }else{
+    n += lcd->print( " ... " );
+    n += lcd->print( _magnitude_limit, 3 );
   }
-  n += lcd->print(starlist_access::magnitude(stars[position + line_number - 1]),
-                  2);
-  n += lcd->print("m ");
-  while (n < 14) {
-    n += lcd->print(' ');
-  }
-  n += lcd->print(bsc_distance_from_target(stars[position + line_number - 1]),
-                  1);
   while (n < width_) {
     n += lcd->print(' ');
   }

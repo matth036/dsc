@@ -36,6 +36,12 @@ class Proximate_Stars_View:Character_Reciever {
   inline bool is_finished() {
     return finished;
   }
+  inline bool prompt_for_magnitude() {
+    return _prompt_for_magnitude;
+  }
+  char get_first_digit();
+  void clear_prompts();
+  void set_magnitude_limit( float mag );
   void increment_position();
   void decrement_position();
   void set_size(uint32_t s);
@@ -45,9 +51,10 @@ class Proximate_Stars_View:Character_Reciever {
                                                   CharLCD_STM32F >, uint32_t n);
   void push_pushto_command();
   void run_algorithm();
-  void input_magnitude_limit( char c );
+  void request_magnitude( char c );
   std::vector < uint32_t > stars;
   double JD;
+  float _magnitude_limit = 5.0;
   Character_Reciever *saved_cr;
   uint32_t size = 99;
   uint32_t position = 0;
@@ -55,7 +62,9 @@ class Proximate_Stars_View:Character_Reciever {
   int32_t width_;
   Simple_Altazimuth_Scope *telescope;
   CAA2DCoordinate RA_and_Dec;
+  char _first_digit;
   bool finished;
+  bool _prompt_for_magnitude = false;
 };
 
 class Proximate_Messier_Objects_View:Character_Reciever {

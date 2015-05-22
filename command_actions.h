@@ -1,6 +1,7 @@
 #ifndef _COMMAND_ACTIONS_H
 #define _COMMAND_ACTIONS_H
 
+#include <string>
 
 void version_info_view_action( char* yytext, int yyleng );
 void ngc_point_to_action( char* yytext, int yyleng );
@@ -28,6 +29,7 @@ void angular_coordinate_view();
 void navigation_star_menu_test();
 void sexagesimal_test_dialog();
 void float_input_test();
+float prompt_for_float( std::string prompt_text, char first_digit );
 
 void display_current_time_view();
 void add_seconds_dialog();

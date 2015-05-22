@@ -67,16 +67,17 @@ void dsc_controller::put_char(char c)
   }
 }
 
-std::vector < char >dsc_controller::char_buffer {
-24};
-std::vector < std::string > dsc_controller::cmd_buffer {
-8};
+std::vector < char >dsc_controller::char_buffer {24};
+std::vector < std::string > dsc_controller::cmd_buffer {8};
 
 std::string dsc_controller::pop_cmd_buffer()
 {
   std::string item = cmd_buffer[0];
-  /* Simulate FIFO  action  [at cost of O(n)]. 
-   * @TODO see if there is a proper FIFO buffer that compiles for uC.  
+  /* 
+   * Simulate FIFO  action  [at cost of O(n)]. 
+   * 
+   * An attempt to make cmd_buffer a std::deque<std::string> did not work well.
+   * The application halted displaying an empty command.
    **/
   for (auto p = cmd_buffer.begin(); (p + 1) != cmd_buffer.end(); ++p) {
     *p = *(p + 1);

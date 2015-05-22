@@ -206,7 +206,7 @@ const double Float_Input_View::get_value()
   }
   double place = 1.0;
   for (i = integer_digits.size() - 1; i >= 0; --i) {
-    value += place * static_cast < double >(fraction_digits[i] - '0');
+    value += place * static_cast < double >(integer_digits[i] - '0');
     place *= 10.0;;
   }
   return value;
