@@ -27,17 +27,6 @@ float ngc_list_access::get_magnitude_i( int index ){
   return ngc_list[index].Vmag;
 }
 
-/*************
-float ngc_list_access::get_RA_i( int index ){
-  sexagesimal::Sexagesimal temp;
-  temp.set_binary_data( ngc_list[index].RAdata );
-  return temp.to_float();
-}b
-float get_Dec_i( int index );
-*************/
-
-
-
 float ngc_list_access::get_dimension_a_i( int index ){
   return ngc_list[index].dimension_a;
 }

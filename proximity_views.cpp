@@ -828,7 +828,7 @@ void Proximate_NGC_View::run_algorithm()
    *   Now *ngc_objects.begin() has the largest distance_from_target() 
    *   and, the rest of the list has the heap propery.
    */
-  while (ngc_objects.size() < size && index < ngc_list_access::ngc_list_size()) {
+  while ( index < ngc_list_access::ngc_list_size()) {
     float mag = ngc_list_access::get_magnitude_i( index );
     if( mag <= _magnitude_limit && mag > .0001 ){
       if (target_proximity_compare(index, *ngc_objects.begin())) {
@@ -894,7 +894,6 @@ std::unique_ptr < CharLCD_STM32F >
     Dec = ngc_list_access::get_Dec_i( index );
     return distance_from_target(RA.to_double(), Dec.to_double());
   };
-
   int n = 0;
   n += lcd->print(position + line_number);
   while (n < 3) {
