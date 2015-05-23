@@ -2,7 +2,7 @@
 #include "ngc_list.h" 
 
 
-int32_t ngc_list_access::ngc_list_size(){
+uint32_t ngc_list_access::ngc_list_size(){
   return NGC_LIST_SIZE; /* defined at the bottom of very large file ngc_list.h */
 }
 
@@ -18,9 +18,25 @@ int ngc_list_access::get_index( uint32_t ngc_num ){
   return index;
 }
 
+uint32_t ngc_list_access::ngc_number( int32_t index ){
+  return ngc_list[index].NGC_number;
+}
+
+
 float ngc_list_access::get_magnitude_i( int index ){
   return ngc_list[index].Vmag;
 }
+
+/*************
+float ngc_list_access::get_RA_i( int index ){
+  sexagesimal::Sexagesimal temp;
+  temp.set_binary_data( ngc_list[index].RAdata );
+  return temp.to_float();
+}b
+float get_Dec_i( int index );
+*************/
+
+
 
 float ngc_list_access::get_dimension_a_i( int index ){
   return ngc_list[index].dimension_a;

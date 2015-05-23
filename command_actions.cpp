@@ -82,27 +82,6 @@ void moon_parallax_test(){
 
   CAA2DCoordinate RA_Dec_topocentric;
 
-// No Good.
-#if 0
-  RA_Dec_topocentric = Equatorial2TopocentricRigorous_PJ(ra_dec_dist.X,
-							   ra_dec_dist.Y,
-							   ra_dec_dist.Z/solar_system::AU_kilometers,
-							   longitude.to_double(),
-							   latitude.to_double(),
-							   0.0,
-							   JD);
-
-
-RA_Dec_topocentric = CAAParallax::Equatorial2Topocentric(ra_dec_dist.X,
-							ra_dec_dist.Y,
-							   (ra_dec_dist.Z/solar_system::AU_kilometers),
-							longitude.to_double(),
-							latitude.to_double(),
-							0.0,
-							JD);
-
-
-#endif
 
   RA_Dec_topocentric = Equatorial2TopocentricRigorousAlternative(ra_dec_dist.X,
 								 ra_dec_dist.Y,
@@ -1112,6 +1091,34 @@ void proximate_stars_view(){
 
   check_in_main_lcd(std::move(lcd));
 }
+
+void proximate_ngc_object_view(){
+  auto lcd = check_out_main_lcd();
+  Simple_Altazimuth_Scope* scope = get_main_simple_telescope();
+  auto view = std::unique_ptr<Proximate_NGC_View>( new Proximate_NGC_View( scope ) );
+  
+  while( !view->is_finished() ){
+    lcd->setCursor(0,0);
+    lcd = view->write_first_line(std::move(lcd));
+    lcd->setCursor(0,1);
+    lcd = view->write_second_line(std::move(lcd));
+    lcd->setCursor(0,2);
+    lcd = view->write_third_line(std::move(lcd));
+    lcd->setCursor(0,3);
+    lcd = view->write_fourth_line(std::move(lcd));
+    if( view->prompt_for_magnitude() ){
+      check_in_main_lcd(std::move(lcd));
+      char c = view->get_first_digit();
+      float mag = prompt_for_float( "Set Magnitude Limit", c );
+      view->set_magnitude_limit( mag );
+      view->clear_prompts();
+      lcd = check_out_main_lcd();
+    }
+  }
+
+  check_in_main_lcd(std::move(lcd));
+}
+
 
 float prompt_for_float( std::string prompt_text, char first_digit ){
   auto lcd = check_out_main_lcd();

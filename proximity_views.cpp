@@ -6,6 +6,7 @@
 #include "char_lcd_stm32f4.h"
 #include "rtc_management.h"
 #include "starlist_access.h"
+#include "ngc_list_access.h"
 #include "messier.h"
 #include "navigation_star.h"
 #include "AAAngularSeparation.h"
@@ -685,3 +686,242 @@ std::unique_ptr < CharLCD_STM32F >
   }
   return std::move(lcd);
 }
+
+
+/*********************************************************************************************/
+
+Proximate_NGC_View::Proximate_NGC_View(Simple_Altazimuth_Scope * scope)
+{
+  telescope = scope;
+  finished = false;
+  width_ = PROXIMITY_VIEW_DEFAULT_WIDTH;
+
+  saved_cr = dsc_controller::get_character_reciever();
+  dsc_controller::set_character_reciever(this);
+}
+
+Proximate_NGC_View::~Proximate_NGC_View()
+{
+  dsc_controller::set_character_reciever(saved_cr);
+}
+
+void Proximate_NGC_View::put_char(char c)
+{
+  switch (c) {
+  case keypad_return_char:
+    dismiss_action();
+    return;
+  case scroll_up_char:
+    decrement_position();
+    return;
+  case scroll_down_char:
+    increment_position();
+    return;
+  case '*':
+    push_pushto_command();
+    return;
+  case 'B':
+    return;
+  case '1':
+  case '2':
+  case '3':
+  case '4':
+  case '5':
+  case '6':
+  case '7':
+  case '8':
+  case '9':
+  case '0':
+    request_magnitude( c );
+    return;
+  }
+}
+
+void Proximate_NGC_View::dismiss_action()
+{
+  finished = true;
+}
+
+void Proximate_NGC_View::set_size(uint32_t s)
+{
+  if (size < 4) {
+    return;
+  }
+  size = s;
+  if (position >= size) {
+    position = size - 1;
+  }
+}
+
+void Proximate_NGC_View::increment_position()
+{
+  if (position + 4 < size) {
+    ++position;
+  }
+}
+
+void Proximate_NGC_View::decrement_position()
+{
+  if (position > 0) {
+    --position;
+  }
+}
+
+void Proximate_NGC_View::clear_prompts(){
+  _prompt_for_magnitude = false;
+}
+
+void Proximate_NGC_View::set_magnitude_limit( float mag ){
+  _magnitude_limit = mag;
+}
+
+void Proximate_NGC_View::push_pushto_command(){
+  std::string cmd = "CA";
+  cmd += sexagesimal::to_string_hack(ngc_selection);
+  dsc_controller::push_cmd_buffer(cmd);
+  dismiss_action();
+}
+
+void Proximate_NGC_View::request_magnitude( char c ){
+  _first_digit = c;
+  _prompt_for_magnitude = true;
+}
+
+char Proximate_NGC_View::get_first_digit(){
+  return _first_digit;
+}
+
+void Proximate_NGC_View::run_algorithm()
+{
+  ngc_objects.clear();
+  uint32_t index = 0;
+  while (ngc_objects.size() < size && index < ngc_list_access::ngc_list_size()) {
+    float mag = ngc_list_access::get_magnitude_i( index );
+    if( mag <= _magnitude_limit && mag > .0001 ){
+      ngc_objects.push_back(index);
+    }
+    ++index;
+  }
+
+  /* @TODO convert to J2000 RA and Declination */
+  float target_RA = RA_and_Dec.X;
+  float target_Dec = RA_and_Dec.Y;
+  auto distance_from_target =
+      [target_RA, target_Dec] (float subject_RA, float subject_Dec){
+    return separation(target_RA, target_Dec, subject_RA, subject_Dec);
+  };
+  //  double JD = this->JD;
+  auto ngc_distance_from_target =[distance_from_target] (uint32_t index) {
+    float RA = ngc_list_access::get_RA_i( index ).to_float();
+    float Dec = ngc_list_access::get_Dec_i( index ).to_float();
+    return distance_from_target(RA, Dec);
+  };
+  auto target_proximity_compare =
+      [ngc_distance_from_target] (const uint32_t a, const uint32_t b){
+    auto distance_a = ngc_distance_from_target(a);
+    auto distance_b = ngc_distance_from_target(b);
+    return distance_a < distance_b;
+  };
+  /* The algoritm proper begins here. */
+  make_heap(ngc_objects.begin(), ngc_objects.end(), target_proximity_compare);
+  /* 
+   *   Now *ngc_objects.begin() has the largest distance_from_target() 
+   *   and, the rest of the list has the heap propery.
+   */
+  while (ngc_objects.size() < size && index < ngc_list_access::ngc_list_size()) {
+    float mag = ngc_list_access::get_magnitude_i( index );
+    if( mag <= _magnitude_limit && mag > .0001 ){
+      if (target_proximity_compare(index, *ngc_objects.begin())) {
+	pop_heap(ngc_objects.begin(), ngc_objects.end(), target_proximity_compare);
+	ngc_objects.pop_back();
+	ngc_objects.push_back(index);
+	push_heap(ngc_objects.begin(), ngc_objects.end(), target_proximity_compare);
+      }
+    }
+    ++index;
+  }
+  sort_heap(ngc_objects.begin(), ngc_objects.end(), target_proximity_compare);
+  ngc_selection = ngc_objects[position];
+}
+
+std::unique_ptr < CharLCD_STM32F >
+    Proximate_NGC_View::write_first_line(std::unique_ptr < CharLCD_STM32F >
+                                           lcd)
+{
+  JD = JD_timestamp_pretty_good_000();
+  RA_and_Dec = telescope->current_RA_and_Dec();
+  run_algorithm();
+  return std::move(write_line_n(std::move(lcd), 1));
+}
+
+std::unique_ptr < CharLCD_STM32F >
+    Proximate_NGC_View::write_second_line(std::unique_ptr < CharLCD_STM32F >
+                                            lcd)
+{
+  return std::move(write_line_n(std::move(lcd), 2));
+}
+
+std::unique_ptr < CharLCD_STM32F >
+    Proximate_NGC_View::write_third_line(std::unique_ptr < CharLCD_STM32F >
+                                           lcd)
+{
+  return std::move(write_line_n(std::move(lcd), 3));
+}
+
+std::unique_ptr < CharLCD_STM32F >
+    Proximate_NGC_View::write_fourth_line(std::unique_ptr < CharLCD_STM32F >
+                                            lcd)
+{
+  return std::move(write_line_n(std::move(lcd), 4));
+}
+
+std::unique_ptr < CharLCD_STM32F >
+    Proximate_NGC_View::write_line_n(std::unique_ptr < CharLCD_STM32F > lcd,
+                                       uint32_t line_number)
+{
+  double target_RA = RA_and_Dec.X;
+  double target_Dec = RA_and_Dec.Y;
+  auto distance_from_target =
+      [target_RA, target_Dec] (double subject_RA, double subject_Dec){
+    return CAAAngularSeparation::Separation(target_RA, target_Dec, subject_RA,
+                                            subject_Dec);
+  };
+  double JD = this->JD;
+  auto ngc_distance_from_target = [JD,distance_from_target] (uint32_t index) {
+    sexagesimal::Sexagesimal RA;
+    sexagesimal::Sexagesimal Dec;
+    RA = ngc_list_access::get_RA_i( index );
+    Dec = ngc_list_access::get_Dec_i( index );
+    return distance_from_target(RA.to_double(), Dec.to_double());
+  };
+
+  int n = 0;
+  n += lcd->print(position + line_number);
+  while (n < 3) {
+    n += lcd->print(' ');
+  }
+  if( position + line_number - 1 < ngc_objects.size() ){
+    n += lcd->
+      print(ngc_list_access::ngc_number(ngc_objects[position + line_number - 1]));
+    while (n < 8) {
+      n += lcd->print(' ');
+    }
+    n += lcd->print(ngc_list_access::get_magnitude_i(ngc_objects[position + line_number - 1]),
+		    2);
+    n += lcd->print("m ");
+    while (n < 14) {
+      n += lcd->print(' ');
+    }
+    n += lcd->print(ngc_distance_from_target(ngc_objects[position + line_number - 1]),
+		    1);
+  }else{
+    n += lcd->print( " ... " );
+    n += lcd->print( _magnitude_limit, 3 );
+  }
+  while (n < width_) {
+    n += lcd->print(' ');
+  }
+  return std::move(lcd);
+}
+
+/*************************************************************************/
