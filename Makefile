@@ -125,6 +125,7 @@ CPPSRC+=flex_lexer.cpp
 CPPSRC+=command_actions.cpp
 CPPSRC+=sight_data_command_actions.cpp
 CPPSRC+=specificities.cpp
+CPPSRC+=neo_bsc_starlist.cpp
 
 # (Subset of) Astronomical Algorithms Source Files
 CPPSRC+=$(AA_SRCDIR)/AAAngularSeparation.cpp
@@ -233,6 +234,8 @@ starlist.h:     make_star_list catalog
 	rm -f starlist.h
 	./make_star_list > starlist.h;    indent  starlist.h
 
+
+
 FLEX_LEXER_ADDITIONAL_COMPILE_FLAG=-Wno-unused-function -Wno-sign-compare
 # flex_lexer.cpp contains unused functions and won't compile under -Werror -Wall
 # Ideally I should find the right flex flags to eliminate the unused functions.
@@ -270,6 +273,12 @@ DPublic_HCNGC.txt: Public_HCNGC.zip
 make_star_list: make_star_list.c navigation_star.cpp  sexagesimal.cpp
 	g++ -std=c++11 -g -o make_star_list make_star_list.c navigation_star.cpp  sexagesimal.cpp
 
+make_starlist: make_starlist_cpp.cpp sexagesimal.cpp navigation_star.cpp
+	g++ --std=c++11 -g -o make_starlist make_starlist_cpp.cpp sexagesimal.cpp navigation_star.cpp
+
+neo_bsc_starlist.cpp: make_starlist
+	./make_starlist
+
 debug: $(TARGET).elf 
 	./do_flash.pl $(TARGET).bin 
 	$(GDB) $(TARGET).elf -x "target extended-remote localhost:3333"
@@ -299,3 +308,4 @@ clean:
 	rm -f DPublic_HCNGC.txt Public_HCNGC.txt Public_HCNGC.xls
 	rm -f sex_to_hex
 	rm -f flex_lexer.cpp flex_lexer.h
+	rm -f neo_bsc_starlist.h neo_bsc_starlist.cpp make_starlist
