@@ -51,6 +51,8 @@ float separation(float Alpha1, float Delta1, float Alpha2, float Delta2)
   return value;
 }
 
+
+
 Proximate_Stars_View::Proximate_Stars_View(Simple_Altazimuth_Scope * scope)
 {
   telescope = scope;
@@ -158,7 +160,7 @@ void Proximate_Stars_View::run_algorithm()
   uint32_t index = 0;
   while (stars.size() < size && index <  flash_memory_array::bsc_array.size() ) {
     /* We may want to filter for magnitude here. */
-    if( starlist_access::magnitude( index ) <= _magnitude_limit ){
+    if( flash_memory_array::bsc_array[index].magnitude <= _magnitude_limit ){
       stars.push_back(index);
     }
     ++index;
@@ -172,14 +174,16 @@ void Proximate_Stars_View::run_algorithm()
   };
   double JD = this->JD;
   auto bsc_distance_from_target =[JD, distance_from_target] (uint32_t index) {
-    float RA = starlist_access::RA_f( index );
-    float Dec = starlist_access::Dec_f( index );
-    return distance_from_target(RA, Dec);
+    sexagesimal::Sexagesimal RA;
+    sexagesimal::Sexagesimal Dec;
+    RA.set_binary_data( flash_memory_array::bsc_array[index].RAdata );
+    Dec.set_binary_data( flash_memory_array::bsc_array[index].DECdata );
+    return distance_from_target(RA.to_float(), Dec.to_float() );
   };
   auto target_proximity_compare =
       [bsc_distance_from_target] (const uint32_t a, const uint32_t b){
-    auto distance_a = bsc_distance_from_target(a);
-    auto distance_b = bsc_distance_from_target(b);
+    float distance_a = bsc_distance_from_target(a);
+    float distance_b = bsc_distance_from_target(b);
     return distance_a < distance_b;
   };
   /* The algoritm proper begins here. */
@@ -188,8 +192,8 @@ void Proximate_Stars_View::run_algorithm()
    *   Now *stars.begin() has the largest distance_from_target() 
    *   and, the rest of the list has the heap propery.
    */
-  while (index < starlist_access::starlist_size()) {
-    if( starlist_access::magnitude( index ) <= _magnitude_limit ){
+  while (index < flash_memory_array::bsc_array.size() ) {
+    if( flash_memory_array::bsc_array[index].magnitude <= _magnitude_limit ){
       if (target_proximity_compare(index, *stars.begin())) {
 	pop_heap(stars.begin(), stars.end(), target_proximity_compare);
 	stars.pop_back();
@@ -200,7 +204,9 @@ void Proximate_Stars_View::run_algorithm()
     ++index;
   }
   sort_heap(stars.begin(), stars.end(), target_proximity_compare);
-  bsc_selection = stars[position];
+  index = stars[position];
+  uint32_t bsc_number = flash_memory_array::bsc_array[index].BSCnum;
+  bsc_selection = bsc_number;
 }
 
 std::unique_ptr < CharLCD_STM32F >
@@ -247,8 +253,14 @@ std::unique_ptr < CharLCD_STM32F >
   };
   double JD = this->JD;
   auto bsc_distance_from_target =[JD, distance_from_target] (uint32_t index) {
-    CAA2DCoordinate position =
-        starlist_access::proper_motion_adjusted_position(index, JD);
+    sexagesimal::Sexagesimal RA;
+    sexagesimal::Sexagesimal Dec;
+    RA.set_binary_data( flash_memory_array::bsc_array[index].RAdata );
+    Dec.set_binary_data( flash_memory_array::bsc_array[index].DECdata );
+    CAA2DCoordinate position;
+    position.X = RA.to_double();
+    position.Y = Dec.to_double();
+    /* We want a proper motion adjustment here. OMMITED.  */
     return distance_from_target(position.X, position.Y);
   };
 
@@ -258,18 +270,18 @@ std::unique_ptr < CharLCD_STM32F >
     n += lcd->print(' ');
   }
   if( position + line_number - 1 < stars.size() ){
-    n += lcd->
-      print(starlist_access::bsc_number(stars[position + line_number - 1]));
+    uint32_t index = stars[position + line_number - 1];
+    n += lcd->print( flash_memory_array::bsc_array[index].BSCnum );
     while (n < 8) {
       n += lcd->print(' ');
     }
-    n += lcd->print(starlist_access::magnitude(stars[position + line_number - 1]),
-		    2);
+    n += lcd->print( flash_memory_array::bsc_array[index].magnitude, 2 );
+
     n += lcd->print("m ");
     while (n < 14) {
       n += lcd->print(' ');
     }
-    n += lcd->print(bsc_distance_from_target(stars[position + line_number - 1]),
+    n += lcd->print(bsc_distance_from_target(index),
 		    1);
   }else{
     n += lcd->print( " ... " );
