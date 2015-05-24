@@ -12,6 +12,7 @@
 #include "AAAngularSeparation.h"
 #include "AACoordinateTransformation.h"
 #include "sexagesimal.h"
+#include "neo_bsc_starlist.h"
 
 
 /* 
@@ -155,7 +156,7 @@ void Proximate_Stars_View::run_algorithm()
 {
   stars.clear();
   uint32_t index = 0;
-  while (stars.size() < size && index < starlist_access::starlist_size()) {
+  while (stars.size() < size && index <  flash_memory_array::bsc_array.size() ) {
     /* We may want to filter for magnitude here. */
     if( starlist_access::magnitude( index ) <= _magnitude_limit ){
       stars.push_back(index);

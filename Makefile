@@ -93,6 +93,7 @@ SRC+=stm32f4xx_rtc.c
 SRC+=stm32f4xx_pwr.c
 
 CPPSRC=main.cpp
+CPPSRC+=neo_bsc_starlist.cpp
 CPPSRC+=microsecond_delay.cpp
 CPPSRC+=timebase_32768Hz.cpp
 CPPSRC+=stm32_e407_utilities.cpp
@@ -125,7 +126,7 @@ CPPSRC+=flex_lexer.cpp
 CPPSRC+=command_actions.cpp
 CPPSRC+=sight_data_command_actions.cpp
 CPPSRC+=specificities.cpp
-CPPSRC+=neo_bsc_starlist.cpp
+
 
 # (Subset of) Astronomical Algorithms Source Files
 CPPSRC+=$(AA_SRCDIR)/AAAngularSeparation.cpp

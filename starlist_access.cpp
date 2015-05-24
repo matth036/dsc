@@ -4,6 +4,7 @@
 #include <cmath>
 #include <AACoordinateTransformation.h>
 
+
 int starlist_access::get_index( int bsc_number ){
   int index = -1;
   for (int i = 0; i < STARLIST_SIZE; ++i) {

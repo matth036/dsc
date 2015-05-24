@@ -224,7 +224,8 @@ bool accept_bsc_number(std::string catalog_line ){
     // optionallly return false here to omit far south stars.
   }
   float Vmag = extract_Vmag( catalog_line );
-  float Vmag_limit = 99.0;
+  //  float Vmag_limit = 99.0;
+  float Vmag_limit = 3.0;
   if( Vmag > Vmag_limit ){
     return false;
   }
