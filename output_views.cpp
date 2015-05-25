@@ -13,7 +13,8 @@
 #include "binary_tidbits.h"
 #include "solar_system.h"
 #include "ngc_list_access.h"
-#include "starlist_access.h"
+// #include "starlist_access.h"
+#include "neo_bsc_starlist.h"
 #include "extra_solar_transforms.h"
 #include "AACoordinateTransformation.h"
 #include "refraction_temperature_pressure.h"
@@ -1024,7 +1025,7 @@ void BSC_Details_View::put_char( char c ){
   if( c == keypad_return_char ){
     dismiss_action();
   }else if( c == scroll_up_char ){
-    if( static_cast<uint32_t>(index+1) < starlist_access::starlist_size() ){
+    if( static_cast<uint32_t>(index+1) < flash_memory_array::bsc_array.size() ){
       set_index( index+1 );
     }
   }else if( c == scroll_down_char ){
@@ -1036,7 +1037,8 @@ void BSC_Details_View::put_char( char c ){
 
 void BSC_Details_View::set_index( int i ){
   index = i;
-  RA_Dec = starlist_access::proper_motion_adjusted_position( index, JD);
+  //  RA_Dec = starlist_access::proper_motion_adjusted_position( index, JD);
+  RA_Dec = extra_solar::proper_motion_adjusted_position(flash_memory_array::bsc_array[index], JD);
   double deltaT = CAADynamicalTime::DeltaT( JD );
   RA_Dec = apply_aberration( RA_Dec, JD + deltaT/86400.0 );
   RA_Dec = precession_and_nutation_correct_from_mean_eqinox( RA_Dec, JD );
@@ -1051,13 +1053,12 @@ std::unique_ptr < CharLCD_STM32F > BSC_Details_View::write_first_line(std::uniqu
   
   int n = 0;
   n += lcd->print( "B*C " );
-  n += lcd->print( starlist_access::bsc_number(index) );
+  n += lcd->print( flash_memory_array::bsc_array[index].BSCnum );
   while (n < width_/2 ) {
     n += lcd->print(' ');
   } 
   n += lcd->print( "Mag " );
-  n += lcd->print( starlist_access::magnitude(index), 2 );
-
+  n += lcd->print( flash_memory_array::bsc_array[index].magnitude,2 );
   while (n < width_) {
     n += lcd->print(' ');
   } 

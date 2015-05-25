@@ -12,7 +12,6 @@
 #include "solar_system.h"
 
 #include "ngc_list_access.h"
-// #include "starlist_access.h"
 #include "neo_bsc_starlist.h"
 #include "messier.h"
 #include "extra_solar_transforms.h"
@@ -300,7 +299,6 @@ void bsc_point_to_action(char *yytext, int yyleng)
     return;
   }
   double JD = JD_timestamp_pretty_good_000();
-  //  RA_Dec = starlist_access::proper_motion_adjusted_position( index, JD);
   RA_Dec = extra_solar::proper_motion_adjusted_position(flash_memory_array::bsc_array[index], JD);
   double deltaT = CAADynamicalTime::DeltaT( JD );
   RA_Dec = apply_aberration( RA_Dec, JD + deltaT/86400.0 );
@@ -427,7 +425,6 @@ void bsc_details_view_action( char *yytext, int yyleng ){
     return;
   }
   double JD = JD_timestamp_pretty_good_000();
-  //  RA_Dec = starlist_access::proper_motion_adjusted_position( index, JD);
   RA_Dec = extra_solar::proper_motion_adjusted_position(flash_memory_array::bsc_array[index], JD);
   double deltaT = CAADynamicalTime::DeltaT( JD );
   RA_Dec = apply_aberration( RA_Dec, JD + deltaT/86400.0 );
@@ -524,7 +521,6 @@ void almanac_star_point_to_action(char *yytext, int yyleng)
     return;
   }
   double JD = JD_timestamp_pretty_good_000();
-  //  CAA2DCoordinate RA_Dec = starlist_access::proper_motion_adjusted_position( index, JD);
   CAA2DCoordinate RA_Dec = extra_solar::proper_motion_adjusted_position(flash_memory_array::bsc_array[index], JD);
   double deltaT = CAADynamicalTime::DeltaT( JD );
   RA_Dec = apply_aberration( RA_Dec, JD + deltaT/86400.0 );

@@ -1,6 +1,6 @@
 #include "navigation_star.h"
 #include "extra_solar_transforms.h"
-#include "starlist_access.h"
+// #include "starlist_access.h"
 #include "solar_system.h"
 #include <cmath>
 #include "AACoordinateTransformation.h"
@@ -286,13 +286,12 @@ CAA2DCoordinate navigation_star::nav_star_RA_Dec(int navstar_num, double JD)
 {
   CAA2DCoordinate RA_Dec;
   int bsc_num = navigation_star::nav2bsc[navstar_num];
-  int index = starlist_access::get_index( bsc_num );
+  int index = extra_solar::neo_get_index( bsc_num );
   if (index < 0) {
     RA_Dec.X = RA_Dec.Y = 0;
     return RA_Dec;
   }
-  RA_Dec = starlist_access::proper_motion_adjusted_position(index, JD);
-
+  RA_Dec = extra_solar::proper_motion_adjusted_position(flash_memory_array::bsc_array[index], JD);
   double deltaT = CAADynamicalTime::DeltaT(JD);
 
   RA_Dec = apply_aberration(RA_Dec, JD + deltaT/86400.0 );
