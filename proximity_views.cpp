@@ -386,7 +386,10 @@ void Proximate_Navigation_Stars_View::run_algorithm()
 
   auto navstar_distance_from_target =[JD, distance_from_target] (uint32_t navstar_number) {
     uint32_t bsc = navigation_star::nav2bsc[navstar_number];
-    int32_t index = extra_solar::neo_get_index( bsc );
+    int32_t index = extra_solar::neo_get_index_fast( bsc );
+    while( index < 0 ){
+
+    }
     sexagesimal::Sexagesimal RA;
     sexagesimal::Sexagesimal Dec;
     RA.set_binary_data( flash_memory_array::bsc_array[index].RAdata );

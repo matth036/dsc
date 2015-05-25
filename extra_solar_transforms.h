@@ -15,6 +15,7 @@ namespace navigation_star {
 namespace extra_solar{
 
   int32_t neo_get_index( uint32_t bsc_number );
+  int32_t neo_get_index_fast( uint32_t bsc_number );
 
   CAA2DCoordinate proper_motion_adjusted_position(const star_data & sd, double JD);
 

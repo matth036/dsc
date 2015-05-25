@@ -102,7 +102,7 @@ CPPSRC+=char_lcd_stm32f4.cpp
 CPPSRC+=quadrature_decoder.cpp
 CPPSRC+=sexagesimal.cpp
 CPPSRC+=navigation_star.cpp
-CPPSRC+=starlist_access.cpp
+# CPPSRC+=starlist_access.cpp
 CPPSRC+=ngc_list_access.cpp
 CPPSRC+=messier.cpp
 CPPSRC+=controller.cpp
@@ -224,18 +224,12 @@ $(AA_SRCDIR): aaplus.zip
 	mkdir -p $(AA_SRCDIR)
 	unzip -d $(AA_SRCDIR) aaplus.zip
 
-$(OBJ): starlist.h ngc_list.h
+$(OBJ): ngc_list.h
 
 flex_lexer.cpp: flex_lexer.l
 	flex -o flex_lexer.cpp --header=flex_lexer.h flex_lexer.l
 
 flex_lexer.h: flex_lexer.cpp
-
-starlist.h:     make_star_list catalog
-	rm -f starlist.h
-	./make_star_list > starlist.h;    indent  starlist.h
-
-
 
 FLEX_LEXER_ADDITIONAL_COMPILE_FLAG=-Wno-unused-function -Wno-sign-compare
 # flex_lexer.cpp contains unused functions and won't compile under -Werror -Wall
@@ -277,7 +271,7 @@ make_star_list: make_star_list.c navigation_star.cpp  sexagesimal.cpp
 make_starlist: make_starlist_cpp.cpp sexagesimal.cpp navigation_star.cpp
 	g++ --std=c++11 -g -o make_starlist make_starlist_cpp.cpp sexagesimal.cpp navigation_star.cpp
 
-neo_bsc_starlist.cpp: make_starlist
+neo_bsc_starlist.cpp: make_starlist catalog
 	./make_starlist
 
 debug: $(TARGET).elf 

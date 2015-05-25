@@ -1,6 +1,5 @@
 #include "navigation_star.h"
 #include "extra_solar_transforms.h"
-// #include "starlist_access.h"
 #include "solar_system.h"
 #include <cmath>
 #include "AACoordinateTransformation.h"
@@ -9,7 +8,34 @@
 #include "AANutation.h"
 #include "AADynamicalTime.h"
 #include "neo_bsc_starlist.h"
+#include <algorithm>
 
+inline uint32_t get_bsc_number( uint32_t index ){
+  return flash_memory_array::bsc_array[index].BSCnum;
+}
+ 
+int32_t extra_solar::neo_get_index_fast( uint32_t bsc_number ){
+  uint32_t lo = 0;
+  uint32_t hi = flash_memory_array::bsc_array.size() - 1;
+  if( bsc_number < get_bsc_number( lo )){
+    return -1;
+  }
+  if( bsc_number > get_bsc_number( hi )){
+    return -1;
+  }
+  while( lo < hi ){
+    uint32_t mid = lo + (hi - lo)/2;
+    uint32_t mid_bsc = get_bsc_number( mid );
+    if( bsc_number == mid_bsc ){
+      return mid;
+    }else if( bsc_number > mid_bsc ){
+      lo = mid;
+    }else if( bsc_number < mid_bsc ){
+      hi = mid;
+    }
+  }
+  return -1;
+}
 
 int32_t extra_solar::neo_get_index( uint32_t bsc_number ){
   for( uint32_t i=0; i<flash_memory_array::bsc_array.size(); ++i ){

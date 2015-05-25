@@ -65,10 +65,6 @@ float extract_DECpm( std::string line){
   return DECpm;
 }
 
-
-
-
-
 int32_t extract_RAhh( std::string line){
   int32_t RAhh;
   std::string str = line.substr(75,2);
@@ -159,8 +155,6 @@ uint8_t extract_DECss( std::string line){
   return DECss;
 }
 
-
-
 bool is_bsc_blacklisted( uint32_t bsc_number ){
   /* These catalog entries fail extract_Vmag( std::string line )  */
   switch( bsc_number ){
@@ -225,7 +219,7 @@ bool accept_bsc_number(std::string catalog_line ){
   }
   float Vmag = extract_Vmag( catalog_line );
   //  float Vmag_limit = 99.0;
-  float Vmag_limit = 3.0;
+  float Vmag_limit = 99.0;
   if( Vmag > Vmag_limit ){
     return false;
   }
@@ -339,7 +333,7 @@ void make_header_file( std::string file_basename,  std::string namespace_name, s
   file_h << namespace_name << "{" << endl;
 
   file_h << tab;
-  file_h << "extern ";
+  file_h << "extern const ";
   file_h << "std::array< ";
   file_h << "star_data";
   file_h << ", ";
@@ -386,9 +380,7 @@ void make_cpp_file( std::string file_basename,  std::string namespace_name, std:
 
   file_cpp << endl;
 
-
-
-  file_cpp << "std::array";
+  file_cpp << "const std::array";
   file_cpp << "< ";
   file_cpp << "star_data";
   file_cpp << ", ";
