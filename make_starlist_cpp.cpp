@@ -262,7 +262,7 @@ std::vector<star_data> make_vector_catalog(){
   return std::move( vect_cat );
 }
 
-void stream_array_item_no_bracket( star_data data, std::ostream& destination ){
+void stream_array_item_no_bracket( star_data data, uint32_t index, std::ostream& destination ){
   sexagesimal::Sexagesimal RA;
   RA.set_binary_data( data.RAdata );
   sexagesimal::Sexagesimal Dec;
@@ -278,6 +278,10 @@ void stream_array_item_no_bracket( star_data data, std::ostream& destination ){
   destination << Dec.to_dms_string();
   destination << "   Vmag = ";
   destination << data.magnitude;
+  destination << "  index = ";
+  destination << index;
+  destination << "  ";
+
   if (  navigation_star::is_navigation_star( data.BSCnum ) ){
     int navnum = navigation_star::get_navigation_star_num(data.BSCnum);
     destination << "   naviagation star ";
@@ -393,9 +397,10 @@ void make_cpp_file( std::string file_basename,  std::string namespace_name, std:
 
   file_cpp << "{";
   file_cpp << endl;
-  for( auto item=catalog.begin(); item!=catalog.end(); ++item ){
+  uint32_t index = 0;
+  for( auto item=catalog.begin(); item!=catalog.end(); ++item, ++index ){
     //    print_array_item_no_bracket( *item );
-    stream_array_item_no_bracket( *item, file_cpp );
+    stream_array_item_no_bracket( *item, index, file_cpp );
   }
   file_cpp << endl;
   file_cpp << "};";

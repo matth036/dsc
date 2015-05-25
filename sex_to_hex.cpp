@@ -39,7 +39,18 @@ int main( int argc, char **argv){
    * Verify that make_ngc_list.pl creates an identical ngc_list.h
    *
    */
-  sexagesimal::Sexagesimal value( dd, hh, mm, xxx );
+  sexagesimal::Sexagesimal value{ static_cast<int32_t>(dd), 
+      static_cast<uint8_t>(hh), 
+      static_cast<uint8_t>(mm),
+      static_cast<uint16_t>(xxx) };
+  std::string str = value.to_string();
+  while( str.length() < 13 ){
+    str = " " + str;
+  }
   // printf( "%d %d %d %d\n", dd, hh, mm, xxx );
-  printf( "%08X\n", value.get_data() );
+  printf( "%08X", value.get_data() );
+  printf( "      /* " );
+  printf( "%s", str.data() );
+  printf( " */" );
+  printf( "\n" );
 }
