@@ -13,7 +13,7 @@
 inline uint32_t get_bsc_number( uint32_t index ){
   return flash_memory_array::bsc_array[index].BSCnum;
 }
- 
+
 int32_t extra_solar::neo_get_index_fast( uint32_t bsc_number ){
   uint32_t lo = 0;
   uint32_t hi = flash_memory_array::bsc_array.size() - 1;

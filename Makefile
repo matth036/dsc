@@ -265,9 +265,6 @@ DPublic_HCNGC.txt: Public_HCNGC.zip
 	unzip Public_HCNGC.zip
 	touch DPublic_HCNGC.txt
 
-make_star_list: make_star_list.c navigation_star.cpp  sexagesimal.cpp
-	g++ -std=c++11 -g -o make_star_list make_star_list.c navigation_star.cpp  sexagesimal.cpp
-
 make_starlist: make_starlist_cpp.cpp sexagesimal.cpp navigation_star.cpp
 	g++ --std=c++11 -g -o make_starlist make_starlist_cpp.cpp sexagesimal.cpp navigation_star.cpp
 
@@ -281,7 +278,6 @@ debug: $(TARGET).elf
 bugger:
 	@echo OBJ =
 	@echo $(OBJ)
-
 
 .PHONY: clean
 
