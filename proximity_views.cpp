@@ -5,15 +5,26 @@
 #include "keypad_layout.h"
 #include "char_lcd_stm32f4.h"
 #include "rtc_management.h"
-#include "starlist_access.h"
 #include "ngc_list_access.h"
 #include "messier.h"
 #include "navigation_star.h"
 #include "AAAngularSeparation.h"
 #include "AACoordinateTransformation.h"
+#include "AAPrecession.h"
 #include "sexagesimal.h"
+#include "solar_system.h"
+#include "extra_solar_transforms.h"
 #include "neo_bsc_starlist.h"
 
+
+int32_t neo_get_index( uint32_t bsc_number ){
+  for( uint32_t i=0; i<flash_memory_array::bsc_array.size(); ++i ){
+    if( flash_memory_array::bsc_array[i].BSCnum == static_cast<int32_t>(bsc_number) ){
+      return static_cast<int32_t>(i);
+    }
+  }
+  return -1;
+}
 
 /* 
  * single precision version of CAAAngularSeparation::Separation( ,,, )
@@ -159,21 +170,20 @@ void Proximate_Stars_View::run_algorithm()
   stars.clear();
   uint32_t index = 0;
   while (stars.size() < size && index <  flash_memory_array::bsc_array.size() ) {
-    /* We may want to filter for magnitude here. */
+    /* Filter for magnitude. */
     if( flash_memory_array::bsc_array[index].magnitude <= _magnitude_limit ){
       stars.push_back(index);
     }
     ++index;
   }
-  /* @TODO convert to J2000 RA and Declination */
-  float target_RA = RA_and_Dec.X;
-  float target_Dec = RA_and_Dec.Y;
+  float target_RA = RA_and_Dec_J2000.X;
+  float target_Dec = RA_and_Dec_J2000.Y;
   auto distance_from_target =
       [target_RA, target_Dec] (float subject_RA, float subject_Dec){
     return separation(target_RA, target_Dec, subject_RA, subject_Dec);
   };
   double JD = this->JD;
-  auto bsc_distance_from_target =[JD, distance_from_target] (uint32_t index) {
+  auto catalog_distance_from_target =[JD, distance_from_target] (uint32_t index) {
     sexagesimal::Sexagesimal RA;
     sexagesimal::Sexagesimal Dec;
     RA.set_binary_data( flash_memory_array::bsc_array[index].RAdata );
@@ -181,9 +191,9 @@ void Proximate_Stars_View::run_algorithm()
     return distance_from_target(RA.to_float(), Dec.to_float() );
   };
   auto target_proximity_compare =
-      [bsc_distance_from_target] (const uint32_t a, const uint32_t b){
-    float distance_a = bsc_distance_from_target(a);
-    float distance_b = bsc_distance_from_target(b);
+      [catalog_distance_from_target] (const uint32_t a, const uint32_t b){
+    float distance_a = catalog_distance_from_target(a);
+    float distance_b = catalog_distance_from_target(b);
     return distance_a < distance_b;
   };
   /* The algoritm proper begins here. */
@@ -215,6 +225,8 @@ std::unique_ptr < CharLCD_STM32F >
 {
   JD = JD_timestamp_pretty_good_000();
   RA_and_Dec = telescope->current_RA_and_Dec();
+  /* Hyper precision would require us to un-apply the nutation correction at this point. */
+  RA_and_Dec_J2000 = CAAPrecession::PrecessEquatorial( RA_and_Dec.X, RA_and_Dec.Y, JD, solar_system::J2000_0 );
   run_algorithm();
   return std::move(write_line_n(std::move(lcd), 1));
 }
@@ -253,14 +265,8 @@ std::unique_ptr < CharLCD_STM32F >
   };
   double JD = this->JD;
   auto bsc_distance_from_target =[JD, distance_from_target] (uint32_t index) {
-    sexagesimal::Sexagesimal RA;
-    sexagesimal::Sexagesimal Dec;
-    RA.set_binary_data( flash_memory_array::bsc_array[index].RAdata );
-    Dec.set_binary_data( flash_memory_array::bsc_array[index].DECdata );
     CAA2DCoordinate position;
-    position.X = RA.to_double();
-    position.Y = Dec.to_double();
-    /* We want a proper motion adjustment here. OMMITED.  */
+    position = extra_solar::proper_motion_adjusted_position(flash_memory_array::bsc_array[index], JD);
     return distance_from_target(position.X, position.Y);
   };
 
@@ -301,7 +307,6 @@ Proximate_Navigation_Stars_View(Simple_Altazimuth_Scope * scope)
   telescope = scope;
   finished = false;
   width_ = PROXIMITY_VIEW_DEFAULT_WIDTH;
-
   saved_cr = dsc_controller::get_character_reciever();
   dsc_controller::set_character_reciever(this);
 }
@@ -377,9 +382,9 @@ void Proximate_Navigation_Stars_View::run_algorithm()
     stars.push_back(navstar_number);
     ++navstar_number;
   }
-  /* @TODO convert to J2000 RA and Declination */
-  float target_RA = RA_and_Dec.X;
-  float target_Dec = RA_and_Dec.Y;
+
+  float target_RA = RA_and_Dec_J2000.X;
+  float target_Dec = RA_and_Dec_J2000.Y;
 
   auto distance_from_target =
       [target_RA, target_Dec] (float subject_RA, float subject_Dec){
@@ -388,13 +393,14 @@ void Proximate_Navigation_Stars_View::run_algorithm()
 
   double JD = this->JD;
 
-  auto navstar_distance_from_target =
-      [JD, distance_from_target] (uint32_t navstar) {
-    uint32_t bsc = navigation_star::nav2bsc[navstar];
-    uint32_t index = starlist_access::get_index(bsc);
-    CAA2DCoordinate position =
-        starlist_access::proper_motion_adjusted_position(index, JD);
-    return distance_from_target(position.X, position.Y);
+  auto navstar_distance_from_target =[JD, distance_from_target] (uint32_t navstar_number) {
+    uint32_t bsc = navigation_star::nav2bsc[navstar_number];
+    int32_t index = neo_get_index( bsc );
+    sexagesimal::Sexagesimal RA;
+    sexagesimal::Sexagesimal Dec;
+    RA.set_binary_data( flash_memory_array::bsc_array[index].RAdata );
+    Dec.set_binary_data( flash_memory_array::bsc_array[index].DECdata );
+    return distance_from_target(RA.to_float(), Dec.to_float() );
   };
 
   auto target_proximity_compare =
@@ -420,7 +426,7 @@ void Proximate_Navigation_Stars_View::run_algorithm()
     ++navstar_number;
   }
   sort_heap(stars.begin(), stars.end(), target_proximity_compare);
-  navstar_selection = stars[position];
+  navstar_selection = stars[position]; /* This is a navstar number. */
 }
 
 std::unique_ptr < CharLCD_STM32F >
@@ -429,6 +435,8 @@ std::unique_ptr < CharLCD_STM32F >
 {
   JD = JD_timestamp_pretty_good_000();
   RA_and_Dec = telescope->current_RA_and_Dec();
+  /* Hyper precision would require us to un-apply the nutation correction at this point. */
+  RA_and_Dec_J2000 = CAAPrecession::PrecessEquatorial( RA_and_Dec.X, RA_and_Dec.Y, JD, solar_system::J2000_0 );
   run_algorithm();
   return std::move(write_line_n(std::move(lcd), 1));
 }
@@ -459,24 +467,6 @@ std::unique_ptr < CharLCD_STM32F >
                                                   CharLCD_STM32F > lcd,
                                                   uint32_t line_number)
 {
-#if 0
-  double target_RA = RA_and_Dec.X;
-  double target_Dec = RA_and_Dec.Y;
-  auto distance_from_target =
-      [target_RA, target_Dec] (double subject_RA, double subject_Dec){
-    return CAAAngularSeparation::Separation(target_RA, target_Dec, subject_RA,
-                                            subject_Dec);
-  };
-  double JD = this->JD;
-  auto navstar_distance_from_target =
-      [JD, distance_from_target] (uint32_t navstar) {
-    uint32_t bsc = navigation_star::nav2bsc[navstar];
-    uint32_t index = starlist_access::get_index(bsc);
-    CAA2DCoordinate position =
-        starlist_access::proper_motion_adjusted_position(index, JD);
-    return distance_from_target(position.X, position.Y);
-  };
-#endif
   int n = 0;
   n += lcd->print(position + line_number);
   while (n < 3) {

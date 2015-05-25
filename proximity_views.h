@@ -62,6 +62,7 @@ class Proximate_Stars_View:Character_Reciever {
   int32_t width_;
   Simple_Altazimuth_Scope *telescope;
   CAA2DCoordinate RA_and_Dec;
+  CAA2DCoordinate RA_and_Dec_J2000;
   char _first_digit;
   bool finished;
   bool _prompt_for_magnitude = false;
@@ -146,6 +147,7 @@ class Proximate_Navigation_Stars_View:Character_Reciever {
   int32_t width_;
   Simple_Altazimuth_Scope *telescope;
   CAA2DCoordinate RA_and_Dec;
+  CAA2DCoordinate RA_and_Dec_J2000;
   bool finished;
 };
 

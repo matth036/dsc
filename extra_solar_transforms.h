@@ -12,8 +12,9 @@ namespace navigation_star {
   CAA2DCoordinate nav_star_RA_Dec(int num, double JD);
 }
 /**********/
-CAA2DCoordinate proper_motion_adjusted_position(const star_data & sd, float days);
-
+namespace extra_solar{
+  CAA2DCoordinate proper_motion_adjusted_position(const star_data & sd, double JD);
+}
   /* Applicable to stars, deep space objects.  */
 CAA2DCoordinate apply_aberration(CAA2DCoordinate RA_Dec_2000, double JD);
 

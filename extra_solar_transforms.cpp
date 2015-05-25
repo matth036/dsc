@@ -14,8 +14,8 @@
  * The return value is Right Ascension and Declination, double precision, 
  * packaged in a CAA2DCoordinate object.
  */
-CAA2DCoordinate proper_motion_adjusted_position(const star_data & sd,
-						float days)
+CAA2DCoordinate extra_solar::proper_motion_adjusted_position(const star_data & sd,
+						double JD)
 {
   CAA2DCoordinate ra_dec;
   sexagesimal::Sexagesimal RA;
@@ -25,6 +25,7 @@ CAA2DCoordinate proper_motion_adjusted_position(const star_data & sd,
   DEC.set_binary_data(sd.DECdata);
   ra_dec.Y = DEC.to_double();
   /* Bright Star Catalog proper motions are arc seconds per year. */
+  double days = JD - solar_system::J2000_0;
   double years = days / 365.25;
   double DECrad =
       CAACoordinateTransformation::DegreesToRadians(DEC.to_double());
