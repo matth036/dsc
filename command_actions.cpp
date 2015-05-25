@@ -12,7 +12,8 @@
 #include "solar_system.h"
 
 #include "ngc_list_access.h"
-#include "starlist_access.h"
+// #include "starlist_access.h"
+#include "neo_bsc_starlist.h"
 #include "messier.h"
 #include "extra_solar_transforms.h"
 #include "telescope_model.h"
@@ -277,7 +278,7 @@ void bsc_point_to_action(char *yytext, int yyleng)
     return;
   }
   CAA2DCoordinate RA_Dec;
-  int index = starlist_access::get_index( bsc_num );
+  int index = extra_solar::neo_get_index( bsc_num );
   if( index < 0 ){
     /* Should write a general purpose error display to handle stuff like this.  */
     auto lcd = check_out_main_lcd();
@@ -299,7 +300,8 @@ void bsc_point_to_action(char *yytext, int yyleng)
     return;
   }
   double JD = JD_timestamp_pretty_good_000();
-  RA_Dec = starlist_access::proper_motion_adjusted_position( index, JD);
+  //  RA_Dec = starlist_access::proper_motion_adjusted_position( index, JD);
+  RA_Dec = extra_solar::proper_motion_adjusted_position(flash_memory_array::bsc_array[index], JD);
   double deltaT = CAADynamicalTime::DeltaT( JD );
   RA_Dec = apply_aberration( RA_Dec, JD + deltaT/86400.0 );
   RA_Dec = precession_and_nutation_correct_from_mean_eqinox( RA_Dec, JD );
@@ -404,7 +406,7 @@ void bsc_details_view_action( char *yytext, int yyleng ){
     return;
   }
   CAA2DCoordinate RA_Dec;
-  int index = starlist_access::get_index( bsc_num );
+  int index = extra_solar::neo_get_index( bsc_num );
   if( index < 0 ){
     auto lcd = check_out_main_lcd();
     lcd->setCursor(0,0);
@@ -425,7 +427,8 @@ void bsc_details_view_action( char *yytext, int yyleng ){
     return;
   }
   double JD = JD_timestamp_pretty_good_000();
-  RA_Dec = starlist_access::proper_motion_adjusted_position( index, JD);
+  //  RA_Dec = starlist_access::proper_motion_adjusted_position( index, JD);
+  RA_Dec = extra_solar::proper_motion_adjusted_position(flash_memory_array::bsc_array[index], JD);
   double deltaT = CAADynamicalTime::DeltaT( JD );
   RA_Dec = apply_aberration( RA_Dec, JD + deltaT/86400.0 );
   RA_Dec = precession_and_nutation_correct_from_mean_eqinox( RA_Dec, JD );
@@ -516,13 +519,13 @@ void almanac_star_point_to_action(char *yytext, int yyleng)
   }
   std::string star_name = navigation_star::get_navigation_star_name( nav_num );
   int bsc_num = navigation_star::nav2bsc[nav_num];
-  int index = starlist_access::get_index( bsc_num );
+  int index = extra_solar::neo_get_index( bsc_num );
   if( index == -1 ){
     return;
   }
   double JD = JD_timestamp_pretty_good_000();
-  CAA2DCoordinate RA_Dec = starlist_access::proper_motion_adjusted_position( index, JD);
-
+  //  CAA2DCoordinate RA_Dec = starlist_access::proper_motion_adjusted_position( index, JD);
+  CAA2DCoordinate RA_Dec = extra_solar::proper_motion_adjusted_position(flash_memory_array::bsc_array[index], JD);
   double deltaT = CAADynamicalTime::DeltaT( JD );
   RA_Dec = apply_aberration( RA_Dec, JD + deltaT/86400.0 );
   RA_Dec = precession_and_nutation_correct_from_mean_eqinox( RA_Dec, JD );

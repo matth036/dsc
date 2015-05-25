@@ -17,15 +17,6 @@
 #include "neo_bsc_starlist.h"
 
 
-int32_t neo_get_index( uint32_t bsc_number ){
-  for( uint32_t i=0; i<flash_memory_array::bsc_array.size(); ++i ){
-    if( flash_memory_array::bsc_array[i].BSCnum == static_cast<int32_t>(bsc_number) ){
-      return static_cast<int32_t>(i);
-    }
-  }
-  return -1;
-}
-
 /* 
  * single precision version of CAAAngularSeparation::Separation( ,,, )
  *
@@ -395,7 +386,7 @@ void Proximate_Navigation_Stars_View::run_algorithm()
 
   auto navstar_distance_from_target =[JD, distance_from_target] (uint32_t navstar_number) {
     uint32_t bsc = navigation_star::nav2bsc[navstar_number];
-    int32_t index = neo_get_index( bsc );
+    int32_t index = extra_solar::neo_get_index( bsc );
     sexagesimal::Sexagesimal RA;
     sexagesimal::Sexagesimal Dec;
     RA.set_binary_data( flash_memory_array::bsc_array[index].RAdata );

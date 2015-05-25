@@ -8,12 +8,18 @@
 #include "AAAberration.h"
 #include "AANutation.h"
 #include "AADynamicalTime.h"
+#include "neo_bsc_starlist.h"
 
-/* sd points to star data as found in star_data.h.
- * days is days elapsed since 0h January 1, 2000.
- * The return value is Right Ascension and Declination, double precision, 
- * packaged in a CAA2DCoordinate object.
- */
+
+int32_t extra_solar::neo_get_index( uint32_t bsc_number ){
+  for( uint32_t i=0; i<flash_memory_array::bsc_array.size(); ++i ){
+    if( flash_memory_array::bsc_array[i].BSCnum == static_cast<int32_t>(bsc_number) ){
+      return static_cast<int32_t>(i);
+    }
+  }
+  return -1;
+}
+
 CAA2DCoordinate extra_solar::proper_motion_adjusted_position(const star_data & sd,
 						double JD)
 {
