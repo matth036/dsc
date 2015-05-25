@@ -248,8 +248,6 @@ flex_lexer.o: flex_lexer.cpp flex_lexer.h
 #main.o: main.cpp
 #	$(CXX) $(CXXFLAGS) $(LINEAR_ALGEBRA_INTERFACE_ADDITIONAL_COMPILE_FLAGS) -c -o main.o main.cpp
 
-
-
 catalog:
 	cp YaleStarCatalog/catalog.gz  .
 	gunzip catalog.gz

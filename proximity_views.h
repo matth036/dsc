@@ -54,7 +54,7 @@ class Proximate_Stars_View:Character_Reciever {
   void request_magnitude( char c );
   std::vector < uint32_t > stars;
   double JD;
-  float _magnitude_limit = 5.0;
+  float _magnitude_limit = 6.0;
   Character_Reciever *saved_cr;
   uint32_t size = 99;
   uint32_t position = 0;

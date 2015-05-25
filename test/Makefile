@@ -65,7 +65,7 @@ CPPSRC+=AAUranus.cpp
 CPPSRC+=AANeptune.cpp
 CPPSRC+=AAPluto.cpp
 CPPSRC+=AASidereal.cpp
-CPPSRC+=starlist_access.cpp
+CPPSRC+=neo_bsc_starlist.cpp
 
 COMMONFLAGS=-O$(OPTLVL) -ggdb3 -Wall -Werror -std=c++11
 CFLAGS=$(COMMONFLAGS) $(MCUFLAGS) $(INCLUDE) $(CDEFS)
@@ -94,18 +94,15 @@ TESTS= example_23b example_33a nautical_almanac astronomical_almanac jd nutation
  memoized_mean_sidereal memoized_apparent_sidereal burnham_test horizontal2equatorial \
  h2q intercept_azimuth near_parabolic moon_test planet_declinations
 
-all: $(AA_SRCDIR) ../starlist.h objects tests
+all: $(AA_SRCDIR) objects tests
 
-objects:
+objects: ../neo_bsc_starlist.cpp
 	$(MAKE) -C . $(OBJ)
 
 tests: $(TESTS)
 #
-$(TESTS): $(AA_SRCDIR) ../starlist.h $(OBJ)
+$(TESTS): $(AA_SRCDIR) $(OBJ)
 #
-# objects: $(OBJ)
-#
-# $(OBJ) : $(AA_SRCDIR) ../starlist.h
 #
 #
 $(AA_SRCDIR) : ../aaplus.zip
@@ -115,8 +112,8 @@ $(AA_SRCDIR) : ../aaplus.zip
 # AACoordinateTransformation.o: $(AA_SRCDIR) $(AA_SRCDIR)/AACoordinateTransformation.cpp
 # 	$(CXX) $(CXXFLAGS) -c -o AACoordinateTransformation.o $(INCLUDE) $(AA_SRCDIR)/AACoordinateTransformation.cpp
 
-../starlist.h:
-	 $(MAKE) -C .. starlist.h
+../neo_bsc_starlist.cpp:
+	 $(MAKE) -C .. neo_bsc_starlist.cpp
 
 ../ngc_list.h:
 	 $(MAKE) -C .. ngc_list.h

@@ -37,7 +37,6 @@ void na_pretty_print( CAA2DCoordinate ra_dec ){
   cout << endl;
 }
 
-
 void na_pretty_print( CAAEllipticalPlanetaryDetails *pd, double sidereal_time, std::string name ){
   double GHA_aries = sidereal_time*15;   // Greenwhich Hour of Aries.
   double RA = pd->ApparentGeocentricRA;
@@ -51,8 +50,6 @@ void na_pretty_print( CAAEllipticalPlanetaryDetails *pd, double sidereal_time, s
   cout << sexagesimal::double2sexagesimal(DEC).to_dddmmxxxx_string() << "   ";
   cout << name << "   " << endl;
 }
-
-
 
 void navigations_stars_test( double JD ){
   for( uint num=1; num<=57; ++num ){

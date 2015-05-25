@@ -14,16 +14,31 @@ inline uint32_t get_bsc_number( uint32_t index ){
   return flash_memory_array::bsc_array[index].BSCnum;
 }
 
-int32_t extra_solar::neo_get_index_fast( uint32_t bsc_number ){
+/* 
+ * The usual perils of DIY bisection have been encountered. 
+ * Either use a library routine or read Knuth.
+ */
+int32_t extra_solar::neo_get_index_fast( const uint32_t bsc_number ){
   uint32_t lo = 0;
   uint32_t hi = flash_memory_array::bsc_array.size() - 1;
   if( bsc_number < get_bsc_number( lo )){
     return -1;
+  }else if( bsc_number == get_bsc_number( lo )){
+    return lo;
   }
   if( bsc_number > get_bsc_number( hi )){
     return -1;
+  }else if( bsc_number == get_bsc_number( hi )){
+    return hi;
   }
-  while( lo < hi ){
+  /* 
+   * bsc_number > get_bsc_number( lo ) 
+   * bsc_number < get_bsc_number( hi ) 
+   *  or
+   * get_bsc_number( lo )  < bsc_number < get_bsc_number( hi ) 
+   * 
+   */
+  while( lo + 1 < hi ){
     uint32_t mid = lo + (hi - lo)/2;
     uint32_t mid_bsc = get_bsc_number( mid );
     if( bsc_number == mid_bsc ){
@@ -32,6 +47,12 @@ int32_t extra_solar::neo_get_index_fast( uint32_t bsc_number ){
       lo = mid;
     }else if( bsc_number < mid_bsc ){
       hi = mid;
+    }
+  }
+  /* Get here if (lo + 1 == hi) => (mid == lo) */
+  for( uint32_t i=lo; i<=hi; ++i ){
+    if( get_bsc_number( i ) == bsc_number ){
+      return i;
     }
   }
   return -1;
@@ -312,7 +333,7 @@ CAA2DCoordinate navigation_star::nav_star_RA_Dec(int navstar_num, double JD)
 {
   CAA2DCoordinate RA_Dec;
   int bsc_num = navigation_star::nav2bsc[navstar_num];
-  int index = extra_solar::neo_get_index( bsc_num );
+  int index = extra_solar::neo_get_index_fast( bsc_num );
   if (index < 0) {
     RA_Dec.X = RA_Dec.Y = 0;
     return RA_Dec;
