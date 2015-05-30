@@ -24,7 +24,7 @@ int32_t extra_solar::neo_get_index_fast( const uint32_t bsc_number ){
       hi = mid - 1;
     }else if( mid_bsc < bsc_number ){
       lo = mid + 1;
-    }else if( bsc_number < mid_bsc ){
+    }else if( bsc_number == mid_bsc ){
       return mid;
     }
   }
