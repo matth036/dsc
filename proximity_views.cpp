@@ -838,7 +838,7 @@ void Proximate_NGC_View::run_algorithm()
     ++index;
   }
   sort_heap(ngc_objects.begin(), ngc_objects.end(), target_proximity_compare);
-  ngc_selection = ngc_objects[position];
+  ngc_selection = ngc_list_access::ngc_number( ngc_objects[position] );
 }
 
 std::unique_ptr < CharLCD_STM32F >
