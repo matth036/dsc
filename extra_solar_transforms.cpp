@@ -14,48 +14,21 @@ inline uint32_t get_bsc_number( uint32_t index ){
   return flash_memory_array::bsc_array[index].BSCnum;
 }
 
-/* 
- * The usual perils of DIY bisection have been encountered. 
- * Either use a library routine or read Knuth.
- */
 int32_t extra_solar::neo_get_index_fast( const uint32_t bsc_number ){
   uint32_t lo = 0;
   uint32_t hi = flash_memory_array::bsc_array.size() - 1;
-  if( bsc_number < get_bsc_number( lo )){
-    return -1;
-  }else if( bsc_number == get_bsc_number( lo )){
-    return lo;
-  }
-  if( bsc_number > get_bsc_number( hi )){
-    return -1;
-  }else if( bsc_number == get_bsc_number( hi )){
-    return hi;
-  }
-  /* 
-   * bsc_number > get_bsc_number( lo ) 
-   * bsc_number < get_bsc_number( hi ) 
-   *  or
-   * get_bsc_number( lo )  < bsc_number < get_bsc_number( hi ) 
-   * 
-   */
-  while( lo + 1 < hi ){
+  while( lo <= hi ){
     uint32_t mid = lo + (hi - lo)/2;
     uint32_t mid_bsc = get_bsc_number( mid );
-    if( bsc_number == mid_bsc ){
-      return mid;
-    }else if( bsc_number > mid_bsc ){
-      lo = mid;
+    if( mid_bsc > bsc_number ){
+      hi = mid - 1;
+    }else if( mid_bsc < bsc_number ){
+      lo = mid + 1;
     }else if( bsc_number < mid_bsc ){
-      hi = mid;
+      return mid;
     }
   }
-  /* Get here if (lo + 1 == hi) => (mid == lo) */
-  for( uint32_t i=lo; i<=hi; ++i ){
-    if( get_bsc_number( i ) == bsc_number ){
-      return i;
-    }
-  }
-  return -1;
+  return -1; // Not found.
 }
 
 int32_t extra_solar::neo_get_index( uint32_t bsc_number ){
