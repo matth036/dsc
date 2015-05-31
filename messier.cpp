@@ -119,7 +119,7 @@ int messier_numbers::messier_to_ngc(int messier_number)
   case 20:
     return 6514;
   case 21:
-    return 6513;
+    return 6531;
   case 22:
     return 6656;
   case 23:

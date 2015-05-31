@@ -108,14 +108,26 @@ void moon_parallax_test(){
   check_in_main_lcd(std::move(lcd));
 }
 
-
+void bisection_test(){
+  int32_t target;
+  for( target = -100; target <=10000; ++target ){
+    int i_slow = extra_solar::neo_get_index( target );
+    int i_fast = extra_solar::neo_get_index_fast( target );
+    while( i_slow != i_fast ){
+      // Get trapped here if the two methods differ.
+    }
+  }
+}
 
 void debug_action(){
   //  information_view_test();
   //  moon_parallax_test();
   //  point_to_where_already_pointed_action();
-  float_input_test();
+  // float_input_test();
+  bisection_test();
 }
+
+
 
 
 void messier_catalog_point_to( char* yytext, int yyleng ){

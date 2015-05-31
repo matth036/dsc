@@ -14,12 +14,13 @@ inline uint32_t get_bsc_number( uint32_t index ){
   return flash_memory_array::bsc_array[index].BSCnum;
 }
 
-int32_t extra_solar::neo_get_index_fast( const uint32_t bsc_number ){
-  uint32_t lo = 0;
-  uint32_t hi = flash_memory_array::bsc_array.size() - 1;
+
+int32_t extra_solar::neo_get_index_fast( const int32_t bsc_number ){
+  int32_t lo = 0;
+  int32_t hi = flash_memory_array::bsc_array.size() - 1;
   while( lo <= hi ){
-    uint32_t mid = lo + (hi - lo)/2;
-    uint32_t mid_bsc = get_bsc_number( mid );
+    int32_t mid = (hi+lo)/2;
+    int32_t mid_bsc = get_bsc_number( mid );
     if( mid_bsc > bsc_number ){
       hi = mid - 1;
     }else if( mid_bsc < bsc_number ){

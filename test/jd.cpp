@@ -6,7 +6,8 @@ using std::endl;
 
 /* 
  * Julian date from command line input arguments year,month,day.
- *
+ * @TODO Make a version that gets the current time and 
+ * expresses the julian date
  */
 int main( int argc, char **argv){
   int year = 2000;
