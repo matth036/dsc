@@ -15,7 +15,6 @@ inline uint32_t get_bsc_number( uint32_t index ){
   return flash_memory_array::bsc_array[index].BSCnum;
 }
 
-
 int32_t extra_solar_bsc::neo_get_index_fast( const int32_t bsc_number ){
   int32_t lo = 0;
   int32_t hi = flash_memory_array::bsc_array.size() - 1;
@@ -42,6 +41,11 @@ int32_t extra_solar_bsc::neo_get_index( uint32_t bsc_number ){
   return -1;
 }
 
+/********************* New General Catalog data retrieval. ******************************/
+
+inline uint32_t get_ngc_number( uint32_t index ){
+  return  flash_memory_array::ngc_list[index].NGC_number;
+}
 
 int32_t extra_solar_ngc::neo_get_index( uint32_t ngc_number ){
   for( uint32_t i=0; i<flash_memory_array::ngc_list.size(); ++i ){
@@ -64,13 +68,21 @@ double extra_solar_ngc::neo_get_Dec_i(uint32_t index){
   return DEC.to_double();
 }
 
-
-
-
-
 int32_t extra_solar_ngc::neo_get_index_fast( int32_t ngc_number ){
-  // @FIXME really a implement fast implementation.
-  return extra_solar_ngc::neo_get_index( static_cast<uint32_t>(ngc_number) );
+  int32_t lo = 0;
+  int32_t hi = flash_memory_array::ngc_list.size() - 1;
+  while( lo <= hi ){
+    int32_t mid = (hi+lo)/2;
+    int32_t mid_ngc = get_ngc_number( mid );
+    if( mid_ngc > ngc_number ){
+      hi = mid - 1;
+    }else if( mid_ngc < ngc_number ){
+      lo = mid + 1;
+    }else if( ngc_number == mid_ngc ){
+      return mid;
+    }
+  }
+  return -1; // Not found.
 }
 
 
