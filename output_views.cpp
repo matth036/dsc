@@ -1037,8 +1037,7 @@ void BSC_Details_View::put_char( char c ){
 
 void BSC_Details_View::set_index( int i ){
   index = i;
-  //  RA_Dec = starlist_access::proper_motion_adjusted_position( index, JD);
-  RA_Dec = extra_solar::proper_motion_adjusted_position(flash_memory_array::bsc_array[index], JD);
+  RA_Dec = extra_solar_bsc::proper_motion_adjusted_position(flash_memory_array::bsc_array[index], JD);
   double deltaT = CAADynamicalTime::DeltaT( JD );
   RA_Dec = apply_aberration( RA_Dec, JD + deltaT/86400.0 );
   RA_Dec = precession_and_nutation_correct_from_mean_eqinox( RA_Dec, JD );

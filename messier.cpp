@@ -1,5 +1,7 @@
 #include "messier.h"
-#include "ngc_list_access.h"
+// #include "ngc_list_access.h"
+#include "sexagesimal.h"
+#include "extra_solar_transforms.h"
 
 /* A helper function not declared in header messier.h  */
 bool is_messier_with_no_ngc(int messier_number)
@@ -62,14 +64,17 @@ CAA2DCoordinate messier_numbers::messier_J2000_RA_and_Dec(int number, bool & OK)
     OK = false;
     return result;              /* returns {0.0,0.0} */
   }
-  int index = ngc_list_access::get_index(ngc_number);
+  //  int index = ngc_list_access::get_index(ngc_number);
+  int index = extra_solar_ngc::neo_get_index_fast(ngc_number);
   if (index == -1) {
     OK = false;
     /* Also returns {0.0,0.0},  Return via this statement may indicate a deficiency in ngc_list.h (which is machine generated.)  */
     return result;
   }
-  result.X = ngc_list_access::get_RA_i(index).to_double();
-  result.Y = ngc_list_access::get_Dec_i(index).to_double();
+  // result.X = ngc_list_access::get_RA_i(index).to_double();
+  // result.Y = ngc_list_access::get_Dec_i(index).to_double();
+  result.X = extra_solar_ngc::neo_get_RA_i(ngc_number);
+  result.Y = extra_solar_ngc::neo_get_Dec_i(ngc_number);
   OK = true;
   return result;
 }

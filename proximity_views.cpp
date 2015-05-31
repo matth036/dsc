@@ -257,7 +257,7 @@ std::unique_ptr < CharLCD_STM32F >
   double JD = this->JD;
   auto bsc_distance_from_target =[JD, distance_from_target] (uint32_t index) {
     CAA2DCoordinate position;
-    position = extra_solar::proper_motion_adjusted_position(flash_memory_array::bsc_array[index], JD);
+    position = extra_solar_bsc::proper_motion_adjusted_position(flash_memory_array::bsc_array[index], JD);
     return distance_from_target(position.X, position.Y);
   };
 
@@ -386,7 +386,7 @@ void Proximate_Navigation_Stars_View::run_algorithm()
 
   auto navstar_distance_from_target =[JD, distance_from_target] (uint32_t navstar_number) {
     uint32_t bsc = navigation_star::nav2bsc[navstar_number];
-    int32_t index = extra_solar::neo_get_index_fast( bsc );
+    int32_t index = extra_solar_bsc::neo_get_index_fast( bsc );
     while( index < 0 ){
 
     }

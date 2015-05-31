@@ -219,7 +219,7 @@ bool accept_bsc_number(std::string catalog_line ){
   }
   float Vmag = extract_Vmag( catalog_line );
   //  float Vmag_limit = 99.0;
-  float Vmag_limit = 99.0;
+  float Vmag_limit = 5.1;
   if( Vmag > Vmag_limit ){
     return false;
   }

@@ -8,6 +8,7 @@
 #include "AANutation.h"
 #include "AADynamicalTime.h"
 #include "neo_bsc_starlist.h"
+#include "neo_whiz_bang_ngc_list.h"
 #include <algorithm>
 
 inline uint32_t get_bsc_number( uint32_t index ){
@@ -15,7 +16,7 @@ inline uint32_t get_bsc_number( uint32_t index ){
 }
 
 
-int32_t extra_solar::neo_get_index_fast( const int32_t bsc_number ){
+int32_t extra_solar_bsc::neo_get_index_fast( const int32_t bsc_number ){
   int32_t lo = 0;
   int32_t hi = flash_memory_array::bsc_array.size() - 1;
   while( lo <= hi ){
@@ -32,7 +33,7 @@ int32_t extra_solar::neo_get_index_fast( const int32_t bsc_number ){
   return -1; // Not found.
 }
 
-int32_t extra_solar::neo_get_index( uint32_t bsc_number ){
+int32_t extra_solar_bsc::neo_get_index( uint32_t bsc_number ){
   for( uint32_t i=0; i<flash_memory_array::bsc_array.size(); ++i ){
     if( flash_memory_array::bsc_array[i].BSCnum == static_cast<int32_t>(bsc_number) ){
       return static_cast<int32_t>(i);
@@ -41,7 +42,43 @@ int32_t extra_solar::neo_get_index( uint32_t bsc_number ){
   return -1;
 }
 
-CAA2DCoordinate extra_solar::proper_motion_adjusted_position(const star_data & sd,
+
+int32_t extra_solar_ngc::neo_get_index( uint32_t ngc_number ){
+  for( uint32_t i=0; i<flash_memory_array::ngc_list.size(); ++i ){
+    if( flash_memory_array::ngc_list[i].NGC_number == ngc_number ){
+      return static_cast<int32_t>(i);
+    }
+  }
+  return -1;
+}
+
+double extra_solar_ngc::neo_get_RA_i(uint32_t index){
+  sexagesimal::Sexagesimal RA;
+  RA.set_binary_data( flash_memory_array::ngc_list[index].RA_data );
+  return RA.to_double();
+}
+
+double extra_solar_ngc::neo_get_Dec_i(uint32_t index){
+  sexagesimal::Sexagesimal DEC;
+  DEC.set_binary_data( flash_memory_array::ngc_list[index].DEC_data );
+  return DEC.to_double();
+}
+
+
+
+
+
+int32_t extra_solar_ngc::neo_get_index_fast( int32_t ngc_number ){
+  // @FIXME really a implement fast implementation.
+  return extra_solar_ngc::neo_get_index( static_cast<uint32_t>(ngc_number) );
+}
+
+
+
+
+
+
+CAA2DCoordinate extra_solar_bsc::proper_motion_adjusted_position(const star_data & sd,
 						double JD)
 {
   CAA2DCoordinate ra_dec;
@@ -307,12 +344,12 @@ CAA2DCoordinate navigation_star::nav_star_RA_Dec(int navstar_num, double JD)
 {
   CAA2DCoordinate RA_Dec;
   int bsc_num = navigation_star::nav2bsc[navstar_num];
-  int index = extra_solar::neo_get_index_fast( bsc_num );
+  int index = extra_solar_bsc::neo_get_index_fast( bsc_num );
   if (index < 0) {
     RA_Dec.X = RA_Dec.Y = 0;
     return RA_Dec;
   }
-  RA_Dec = extra_solar::proper_motion_adjusted_position(flash_memory_array::bsc_array[index], JD);
+  RA_Dec = extra_solar_bsc::proper_motion_adjusted_position(flash_memory_array::bsc_array[index], JD);
   double deltaT = CAADynamicalTime::DeltaT(JD);
 
   RA_Dec = apply_aberration(RA_Dec, JD + deltaT/86400.0 );
