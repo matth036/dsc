@@ -102,8 +102,8 @@ CPPSRC+=char_lcd_stm32f4.cpp
 CPPSRC+=quadrature_decoder.cpp
 CPPSRC+=sexagesimal.cpp
 CPPSRC+=navigation_star.cpp
-# CPPSRC+=starlist_access.cpp
 CPPSRC+=ngc_list_access.cpp
+CPPSRC+=neo_whiz_bang_ngc_list.cpp
 CPPSRC+=messier.cpp
 CPPSRC+=controller.cpp
 CPPSRC+=telescope_model.cpp
@@ -224,7 +224,10 @@ $(AA_SRCDIR): aaplus.zip
 	mkdir -p $(AA_SRCDIR)
 	unzip -d $(AA_SRCDIR) aaplus.zip
 
-$(OBJ): ngc_list.h
+$(OBJ): ngc_list.h neo_whiz_bang_ngc_list.cpp
+
+neo_whiz_bang_ngc_list.cpp: make_neo_ngc_list.pl
+	./make_neo_ngc_list.pl
 
 flex_lexer.cpp: flex_lexer.l
 	flex -o flex_lexer.cpp --header=flex_lexer.h flex_lexer.l
@@ -298,3 +301,4 @@ clean:
 	rm -f sex_to_hex
 	rm -f flex_lexer.cpp flex_lexer.h
 	rm -f neo_bsc_starlist.h neo_bsc_starlist.cpp make_starlist
+	rm -f neo_whiz_bang_ngc_list.cpp neo_whiz_bang_ngc_list.h
