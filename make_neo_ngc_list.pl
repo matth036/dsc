@@ -90,6 +90,8 @@ sub make_header_file{
     print_mechanization_warning( \*OUTFILE_H );
     print OUTFILE_H "\n";
 
+    print OUTFILE_H "#include <inttypes.h>";
+    print OUTFILE_H "\n";
     print OUTFILE_H "#include <array>";
 
     print OUTFILE_H "\n";
@@ -104,42 +106,42 @@ sub make_header_file{
     print OUTFILE_H "uint32_t";
     print OUTFILE_H " ";
     print OUTFILE_H "RA_data";
-    print OUTFILE_H ",";
+    print OUTFILE_H ";";
     print OUTFILE_H "\n";
 
     print OUTFILE_H $indent;
     print OUTFILE_H "uint32_t";
     print OUTFILE_H " ";
     print OUTFILE_H "DEC_data";
-    print OUTFILE_H ",";
+    print OUTFILE_H ";";
     print OUTFILE_H "\n";
 
     print OUTFILE_H $indent;
     print OUTFILE_H "uint32_t";
     print OUTFILE_H " ";
     print OUTFILE_H "NGC_number";
-    print OUTFILE_H ",";
+    print OUTFILE_H ";";
     print OUTFILE_H "\n";
 
     print OUTFILE_H $indent;
     print OUTFILE_H "float";
     print OUTFILE_H " ";
     print OUTFILE_H "Vmag";
-    print OUTFILE_H ",";
+    print OUTFILE_H ";";
     print OUTFILE_H "\n";
 
     print OUTFILE_H $indent;
     print OUTFILE_H "float";
     print OUTFILE_H " ";
     print OUTFILE_H "dimension_a";
-    print OUTFILE_H ",";
+    print OUTFILE_H ";";
     print OUTFILE_H "\n";
 
     print OUTFILE_H $indent;
     print OUTFILE_H "float";
     print OUTFILE_H " ";
     print OUTFILE_H "dimension_b";
-    print OUTFILE_H ",";
+    print OUTFILE_H ";";
     print OUTFILE_H "\n";
 
     print OUTFILE_H "} ";
@@ -202,22 +204,22 @@ sub make_cpp_file{
 	print OUTFILE_CPP " */";
 	print OUTFILE_CPP "\n";
 	print OUTFILE_CPP $indent;
-	print OUTFILE_CPP "uint32_t ";
+	# print OUTFILE_CPP "uint32_t ";
 	print OUTFILE_CPP $AoH[$index]{RA_data};
 	print OUTFILE_CPP ",\n";
 
 	print OUTFILE_CPP $indent;
-	print OUTFILE_CPP "uint32_t ";
+	# print OUTFILE_CPP "uint32_t ";
 	print OUTFILE_CPP $AoH[$index]{Declination_data};
 	print OUTFILE_CPP ",\n";
 
 	print OUTFILE_CPP $indent;
-	print OUTFILE_CPP "uint32_t ";
+	# print OUTFILE_CPP "uint32_t ";
 	print OUTFILE_CPP $AoH[$index]{NGC_number};
 	print OUTFILE_CPP ",\n";
 
 	print OUTFILE_CPP $indent;
-	print OUTFILE_CPP "float ";
+	print OUTFILE_CPP "(float) ";
 	print OUTFILE_CPP $AoH[$index]{magnitude};
 	print OUTFILE_CPP ",";
 	print OUTFILE_CPP "               /* Vmag */";
@@ -225,18 +227,18 @@ sub make_cpp_file{
 
 
 	print OUTFILE_CPP $indent;
-	print OUTFILE_CPP "float ";
+	print OUTFILE_CPP "(float) ";
 	print OUTFILE_CPP $AoH[$index]{size_a};
 	print OUTFILE_CPP ",";
-	print OUTFILE_CPP "               /* Vmag */";
+	print OUTFILE_CPP "               /* dimension_a */";
 	print OUTFILE_CPP "\n";
 
 
 	print OUTFILE_CPP $indent;
-	print OUTFILE_CPP "float ";
+	print OUTFILE_CPP "(float) ";
 	print OUTFILE_CPP $AoH[$index]{size_b};
 	print OUTFILE_CPP ",";
-	print OUTFILE_CPP "               /* Vmag */";
+	print OUTFILE_CPP "               /* dimension_b */";
 	print OUTFILE_CPP "\n";
 
 
