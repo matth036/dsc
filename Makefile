@@ -259,11 +259,11 @@ DPublic_HCNGC.txt: Public_HCNGC.zip
 	unzip Public_HCNGC.zip
 	touch DPublic_HCNGC.txt
 
-make_starlist: make_starlist_cpp.cpp sexagesimal.cpp navigation_star.cpp
-	g++ --std=c++11 -g -o make_starlist make_starlist_cpp.cpp sexagesimal.cpp navigation_star.cpp
+make_bsc_starlist: make_bsc_starlist.cpp sexagesimal.cpp navigation_star.cpp
+	g++ --std=c++11 -g -o make_bsc_starlist make_bsc_starlist.cpp sexagesimal.cpp navigation_star.cpp
 
-neo_bsc_starlist.cpp: make_starlist catalog
-	./make_starlist
+neo_bsc_starlist.cpp: make_bsc_starlist catalog
+	./make_bsc_starlist
 
 debug: $(TARGET).elf 
 	./do_flash.pl $(TARGET).bin 
@@ -286,9 +286,8 @@ clean:
 	rm -f openocd.log
 	rm -f *.o
 	rm -f catalog
-	rm -f starlist.h starlist.h~
+	rm -f make_bsc_starlist
 	rm -f ngc_list.h ngc_list.h~
-	rm -f make_star_list
 	rm -Rf $(AA_SRCDIR)
 	rm -f DPublic_HCNGC.txt Public_HCNGC.txt Public_HCNGC.xls
 	rm -f sex_to_hex
