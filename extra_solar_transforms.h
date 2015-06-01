@@ -3,6 +3,7 @@
 
 #include "AA2DCoordinate.h"
 #include "navigation_star.h"
+#include "sexagesimal.h"
 
 /* 
  * This re-opens and appends the namespace begun
@@ -21,8 +22,12 @@ namespace extra_solar_bsc{
 namespace extra_solar_ngc{
   int32_t neo_get_index( uint32_t ngc_number );
   int32_t neo_get_index_fast( int32_t ngc_number );
-  double neo_get_RA_i(uint32_t index);
-  double neo_get_Dec_i(uint32_t index);
+  sexagesimal::Sexagesimal get_RA_i(uint32_t index);
+  sexagesimal::Sexagesimal get_Dec_i(uint32_t index);
+  uint32_t get_ngc_number_i(uint32_t index);
+  float get_magnitude_i(uint32_t index);
+  float get_dimension_a_i(uint32_t index);
+  float get_dimension_b_i(uint32_t index);
 }
 
 

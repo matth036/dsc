@@ -12,7 +12,7 @@
 #include "main.h"
 #include "binary_tidbits.h"
 #include "solar_system.h"
-#include "ngc_list_access.h"
+// #include "ngc_list_access.h"
 // #include "starlist_access.h"
 #include "neo_bsc_starlist.h"
 #include "extra_solar_transforms.h"
@@ -1130,13 +1130,20 @@ void NGC_Details_View::dismiss_action( ){
 
 void NGC_Details_View::setup( int ngc_num ){
   ngc_num_ = ngc_num;
-  index = ngc_list_access::get_index( ngc_num_ );
+  //  index = ngc_list_access::get_index( ngc_num_ );
+  index = extra_solar_ngc::neo_get_index_fast( ngc_num_ );
   if( index != -1 ){
-    magnitude = ngc_list_access::get_magnitude_i( index );
-    dimension_a = ngc_list_access::get_dimension_a_i( index );
-    dimension_b = ngc_list_access::get_dimension_b_i( index );
-    sexagesimal::Sexagesimal RA = ngc_list_access::get_RA_i(index);
-    sexagesimal::Sexagesimal Dec = ngc_list_access::get_Dec_i(index);
+    // magnitude = ngc_list_access::get_magnitude_i( index );
+    // dimension_a = ngc_list_access::get_dimension_a_i( index );
+    // dimension_b = ngc_list_access::get_dimension_b_i( index );
+    // sexagesimal::Sexagesimal RA = ngc_list_access::get_RA_i(index);
+    // sexagesimal::Sexagesimal Dec = ngc_list_access::get_Dec_i(index);
+
+    magnitude = extra_solar_ngc::get_magnitude_i( index );
+    dimension_a = extra_solar_ngc::get_dimension_a_i( index );
+    dimension_b = extra_solar_ngc::get_dimension_b_i( index );
+    sexagesimal::Sexagesimal RA = extra_solar_ngc::get_RA_i(index);
+    sexagesimal::Sexagesimal Dec = extra_solar_ngc::get_Dec_i(index);
     RA_Dec.X = RA.to_double();
     RA_Dec.Y = Dec.to_double();
     /* @TODO perform precesion transformation. */

@@ -73,8 +73,8 @@ CAA2DCoordinate messier_numbers::messier_J2000_RA_and_Dec(int number, bool & OK)
   }
   // result.X = ngc_list_access::get_RA_i(index).to_double();
   // result.Y = ngc_list_access::get_Dec_i(index).to_double();
-  result.X = extra_solar_ngc::neo_get_RA_i(ngc_number);
-  result.Y = extra_solar_ngc::neo_get_Dec_i(ngc_number);
+  result.X = extra_solar_ngc::get_RA_i(ngc_number).to_double();
+  result.Y = extra_solar_ngc::get_Dec_i(ngc_number).to_double();
   OK = true;
   return result;
 }

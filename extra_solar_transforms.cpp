@@ -56,17 +56,34 @@ int32_t extra_solar_ngc::neo_get_index( uint32_t ngc_number ){
   return -1;
 }
 
-double extra_solar_ngc::neo_get_RA_i(uint32_t index){
+sexagesimal::Sexagesimal extra_solar_ngc::get_RA_i(uint32_t index){
   sexagesimal::Sexagesimal RA;
   RA.set_binary_data( flash_memory_array::ngc_list[index].RA_data );
-  return RA.to_double();
+  return RA;
 }
 
-double extra_solar_ngc::neo_get_Dec_i(uint32_t index){
+sexagesimal::Sexagesimal extra_solar_ngc::get_Dec_i(uint32_t index){
   sexagesimal::Sexagesimal DEC;
   DEC.set_binary_data( flash_memory_array::ngc_list[index].DEC_data );
-  return DEC.to_double();
+  return DEC;
 }
+
+float extra_solar_ngc::get_magnitude_i(uint32_t index){
+  return flash_memory_array::ngc_list[index].Vmag;
+}
+
+float extra_solar_ngc::get_dimension_a_i(uint32_t index){
+  return flash_memory_array::ngc_list[index].dimension_a;
+}
+
+float extra_solar_ngc::get_dimension_b_i(uint32_t index){
+  return flash_memory_array::ngc_list[index].dimension_b;
+}
+
+uint32_t extra_solar_ngc::get_ngc_number_i(uint32_t index){
+  return flash_memory_array::ngc_list[index].NGC_number;
+}
+
 
 int32_t extra_solar_ngc::neo_get_index_fast( int32_t ngc_number ){
   int32_t lo = 0;
@@ -84,11 +101,6 @@ int32_t extra_solar_ngc::neo_get_index_fast( int32_t ngc_number ){
   }
   return -1; // Not found.
 }
-
-
-
-
-
 
 CAA2DCoordinate extra_solar_bsc::proper_motion_adjusted_position(const star_data & sd,
 						double JD)

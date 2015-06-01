@@ -1,12 +1,8 @@
 TARGET:=$(notdir $(lastword $(CURDIR)))
 
-
-
 TOOLCHAIN_PATH:=/opt/cross/microcontroller/arm/4.8.4-release-candidate-2015-04-09_184647/bin
 # TOOLCHAIN_PATH:=/opt/cross/microcontroller/arm/4.9.2-release-candidate-2015-04-09_110954/bin
 # TOOLCHAIN_PATH:=/opt/cross/microcontroller/arm/5.1.0-release-candidate-2015-05-15_144212/bin
-
-
 
 TOOLCHAIN_PREFIX:=arm-none-eabi
 
@@ -32,7 +28,6 @@ LINKER_SCRIPT=project_stm32_flash.ld
 # md5sum:  
 # 6063f18dff8b5f1ddfafa77d1ab72ad9  stsw-stm32068.zip
 VENDOR_STM_SOURCE_DIR:=/opt/cross/microcontroller/arm/STM32F4-Discovery_FW_V1.1.0
-
 
 # We are (2014-Dec-16) using an Olimex board, not the discovery board.
 # 
@@ -127,7 +122,6 @@ CPPSRC+=command_actions.cpp
 CPPSRC+=sight_data_command_actions.cpp
 CPPSRC+=specificities.cpp
 
-
 # (Subset of) Astronomical Algorithms Source Files
 CPPSRC+=$(AA_SRCDIR)/AAAngularSeparation.cpp
 CPPSRC+=$(AA_SRCDIR)/AACoordinateTransformation.cpp
@@ -158,8 +152,6 @@ CPPSRC+=$(AA_SRCDIR)/AAElliptical.cpp
 CPPSRC+=$(AA_SRCDIR)/AAElementsPlanetaryOrbit.cpp
 CPPSRC+=$(AA_SRCDIR)/AAParallax.cpp
 CPPSRC+=$(AA_SRCDIR)/AAGlobe.cpp
-
-
 
 # March 2014 attempted update to  STM32F4xx_DSP_StdPeriph_Lib_V1.3.0/
 # Define was: 
@@ -224,7 +216,7 @@ $(AA_SRCDIR): aaplus.zip
 	mkdir -p $(AA_SRCDIR)
 	unzip -d $(AA_SRCDIR) aaplus.zip
 
-$(OBJ): ngc_list.h neo_whiz_bang_ngc_list.cpp
+$(OBJ): ngc_list.h
 
 neo_whiz_bang_ngc_list.cpp: make_neo_ngc_list.pl
 	./make_neo_ngc_list.pl

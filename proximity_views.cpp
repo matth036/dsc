@@ -5,7 +5,7 @@
 #include "keypad_layout.h"
 #include "char_lcd_stm32f4.h"
 #include "rtc_management.h"
-#include "ngc_list_access.h"
+// #include "ngc_list_access.h"
 #include "messier.h"
 #include "navigation_star.h"
 #include "AAAngularSeparation.h"
@@ -15,7 +15,7 @@
 #include "solar_system.h"
 #include "extra_solar_transforms.h"
 #include "neo_bsc_starlist.h"
-
+#include "neo_whiz_bang_ngc_list.h"
 
 /* 
  * single precision version of CAAAngularSeparation::Separation( ,,, )
@@ -792,8 +792,8 @@ void Proximate_NGC_View::run_algorithm()
 {
   ngc_objects.clear();
   uint32_t index = 0;
-  while (ngc_objects.size() < size && index < ngc_list_access::ngc_list_size()) {
-    float mag = ngc_list_access::get_magnitude_i( index );
+  while (ngc_objects.size() < size && index < flash_memory_array::ngc_list.size() ) {
+    float mag = extra_solar_ngc::get_magnitude_i( index );
     if( mag <= _magnitude_limit && mag > .0001 ){
       ngc_objects.push_back(index);
     }
@@ -809,8 +809,8 @@ void Proximate_NGC_View::run_algorithm()
   };
   //  double JD = this->JD;
   auto ngc_distance_from_target =[distance_from_target] (uint32_t index) {
-    float RA = ngc_list_access::get_RA_i( index ).to_float();
-    float Dec = ngc_list_access::get_Dec_i( index ).to_float();
+    float RA = extra_solar_ngc::get_RA_i( index ).to_float();
+    float Dec = extra_solar_ngc::get_Dec_i( index ).to_float();
     return distance_from_target(RA, Dec);
   };
   auto target_proximity_compare =
@@ -825,8 +825,8 @@ void Proximate_NGC_View::run_algorithm()
    *   Now *ngc_objects.begin() has the largest distance_from_target() 
    *   and, the rest of the list has the heap propery.
    */
-  while ( index < ngc_list_access::ngc_list_size()) {
-    float mag = ngc_list_access::get_magnitude_i( index );
+  while ( index < flash_memory_array::ngc_list.size() ){
+    float mag = extra_solar_ngc::get_magnitude_i( index );
     if( mag <= _magnitude_limit && mag > .0001 ){
       if (target_proximity_compare(index, *ngc_objects.begin())) {
 	pop_heap(ngc_objects.begin(), ngc_objects.end(), target_proximity_compare);
@@ -838,7 +838,8 @@ void Proximate_NGC_View::run_algorithm()
     ++index;
   }
   sort_heap(ngc_objects.begin(), ngc_objects.end(), target_proximity_compare);
-  ngc_selection = ngc_list_access::ngc_number( ngc_objects[position] );
+  ngc_selection = extra_solar_ngc::get_ngc_number_i( ngc_objects[position] );
+  // ngc_selection = ngc_list_access::ngc_number( ngc_objects[position] );
 }
 
 std::unique_ptr < CharLCD_STM32F >
@@ -887,8 +888,8 @@ std::unique_ptr < CharLCD_STM32F >
   auto ngc_distance_from_target = [JD,distance_from_target] (uint32_t index) {
     sexagesimal::Sexagesimal RA;
     sexagesimal::Sexagesimal Dec;
-    RA = ngc_list_access::get_RA_i( index );
-    Dec = ngc_list_access::get_Dec_i( index );
+    RA = extra_solar_ngc::get_RA_i( index );
+    Dec = extra_solar_ngc::get_Dec_i( index );
     return distance_from_target(RA.to_double(), Dec.to_double());
   };
   int n = 0;
@@ -898,11 +899,11 @@ std::unique_ptr < CharLCD_STM32F >
   }
   if( position + line_number - 1 < ngc_objects.size() ){
     n += lcd->
-      print(ngc_list_access::ngc_number(ngc_objects[position + line_number - 1]));
+      print(extra_solar_ngc::get_ngc_number_i(ngc_objects[position + line_number - 1]));
     while (n < 8) {
       n += lcd->print(' ');
     }
-    n += lcd->print(ngc_list_access::get_magnitude_i(ngc_objects[position + line_number - 1]),
+    n += lcd->print(extra_solar_ngc::get_magnitude_i(ngc_objects[position + line_number - 1]),
 		    2);
     n += lcd->print("m ");
     while (n < 14) {

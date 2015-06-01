@@ -11,7 +11,7 @@
 #include "binary_tidbits.h"
 #include "solar_system.h"
 
-#include "ngc_list_access.h"
+// #include "ngc_list_access.h"
 #include "neo_bsc_starlist.h"
 #include "messier.h"
 #include "extra_solar_transforms.h"
@@ -204,7 +204,7 @@ void ngc_point_to_action(char *yytext, int yyleng)
   if( ngc_num < 1 || ngc_num > 7840 ){
     return;
   }
-  int index = ngc_list_access::get_index( ngc_num );
+  int index = extra_solar_ngc::neo_get_index_fast( ngc_num );
   /* get_index(ngc_num) fails by returning -1 */
   /* This will be little tested since I am inclined to include the entirety of the NGC. */
   if( index == -1 ){
@@ -229,8 +229,8 @@ void ngc_point_to_action(char *yytext, int yyleng)
   CAA2DCoordinate RA_Dec;
   sexagesimal::Sexagesimal RA;
   sexagesimal::Sexagesimal Dec;
-  RA = ngc_list_access::get_RA_i( index );
-  Dec = ngc_list_access::get_Dec_i( index );
+  RA = extra_solar_ngc::get_RA_i( index );
+  Dec = extra_solar_ngc::get_Dec_i( index );
   RA_Dec.X = RA.to_double();
   RA_Dec.Y = Dec.to_double();
   /* For stars we would have a proper motion correction here. 
