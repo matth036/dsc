@@ -97,7 +97,7 @@ CPPSRC+=char_lcd_stm32f4.cpp
 CPPSRC+=quadrature_decoder.cpp
 CPPSRC+=sexagesimal.cpp
 CPPSRC+=navigation_star.cpp
-CPPSRC+=ngc_list_access.cpp
+# CPPSRC+=ngc_list_access.cpp
 CPPSRC+=neo_whiz_bang_ngc_list.cpp
 CPPSRC+=messier.cpp
 CPPSRC+=controller.cpp
@@ -216,9 +216,10 @@ $(AA_SRCDIR): aaplus.zip
 	mkdir -p $(AA_SRCDIR)
 	unzip -d $(AA_SRCDIR) aaplus.zip
 
-$(OBJ): ngc_list.h
+#$(OBJ): ngc_list.h
+#
 
-neo_whiz_bang_ngc_list.cpp: make_neo_ngc_list.pl
+neo_whiz_bang_ngc_list.cpp: sex_to_hex make_neo_ngc_list.pl DPublic_HCNGC.txt
 	./make_neo_ngc_list.pl
 
 flex_lexer.cpp: flex_lexer.l
@@ -247,8 +248,8 @@ catalog:
 	cp YaleStarCatalog/catalog.gz  .
 	gunzip catalog.gz
 
-ngc_list.h: make_ngc_list.pl DPublic_HCNGC.txt sex_to_hex
-	./make_ngc_list.pl > ngc_list.h
+# ngc_list.h: make_ngc_list.pl DPublic_HCNGC.txt sex_to_hex
+#ngc	./make_ngc_list.pl > ngc_list.h
 
 sex_to_hex: sex_to_hex.cpp sexagesimal.cpp sexagesimal.h
 	g++ -std=c++11 -g -o sex_to_hex sex_to_hex.cpp sexagesimal.cpp

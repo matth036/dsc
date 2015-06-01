@@ -13,6 +13,45 @@
 using std::cout;
 using std::endl;
 
+/*****************************************************************
+ * Forward declarations of funtions used in accept_bsc_number( .. )
+ *****************************************************************/
+uint32_t extract_bsc_number( std::string line);
+bool is_bsc_blacklisted( uint32_t bsc_number );
+sexagesimal::Sexagesimal extract_Dec( std::string line);
+float extract_Vmag( std::string line);
+
+/*****************************************************************
+ * 
+ * bool accept_bsc_number( .. )
+ * Edit this function to reduce the size of the onboard catalog.
+ * (To save space in flash memory.)
+ *
+ ****************************************************************/
+bool accept_bsc_number(std::string catalog_line ){
+  uint32_t bsc_number = extract_bsc_number( catalog_line );
+  if( is_bsc_blacklisted( bsc_number ) ){
+    return false;
+  }
+  if( navigation_star::is_navigation_star( bsc_number ) ){
+    return true;  // Include all navigaion stars for global sight alignment.
+  } 
+  sexagesimal::Sexagesimal declination = extract_Dec( catalog_line );
+  double declination_limit = 45.0;
+  if( declination.to_double() < declination_limit ){
+    // optionallly return false here to omit far south stars.
+  }
+  if( declination.to_double() > declination_limit ){
+    // optionallly return false here to omit far north stars.
+  }
+  float Vmag = extract_Vmag( catalog_line );
+  float Vmag_limit = 99.0;
+  // float Vmag_limit = 5.1;
+  if( Vmag > Vmag_limit ){
+    return false;
+  }
+  return true;
+}
 
 void print_pod_check(){
   if( std::is_pod<star_data>() ){
@@ -196,34 +235,6 @@ sexagesimal::Sexagesimal extract_Dec( std::string line){
       static_cast<uint16_t>( 0 )
       };
   return Dec;
-}
-
-/*****************************************************************
- * 
- * Edit this function to reduce the size of the onboard catalog.
- * (To save space in flash memory.)
- *
- ****************************************************************/
-bool accept_bsc_number(std::string catalog_line ){
-  uint32_t bsc_number = extract_bsc_number( catalog_line );
-  if( is_bsc_blacklisted( bsc_number ) ){
-    return false;
-  }
-  if( navigation_star::is_navigation_star( bsc_number ) ){
-    return true;  // Include all navigaion stars for global sight alignment.
-  } 
-  sexagesimal::Sexagesimal declination = extract_Dec( catalog_line );
-  double declination_limit = 45.0;
-  if( declination.to_double() < declination_limit ){
-    // optionallly return false here to omit far south stars.
-  }
-  float Vmag = extract_Vmag( catalog_line );
-  //  float Vmag_limit = 99.0;
-  float Vmag_limit = 5.1;
-  if( Vmag > Vmag_limit ){
-    return false;
-  }
-  return true;
 }
 
 std::vector<star_data> make_vector_catalog(){
