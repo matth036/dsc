@@ -65,16 +65,12 @@ CAA2DCoordinate messier_numbers::messier_J2000_RA_and_Dec(int number, bool & OK)
     return result;              /* returns {0.0,0.0} */
   }
   //  int index = ngc_list_access::get_index(ngc_number);
-  int index = extra_solar_ngc::neo_get_index_fast(ngc_number);
-  if (index == -1) {
-    OK = false;
-    /* Also returns {0.0,0.0},  Return via this statement may indicate a deficiency in ngc_list.h (which is machine generated.)  */
-    return result;
+  int index = -1;
+  while( index == -1 ){
+    index = extra_solar_ngc::neo_get_index_fast(ngc_number);
   }
-  // result.X = ngc_list_access::get_RA_i(index).to_double();
-  // result.Y = ngc_list_access::get_Dec_i(index).to_double();
-  result.X = extra_solar_ngc::get_RA_i(ngc_number).to_double();
-  result.Y = extra_solar_ngc::get_Dec_i(ngc_number).to_double();
+  result.X = extra_solar_ngc::get_RA_i(index).to_double();
+  result.Y = extra_solar_ngc::get_Dec_i(index).to_double();
   OK = true;
   return result;
 }

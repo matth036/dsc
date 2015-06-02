@@ -562,7 +562,6 @@ void Proximate_Messier_Objects_View::run_algorithm()
   objects.clear();
   uint32_t messier_number = 1;
   while (objects.size() < size && messier_number <= 110) {
-    /* We may want to filter for magnitude here. */
     objects.push_back(messier_number);
     ++messier_number;
   }

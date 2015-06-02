@@ -117,6 +117,14 @@ void bisection_test(){
       // Get trapped here if the two methods differ.
     }
   }
+  for( target = -100; target <=10000; ++target ){
+    int i_slow = extra_solar_ngc::neo_get_index( target );
+    int i_fast = extra_solar_ngc::neo_get_index_fast( target );
+    while( i_slow != i_fast ){
+      // Get trapped here if the two methods differ.
+    }
+  }
+
 }
 
 void debug_action(){
@@ -126,8 +134,6 @@ void debug_action(){
   // float_input_test();
   bisection_test();
 }
-
-
 
 
 void messier_catalog_point_to( char* yytext, int yyleng ){
