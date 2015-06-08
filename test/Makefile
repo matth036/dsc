@@ -47,7 +47,6 @@ CPPSRC+=lbr_and_xyz.cpp
 
 
 #
-
 # It will be tedious to get all of the required includes to compile this.
 # The flaw is a lack of compartmentalization.  I need to segregate the routines
 # that extract data from an input_view into separate code files that can be compiled for
@@ -66,6 +65,7 @@ CPPSRC+=AANeptune.cpp
 CPPSRC+=AAPluto.cpp
 CPPSRC+=AASidereal.cpp
 CPPSRC+=neo_bsc_starlist.cpp
+CPPSRC+=neo_whiz_bang_ngc_list.cpp
 
 COMMONFLAGS=-O$(OPTLVL) -ggdb3 -Wall -Werror -std=c++11
 CFLAGS=$(COMMONFLAGS) $(MCUFLAGS) $(INCLUDE) $(CDEFS)
