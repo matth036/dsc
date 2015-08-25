@@ -96,7 +96,7 @@ TESTS= example_23b example_33a nautical_almanac astronomical_almanac jd nutation
 
 all: $(AA_SRCDIR) objects tests
 
-objects: ../neo_bsc_starlist.cpp
+objects: ../neo_bsc_starlist.cpp ../neo_whiz_bang_ngc_list.cpp
 	$(MAKE) -C . $(OBJ)
 
 tests: $(TESTS)
@@ -116,7 +116,7 @@ $(AA_SRCDIR) : ../aaplus.zip
 	$(MAKE) -C .. neo_bsc_starlist.cpp
 
 ../neo_whiz_bang_ngc_list.cpp:
-	$(MAKE) -C .. whiz_bang_ngc_list.cpp
+	$(MAKE) -C .. neo_whiz_bang_ngc_list.cpp
 
 ../ngc_list.h:
 	 $(MAKE) -C .. ngc_list.h

@@ -7,7 +7,7 @@ TOOLCHAIN_PREFIX:=arm-none-eabi
 #
 # With OPTLVL=g the project compiled but failed to link in with gcc 4.8.3
 #
-OPTLVL:=fast # Optimization level, can be [0, 1, 2, 3, s, g, fast].
+OPTLVL:=0 # Optimization level, can be [0, 1, 2, 3, s, g, fast].
 
 AA_SRCDIR:=AA_src
 
