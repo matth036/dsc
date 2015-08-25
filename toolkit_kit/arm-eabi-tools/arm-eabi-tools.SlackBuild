@@ -200,8 +200,11 @@ tar xvf $CWD/mpc-$LIBMPC_VERSION.tar.?z* || exit 1
   --disable-decimal-float \
   --disable-nls \
   --disable-libssp || exit 1
+  echo "blather: configure of binutils finished."
   make ${NUMJOBS} all || exit 1
+  echo "blather: Build of binutils finished."
   make install DESTDIR=$PKG00_BIG_GLOB
+  echo "blather: Install of binutils finished."
 ) 2> $TMP/binutils.build.log.err | tee $TMP/binutils.build.log
 
 
@@ -412,7 +415,7 @@ if [ -f ${PKG00_BIG_GLOB}${PREFIX}/arm-none-eabi/include/c++/4.8.2/initializer_l
   touch second_build_succeeded
 else
   echo "blather Problem with second build:"
-  echo "blather C++ header file initializer_list is not present where expected."
+  echo "blather C++ header file nitializer_list is not present where expected."
   touch second_build_failed
 fi
 

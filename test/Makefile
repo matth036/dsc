@@ -113,7 +113,10 @@ $(AA_SRCDIR) : ../aaplus.zip
 # 	$(CXX) $(CXXFLAGS) -c -o AACoordinateTransformation.o $(INCLUDE) $(AA_SRCDIR)/AACoordinateTransformation.cpp
 
 ../neo_bsc_starlist.cpp:
-	 $(MAKE) -C .. neo_bsc_starlist.cpp
+	$(MAKE) -C .. neo_bsc_starlist.cpp
+
+../neo_whiz_bang_ngc_list.cpp:
+	$(MAKE) -C .. whiz_bang_ngc_list.cpp
 
 ../ngc_list.h:
 	 $(MAKE) -C .. ngc_list.h

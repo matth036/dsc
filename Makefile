@@ -1,15 +1,13 @@
 TARGET:=$(notdir $(lastword $(CURDIR)))
 
-TOOLCHAIN_PATH:=/opt/cross/microcontroller/arm/4.8.4-release-candidate-2015-04-09_184647/bin
-# TOOLCHAIN_PATH:=/opt/cross/microcontroller/arm/4.9.2-release-candidate-2015-04-09_110954/bin
-# TOOLCHAIN_PATH:=/opt/cross/microcontroller/arm/5.1.0-release-candidate-2015-05-15_144212/bin
+TOOLCHAIN_PATH:=/opt/cross/microcontroller/arm/5.2.0-release-candidate-2015-08-25_083545/bin
 
 TOOLCHAIN_PREFIX:=arm-none-eabi
 
 #
 # With OPTLVL=g the project compiled but failed to link in with gcc 4.8.3
 #
-OPTLVL:=0 # Optimization level, can be [0, 1, 2, 3, s, g, fast].
+OPTLVL:=fast # Optimization level, can be [0, 1, 2, 3, s, g, fast].
 
 AA_SRCDIR:=AA_src
 

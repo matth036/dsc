@@ -3,7 +3,7 @@
 #include "AACoordinateTransformation.h"
 #include <cmath>
 
-CAA3DCoordinate LBR_to_XYZ(CAA3DCoordinate lbr)
+CAA3DCoordinate LBR_to_XYZ(CAA3DCoordinate lbr) noexcept
 {
   double L = CAACoordinateTransformation::DegreesToRadians(lbr.X);
   double B = CAACoordinateTransformation::DegreesToRadians(lbr.Y);
@@ -20,7 +20,7 @@ CAA3DCoordinate LBR_to_XYZ(CAA3DCoordinate lbr)
 }
 
 /* Reverse transformation. */
-CAA3DCoordinate XYZ_to_LBR(CAA3DCoordinate xyz)
+CAA3DCoordinate XYZ_to_LBR(CAA3DCoordinate xyz) noexcept
 {
   CAA3DCoordinate lbr;
   double x2 = xyz.X * xyz.X;
@@ -47,7 +47,7 @@ CAA3DCoordinate XYZ_to_LBR(CAA3DCoordinate xyz)
  * 
  * The Jacobian of this transformation is positive.
  */
-CAA3DCoordinate XYZ_to_AziAltR(CAA3DCoordinate xyz){
+CAA3DCoordinate XYZ_to_AziAltR(CAA3DCoordinate xyz) noexcept {
   /* Reverse Y and Z, (which is a 180 degree rotation about X) */
   xyz.Y = -xyz.Y;
   xyz.Z = -xyz.Z;
