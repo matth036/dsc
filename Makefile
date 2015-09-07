@@ -1,6 +1,7 @@
 TARGET:=$(notdir $(lastword $(CURDIR)))
 
-TOOLCHAIN_PATH:=/opt/cross/microcontroller/arm/5.2.0-release-candidate-2015-08-25_083545/bin
+# TOOLCHAIN_PATH:=/opt/cross/microcontroller/arm/5.2.0-release-candidate-2015-08-25_083545/bin
+TOOLCHAIN_PATH:=/opt/cross/microcontroller/arm/5.2.0/bin/
 
 TOOLCHAIN_PREFIX:=arm-none-eabi
 
