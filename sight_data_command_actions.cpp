@@ -190,7 +190,7 @@ void navigation_star_menu(){
   for( uint32_t num = 0; num<=navigation_star::NAVIGATION_LIST_MAX; ++num ){
     std::string star_name = navigation_star::get_navigation_star_name(num);
     bool success = false;
-    CAA2DCoordinate RA_and_Dec = calulate_RA_and_Dec(star_name, JD, success );
+    CAA2DCoordinate RA_and_Dec = calculate_RA_and_Dec(star_name, JD, success );
     if( success ){
       CAA2DCoordinate azi_alt = data_set->azimuth_altitude( RA_and_Dec, JD, 
 							   refraction_temperature_pressure::DEFAULT_PRESSURE,
@@ -240,7 +240,7 @@ void solar_system_menu(){
 
   for( uint32_t num = 0; num<bodies.size(); ++num ){
     bool success = false;
-    CAA2DCoordinate RA_and_Dec = calulate_RA_and_Dec(bodies[num], JD, success );
+    CAA2DCoordinate RA_and_Dec = calculate_RA_and_Dec(bodies[num], JD, success );
     if( success ){
       CAA2DCoordinate azi_alt = data_set->azimuth_altitude( RA_and_Dec, JD,
 							   refraction_temperature_pressure::DEFAULT_PRESSURE,

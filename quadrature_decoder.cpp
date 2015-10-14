@@ -120,7 +120,7 @@ pin  = GPIO_Pin_7 = ((uint16_t)0x0080)  =  0000 0000 1000 0000b
 The class member _TIMx (x=1,2,3,4,5, or 8) is an implicit argument.
 _TIMx = TIM3
 
-We calulate:
+We calculate:
 npin = 7  The number of zeros to the right of the one.
 And make the funtion call
 GPIO_PinAFConfig( port, 7, GPIO_AF_TIM3);

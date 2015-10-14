@@ -3,7 +3,7 @@
 
 /********************************
   The plan is to put 
-CAA2DCoordinate calulate_RA_and_Dec(std::string object, double JD, bool& success){ ... }
+CAA2DCoordinate calculate_RA_and_Dec(std::string object, double JD, bool& success){ ... }
  now found in 
 alignment_sight_info.cpp
  into it's own file with this file as a header. 

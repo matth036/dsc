@@ -49,7 +49,7 @@ void simple_altazimuth_optimize_altitude_offset_iteration(Alignment_Data_Set *
     std::string object = data_set->get_object_name(s);
     double JD = data_set->get_julian_date(s);
     bool success = false;
-    CAA2DCoordinate RA_and_Dec = calulate_RA_and_Dec(object, JD, success);
+    CAA2DCoordinate RA_and_Dec = calculate_RA_and_Dec(object, JD, success);
     if (!success) {
       assert_param(false);
       continue;
@@ -209,7 +209,7 @@ Matrix3d B_Matrix_from_Alignment_Data_Set(Alignment_Data_Set & data_set)
     std::string object = data_set.get_object_name(s);
     double JD = data_set.get_julian_date(s);
     bool success = false;
-    CAA2DCoordinate RA_and_Dec = calulate_RA_and_Dec(object, JD, success);
+    CAA2DCoordinate RA_and_Dec = calculate_RA_and_Dec(object, JD, success);
     if (!success) {
       assert_param(false);
       continue;
@@ -284,7 +284,7 @@ CAA3DCoordinate optimize_alt_offset_and_get_singular_values(Alignment_Data_Set *
       std::string object = data_set->get_object_name(s);
       double JD = data_set->get_julian_date(s);
       bool success = false;
-      CAA2DCoordinate RA_and_Dec = calulate_RA_and_Dec(object, JD, success);
+      CAA2DCoordinate RA_and_Dec = calculate_RA_and_Dec(object, JD, success);
       if (!success) {
 	assert_param(false);
 	continue;
@@ -329,7 +329,7 @@ CAA3DCoordinate optimize_alt_offset_and_get_singular_values(Alignment_Data_Set *
       double JD = data_set->get_julian_date(s);
       bool success = false;
       /* Yes, this repeats a calulation that is likely expensive. */
-      CAA2DCoordinate RA_and_Dec = calulate_RA_and_Dec(object, JD, success);
+      CAA2DCoordinate RA_and_Dec = calculate_RA_and_Dec(object, JD, success);
       if (!success) {
 	assert_param(false);
 	continue;
@@ -400,7 +400,7 @@ double compare_pair_by_pair(Alignment_Data_Set * data_set, uint32_t max_size)
     std::string object = data_set->get_object_name(s);
     double JD = data_set->get_julian_date(s);
     bool success = false;
-    CAA2DCoordinate RA_and_Dec = calulate_RA_and_Dec(object, JD, success);
+    CAA2DCoordinate RA_and_Dec = calculate_RA_and_Dec(object, JD, success);
     if (!success) {
       assert_param(false);
       continue;
@@ -458,7 +458,7 @@ optimize_alt_offset_and_get_singular_values_HACKTATION(Alignment_Data_Set *
       std::string object = data_set->get_object_name(s);
       double JD = data_set->get_julian_date(s);
       bool success = false;
-      CAA2DCoordinate RA_and_Dec = calulate_RA_and_Dec(object, JD, success);
+      CAA2DCoordinate RA_and_Dec = calculate_RA_and_Dec(object, JD, success);
       if (!success) {
 	assert_param(false);
 	continue;
@@ -507,7 +507,7 @@ optimize_alt_offset_and_get_singular_values_HACKTATION(Alignment_Data_Set *
       double JD = data_set->get_julian_date(s);
       bool success = false;
       /* Yes, this repeats a calulation that is likely expensive. */
-      CAA2DCoordinate RA_and_Dec = calulate_RA_and_Dec(object, JD, success);
+      CAA2DCoordinate RA_and_Dec = calculate_RA_and_Dec(object, JD, success);
       if (!success) {
 	assert_param(false);
 	continue;

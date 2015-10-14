@@ -481,7 +481,7 @@ void solar_system_point_to_action(char *yytext, int yyleng)
   std::string body_name = solar_system::solar_system_body_name(body_num);
   double JD = JD_timestamp_pretty_good_000();
   bool success = false;
-  CAA2DCoordinate RA_Dec = calulate_RA_and_Dec(body_name, JD, success);
+  CAA2DCoordinate RA_Dec = calculate_RA_and_Dec(body_name, JD, success);
   if( !success ){
     return;
   }
@@ -511,7 +511,7 @@ void solar_system_point_to_action(char *yytext, int yyleng)
     lcd = view->write_third_line(std::move(lcd));
 
     JD = JD_timestamp_pretty_good_000();
-    RA_Dec = calulate_RA_and_Dec(body_name, JD, success);
+    RA_Dec = calculate_RA_and_Dec(body_name, JD, success);
     if( success ){
       view->set_ra_and_dec( RA_Dec );
     }

@@ -22,7 +22,7 @@
  *
  */ 
 
-CAA2DCoordinate calulate_RA_and_Dec(std::string object, double JD, bool& success);
+CAA2DCoordinate calculate_RA_and_Dec(std::string object, double JD, bool& success);
 
 class Alignment_Sight_Item{
  public:

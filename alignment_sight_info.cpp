@@ -98,7 +98,7 @@ const Alt_Azi_Snapshot_t Alignment_Sight_Item::get_encoder_data(){
  * ./test/nautical_almanac.cpp. 
  * 
  **/
-CAA2DCoordinate calulate_RA_and_Dec(std::string object, double JD, bool& success){
+CAA2DCoordinate calculate_RA_and_Dec(std::string object, double JD, bool& success){
   success = false;
   CAA2DCoordinate RA_and_DEC;
   RA_and_DEC.X = 0;

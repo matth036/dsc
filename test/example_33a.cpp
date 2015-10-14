@@ -17,7 +17,6 @@
 #include "AANeptune.h"
 #include "AAPluto.h"
 
-
 using std::cout;
 using std::endl;
 
@@ -338,11 +337,10 @@ int main( int argc, char **argv){
   CAAEllipticalPlanetaryDetails details = solar_system::calculate_details(body, JD);
   example_pretty_print( &details, body );
 
-  cout << "Local copy of calulate_details( body, JD ) " << endl;
+  cout << "Local copy of calculate_details( body, JD ) " << endl;
 
   details = local_calculate_details(body, JD);
   
-
   example_pretty_print( &details, body );
 
 }
