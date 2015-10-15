@@ -1,7 +1,7 @@
 TARGET:=$(notdir $(lastword $(CURDIR)))
 
 # TOOLCHAIN_PATH:=/opt/cross/microcontroller/arm/5.2.0-release-candidate-2015-08-25_083545/bin
-TOOLCHAIN_PATH:=/opt/cross/microcontroller/arm/5.2.0/bin/
+TOOLCHAIN_PATH:=/opt/cross/microcontroller/arm/5.2.0/bin
 
 TOOLCHAIN_PREFIX:=arm-none-eabi
 
@@ -179,7 +179,7 @@ CFLAGS=$(COMMONFLAGS) $(MCUFLAGS) $(INCLUDE) $(CDEFS) #
 #
 # My build of GCC 4.8.4 does not recognize -std=c++14
 # -std=c++11 is OK
-CXXFLAGS= -std=c++11 -felide-constructors $(CFLAGS) 
+CXXFLAGS= -std=c++17 -felide-constructors -Wno-deprecated-declarations $(CFLAGS) 
 
 LDLIBS=-lm -lgcc
 LDFLAGS=$(COMMONFLAGS)  -fno-exceptions -ffunction-sections -fdata-sections \
