@@ -26,6 +26,7 @@ namespace solar_system {
   constexpr double J2000_0 = 2451545.0;
   constexpr double J2050_0 = 2469807.5;
 
+  constexpr bool do_use_full_vsop = false;
 }
 
 #endif				/* _SOLAR_SYSTEM_H */

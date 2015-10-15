@@ -142,7 +142,7 @@ CAA2DCoordinate apply_aberration(CAA2DCoordinate ra_dec, double JD)
   ra_dec_a.X = ra_dec.X;
   ra_dec_a.Y = ra_dec.Y;
   CAA2DCoordinate aberration_addon =
-      CAAAberration::EquatorialAberration(ra_dec.X, ra_dec.Y, JD);
+    CAAAberration::EquatorialAberration(ra_dec.X, ra_dec.Y, JD, solar_system::do_use_full_vsop);
   ra_dec_a.X += aberration_addon.X;
   ra_dec_a.Y += aberration_addon.Y;
   return ra_dec_a;

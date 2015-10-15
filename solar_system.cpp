@@ -32,16 +32,18 @@
  * Units of the returned value is (AU/day).
  *
  */
+
+// , solar_system::do_use_full_vsop
 CAA3DCoordinate solar_system::velocity_Earth(double JD, double dt)
 {
   CAA3DCoordinate lbr;
-  lbr.X = CAAEarth::EclipticLongitude(JD + dt);
-  lbr.Y = CAAEarth::EclipticLatitude(JD + dt);
-  lbr.Z = CAAEarth::RadiusVector(JD + dt);
+  lbr.X = CAAEarth::EclipticLongitude(JD + dt, solar_system::do_use_full_vsop );
+  lbr.Y = CAAEarth::EclipticLatitude(JD + dt, solar_system::do_use_full_vsop);
+  lbr.Z = CAAEarth::RadiusVector(JD + dt, solar_system::do_use_full_vsop);
   CAA3DCoordinate R_forward = LBR_to_XYZ(lbr);
-  lbr.X = CAAEarth::EclipticLongitude(JD - dt);
-  lbr.Y = CAAEarth::EclipticLatitude(JD - dt);
-  lbr.Z = CAAEarth::RadiusVector(JD - dt);
+  lbr.X = CAAEarth::EclipticLongitude(JD - dt, solar_system::do_use_full_vsop);
+  lbr.Y = CAAEarth::EclipticLatitude(JD - dt, solar_system::do_use_full_vsop);
+  lbr.Z = CAAEarth::RadiusVector(JD - dt, solar_system::do_use_full_vsop);
   CAA3DCoordinate R_backward = LBR_to_XYZ(lbr);
   dt *= 2.0;
   CAA3DCoordinate V_earth;
@@ -168,44 +170,44 @@ CAA3DCoordinate vsop87_XYZ(const std::string & body, const double JD)
     xyz.X = xyz.Y = xyz.Z = 0.0;
     return xyz;
   } else if (body == "Mercury") {
-    lbr.X = CAAMercury::EclipticLongitude(JD);
-    lbr.Y = CAAMercury::EclipticLatitude(JD);
-    lbr.Z = CAAMercury::RadiusVector(JD);
+    lbr.X = CAAMercury::EclipticLongitude(JD, solar_system::do_use_full_vsop);
+    lbr.Y = CAAMercury::EclipticLatitude(JD, solar_system::do_use_full_vsop);
+    lbr.Z = CAAMercury::RadiusVector(JD, solar_system::do_use_full_vsop);
     return LBR_to_XYZ(lbr);
   } else if (body == "Venus") {
-    lbr.X = CAAVenus::EclipticLongitude(JD);
-    lbr.Y = CAAVenus::EclipticLatitude(JD);
-    lbr.Z = CAAVenus::RadiusVector(JD);
+    lbr.X = CAAVenus::EclipticLongitude(JD, solar_system::do_use_full_vsop);
+    lbr.Y = CAAVenus::EclipticLatitude(JD, solar_system::do_use_full_vsop);
+    lbr.Z = CAAVenus::RadiusVector(JD, solar_system::do_use_full_vsop);
     return LBR_to_XYZ(lbr);
   } else if (body == "Earth") {
-    lbr.X = CAAEarth::EclipticLongitude(JD);
-    lbr.Y = CAAEarth::EclipticLatitude(JD);
-    lbr.Z = CAAEarth::RadiusVector(JD);
+    lbr.X = CAAEarth::EclipticLongitude(JD, solar_system::do_use_full_vsop);
+    lbr.Y = CAAEarth::EclipticLatitude(JD, solar_system::do_use_full_vsop);
+    lbr.Z = CAAEarth::RadiusVector(JD, solar_system::do_use_full_vsop);
     return LBR_to_XYZ(lbr);
   } else if (body == "Mars") {
-    lbr.X = CAAMars::EclipticLongitude(JD);
-    lbr.Y = CAAMars::EclipticLatitude(JD);
-    lbr.Z = CAAMars::RadiusVector(JD);
+    lbr.X = CAAMars::EclipticLongitude(JD, solar_system::do_use_full_vsop);
+    lbr.Y = CAAMars::EclipticLatitude(JD, solar_system::do_use_full_vsop);
+    lbr.Z = CAAMars::RadiusVector(JD, solar_system::do_use_full_vsop);
     return LBR_to_XYZ(lbr);
   } else if (body == "Jupiter") {
-    lbr.X = CAAJupiter::EclipticLongitude(JD);
-    lbr.Y = CAAJupiter::EclipticLatitude(JD);
-    lbr.Z = CAAJupiter::RadiusVector(JD);
+    lbr.X = CAAJupiter::EclipticLongitude(JD, solar_system::do_use_full_vsop);
+    lbr.Y = CAAJupiter::EclipticLatitude(JD, solar_system::do_use_full_vsop);
+    lbr.Z = CAAJupiter::RadiusVector(JD, solar_system::do_use_full_vsop);
     return LBR_to_XYZ(lbr);
   } else if (body == "Saturn") {
-    lbr.X = CAASaturn::EclipticLongitude(JD);
-    lbr.Y = CAASaturn::EclipticLatitude(JD);
-    lbr.Z = CAASaturn::RadiusVector(JD);
+    lbr.X = CAASaturn::EclipticLongitude(JD, solar_system::do_use_full_vsop);
+    lbr.Y = CAASaturn::EclipticLatitude(JD, solar_system::do_use_full_vsop);
+    lbr.Z = CAASaturn::RadiusVector(JD, solar_system::do_use_full_vsop);
     return LBR_to_XYZ(lbr);
   } else if (body == "Uranus") {
-    lbr.X = CAAUranus::EclipticLongitude(JD);
-    lbr.Y = CAAUranus::EclipticLatitude(JD);
-    lbr.Z = CAAUranus::RadiusVector(JD);
+    lbr.X = CAAUranus::EclipticLongitude(JD, solar_system::do_use_full_vsop);
+    lbr.Y = CAAUranus::EclipticLatitude(JD, solar_system::do_use_full_vsop);
+    lbr.Z = CAAUranus::RadiusVector(JD, solar_system::do_use_full_vsop);
     return LBR_to_XYZ(lbr);
   } else if (body == "Neptune") {
-    lbr.X = CAANeptune::EclipticLongitude(JD);
-    lbr.Y = CAANeptune::EclipticLatitude(JD);
-    lbr.Z = CAANeptune::RadiusVector(JD);
+    lbr.X = CAANeptune::EclipticLongitude(JD, solar_system::do_use_full_vsop);
+    lbr.Y = CAANeptune::EclipticLatitude(JD, solar_system::do_use_full_vsop);
+    lbr.Z = CAANeptune::RadiusVector(JD, solar_system::do_use_full_vsop);
     return LBR_to_XYZ(lbr);
   } else if (body == "Pluto") {	/* Not really VSOP87.  Is the coordinate system correct? */
     lbr.X = CAAPluto::EclipticLongitude(JD);
