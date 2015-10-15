@@ -5,7 +5,11 @@
 #include "AAElliptical.h"
 
 namespace solar_system {
-
+#ifdef AAPLUS_VSOP87_NO_HIGH_PRECISION
+  constexpr bool do_use_full_vsop = false;
+#else
+  constexpr bool do_use_full_vsop = true;
+#endif  
   CAAEllipticalPlanetaryDetails calculate_details(std::string body, double JD);
   CAA3DCoordinate calculate_moon_RA_Dec_Dist(double JD);
   std::string solar_system_body_name(int);
@@ -25,8 +29,6 @@ namespace solar_system {
   constexpr double B1950_0 = 2433282.4235;
   constexpr double J2000_0 = 2451545.0;
   constexpr double J2050_0 = 2469807.5;
-
-  constexpr bool do_use_full_vsop = false;
 }
 
 #endif				/* _SOLAR_SYSTEM_H */

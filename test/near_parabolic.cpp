@@ -44,7 +44,7 @@ int main( int argc, char **argv){
   CAANearParabolicObjectDetails details;
   double RA;
   double Dec;
-  details = CAANearParabolic::Calculate( timestamp.Julian(), lovejoy_2014_q2 );
+  details = CAANearParabolic::Calculate( timestamp.Julian(), lovejoy_2014_q2, solar_system::do_use_full_vsop );
   pretty_print( timestamp );
   cout << endl;
   cout << details.PhaseAngle << " Phase Angle" <<  endl;
@@ -62,7 +62,7 @@ int main( int argc, char **argv){
   for( int h=-1; h<=24; ++h ){
     CAADate hour_date = CAADate(JD_hour + static_cast<double>(h)/24.0, true );
     lovejoy_2014_q2.JDEquinox = solar_system::J2000_0;
-    details = CAANearParabolic::Calculate( hour_date.Julian(), lovejoy_2014_q2 );
+    details = CAANearParabolic::Calculate( hour_date.Julian(), lovejoy_2014_q2, solar_system::do_use_full_vsop);
     printf( "%li ", hour_date.Year() );
     printf( "%2li ", hour_date.Month() );
     printf( "%2li ", hour_date.Day() );
