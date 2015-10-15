@@ -34,5 +34,7 @@ int main( int argc, char **argv){
   // cout << test_date.Julian() << endl;
   printf( "%18.8f\n", test_date.Julian() );
 
+  cout << "This is an abandoned test that I may return to. -Dan" << endl;
+  
   return 0;
 }
