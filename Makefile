@@ -179,7 +179,7 @@ CFLAGS=$(COMMONFLAGS) $(MCUFLAGS) $(INCLUDE) $(CDEFS) #
 #
 # My build of GCC 4.8.4 does not recognize -std=c++14
 # -std=c++11 is OK
-CXXFLAGS= -std=c++17 -felide-constructors -Wno-deprecated-declarations $(CFLAGS) 
+CXXFLAGS= -std=c++14 -felide-constructors -Wno-deprecated-declarations $(CFLAGS) 
 
 LDLIBS=-lm -lgcc
 LDFLAGS=$(COMMONFLAGS)  -fno-exceptions -ffunction-sections -fdata-sections \

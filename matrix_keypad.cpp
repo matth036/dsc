@@ -5,7 +5,7 @@
   void main_keypad_time_tick_action()
   is in main.cpp.
  */
-#include "main.h"
+// #include "main.h"
 #include "controller.h"
 
 #if KEYPAD_TIMER_TO_USE ==  12
