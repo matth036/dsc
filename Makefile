@@ -332,6 +332,10 @@ bugger:
 
 .PHONY: clean
 
+docs:	Doxyfile
+	rm -Rf docs
+	doxygen Doxyfile
+
 flash: $(TARGET).bin
 	./do_flash.pl $(TARGET).bin 
 
@@ -351,3 +355,4 @@ clean:
 	rm -f flex_lexer.cpp flex_lexer.h
 	rm -f neo_bsc_starlist.h neo_bsc_starlist.cpp make_starlist
 	rm -f neo_whiz_bang_ngc_list.cpp neo_whiz_bang_ngc_list.h
+	rm -Rf docs

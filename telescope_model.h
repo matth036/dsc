@@ -6,6 +6,31 @@
 #include <memory>
 #include "AA3DCoordinate.h"
 #include "AA2DCoordinate.h"
+
+/** \defgroup wankitude ''Shit I Don't Give a Fuck About.'' */
+
+/** \addtogroup wankitude */
+namespace bogus{
+  /** \addtogroup wankitude 
+   * @brief Indication of my feelings about this project.
+   */
+  constexpr int dogfood = 86; /*!< metric indicating my indifference.  */
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
 // #include "float_coordinates.h"
 // #include "quadrature_decoder.h"
 class Quadrature_Decoder;

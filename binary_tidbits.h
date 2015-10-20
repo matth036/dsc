@@ -4,8 +4,8 @@
 /*! 
  * These values could well be contexpr. We provide them as functions
  * as a reminder that these are only conventions.  Reversing any of 
- * these should have no visible effect after a complete rebuild.  
- * But don't expect that I have tested this.
+ * these should have no visible effect after a complete rebuild, but 
+ * don't expect that I have tested this.
  */
 namespace binary_tidbits {
 

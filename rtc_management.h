@@ -1,5 +1,5 @@
-#ifndef _RTC_MANAGEMENT_H
-#define _RTC_MANAGEMENT_H
+#ifndef RTC_MANAGEMENT_H_
+#define RTC_MANAGEMENT_H_
 
 /*
  *   Expecting to have only one RTC, we will
@@ -8,8 +8,11 @@
  *  
  */
 #include <inttypes.h>
-
+#ifdef __cplusplus
 #include <sexagesimal.h>
+// class sexagesimal::Sexagesimal;
+#endif
+// #include <sexagesimal.h>
 
 #define WAKEUP_BUTTON_EXTI_LINE          EXTI_Line0
 #define TAMPER_BUTTON_EXTI_LINE          EXTI_Line13
@@ -72,18 +75,16 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
-/* Functions using classes that are unsuitable for C. */
-#ifdef __cplusplus
 
+
+/* Functions using or returning C++ classes that are unsuitable for C. */
+#ifdef __cplusplus
 sexagesimal::Sexagesimal get_backup_domain_longitude();
 sexagesimal::Sexagesimal get_backup_domain_latitude();
 void save_backup_domain_longitude(sexagesimal::Sexagesimal longitude);
 void save_backup_domain_latitude(sexagesimal::Sexagesimal latitude);
 bool have_backup_domain_longitude();
 bool have_backup_domain_latitude();
-
-
-
 #endif
 
-#endif				/*  RTC_MANAGMENT_H */
+#endif  // RTC_MANAGMENT_H_

@@ -12,7 +12,7 @@
  *
  */
 
-
+/** \namespace dsc_controller */
 namespace dsc_controller {
 
 

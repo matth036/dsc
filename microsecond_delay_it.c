@@ -1,6 +1,6 @@
 #include "microsecond_delay.h"
 
-/* 
+/** 
  * microsecond_delay(uint16_t) does not use interupts.
  * Instead, it polls
  * TIM_GetFlagStatus(TIMx, TIM_FLAG_CC1)
@@ -13,6 +13,7 @@
  *
  */
 #if MICROSECOND_DELAY_TIMER_TO_USE == 13
+/** \ingroup os */
 void TIM8_UP_TIM13_IRQHandler(void)
 {
   if (TIM_GetITStatus(TIM13, TIM_IT_CC1) != RESET) {
@@ -20,6 +21,7 @@ void TIM8_UP_TIM13_IRQHandler(void)
   }
 }
 #elif  MICROSECOND_DELAY_TIMER_TO_USE == 14
+/** \ingroup os */
 void TIM8_TRG_COM_TIM14_IRQHandler(void){
   if (TIM_GetITStatus(TIM14, TIM_IT_CC1) != RESET) {
     TIM_ClearITPendingBit(TIM14, TIM_IT_CC1);

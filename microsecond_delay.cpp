@@ -12,7 +12,6 @@ using MicroSecondDelay::TIMmicrosecond_delay_timer;
 
 void MicroSecondDelay::microsecond_delay_configure(void)
 {
-
   TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
   TIM_OCInitTypeDef TIM_OCInitStructure;
   RCC_APB1PeriphClockCmd(MicroSecondDelay::microsecond_delay_timer_rcc_bus,
@@ -60,6 +59,7 @@ void MicroSecondDelay::microsecond_delay(uint16_t value)
   TIM_ClearFlag(TIMmicrosecond_delay_timer, TIM_FLAG_CC1);
 }
 
+/*! Delay for the specified number of milliseconds.  */
 void MicroSecondDelay::millisecond_delay(uint32_t value)
 {
   while (value) {

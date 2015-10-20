@@ -4,7 +4,7 @@
    *   To create a 32786 Hz clock we need toggle at 65536 Hz
    *   We operate TIM13 at it's maximum frequency 42 MHz.
    *   We want to toggle every 640.869 clock ticks. (42000000.0 / 65536.0)
-   *   The conditional achieves this on the average.
+   *   The conditional in the interupt achieves this on the average.
    */
 
 static uint32_t tim13_it_count = 0;

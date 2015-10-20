@@ -1,5 +1,5 @@
-#ifndef _CHARLCD_STM32F_H
-#define _CHARLCD_STM32F_H
+#ifndef CHARLCD_STM32F_H_
+#define CHARLCD_STM32F_H_
 
 #include "stm32f4xx_gpio.h"
 #include "stm32f4xx.h"
@@ -7,7 +7,13 @@
 #include "Print.h"
 #include <initializer_list>
 
-/* Commands, de-macro-ized from Arduino code. */
+/**\defgroup char_lcd ''Character Liquid Crystal Display'' */
+
+
+/**\addtogroup char_lcd 
+ *@{
+ **/
+/** Commands, de-macro-ized from Arduino code. */
 static constexpr uint8_t LCD_CLEARDISPLAY = 0x01;
 static constexpr uint8_t LCD_RETURNHOME = 0x02;
 static constexpr uint8_t LCD_ENTRYMODESET = 0x04;
@@ -44,7 +50,7 @@ static constexpr uint8_t LCD_2LINE = 0x08;
 static constexpr uint8_t LCD_1LINE = 0x00;
 static constexpr uint8_t LCD_5x10DOTS = 0x04;
 static constexpr uint8_t LCD_5x8DOTS = 0x00;
-
+/*@}*/
 
 /* Pin numbers are bit masks, e.g. GPIO_Pin_9 == 0x0200 == 1<<9. 
  *  The macro GPIO_Pin_9 is #define-d in stm32f4xx_gpio.h as ((uint16_t)0x0200)
@@ -61,10 +67,10 @@ using std::initializer_list;
 class CharLCD_STM32F : public Print {
 public:
   /*! pins.size() determines the configuration.
-   *  (pins.size()) == 6   -->  4 bit mode, rw grounded.
-   *  (pins.size()) == 7   -->  4 bit mode, rw connected to uC.
-   *  (pins.size()) == 10  -->  8 bit mode, rw grounded.
-   *  (pins.size()) == 11  -->  8 bit mode, rw connected to uC.
+   *  - (pins.size()) == 6   -->  4 bit mode, rw grounded.
+   *  - (pins.size()) == 7   -->  4 bit mode, rw connected to uC.
+   *  - (pins.size()) == 10  -->  8 bit mode, rw grounded.
+   *  - (pins.size()) == 11  -->  8 bit mode, rw connected to uC.
    * 
    *  If ports.size() > pins.size() The last element of ports[]
    *  is used for the remaining pins.
@@ -104,7 +110,7 @@ public:
   void scrollDisplayRight();
   void leftToRight();
   void rightToLeft();
-  void autoscroll();
+  void autoscroll(); /*!< */
   void noAutoscroll();
   void createChar(uint8_t, uint8_t[]);
   void setCursor(uint8_t, uint8_t); 
@@ -144,7 +150,6 @@ private:
   uint8_t _initialized;
   uint8_t _numlines;
   uint8_t _currline;
-  //  bool blocked_for_PWM;
 };
 
-#endif /*  _CHARLCD_STM32F_H  */
+#endif  // CHARLCD_STM32F_H_

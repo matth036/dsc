@@ -192,7 +192,7 @@ void CharLCD_STM32F::gpio_init_msb()
 }
 
 
-
+/** */
 void CharLCD_STM32F::begin(uint8_t cols, uint8_t lines, uint8_t dotsize)
 {
   if (lines > 1) {
@@ -258,7 +258,7 @@ void CharLCD_STM32F::begin(uint8_t cols, uint8_t lines, uint8_t dotsize)
   _displaycontrol = LCD_DISPLAYON | LCD_CURSOROFF | LCD_BLINKOFF;
   display();
 
-  // clear it off
+  // clear it
   clear();
 
   // Initialize to default text direction (for romance languages)
@@ -268,6 +268,7 @@ void CharLCD_STM32F::begin(uint8_t cols, uint8_t lines, uint8_t dotsize)
 }
 
 /********** high level commands, for the user! */
+/** Clears the display. */
 void CharLCD_STM32F::clear()
 {
   command(LCD_CLEARDISPLAY);	// clear display, set cursor position to zero
@@ -275,6 +276,7 @@ void CharLCD_STM32F::clear()
   microsecond_delay(0xFFFF);    // NEWHAVEN_OLED_MOD
 }
 
+/** Sets the cursor to row zero, column zero. */
 void CharLCD_STM32F::home()
 {
   command(LCD_RETURNHOME);	// set cursor position to zero
@@ -290,6 +292,11 @@ void CharLCD_STM32F::VARIOUS_HACKS(){
 
 }
 
+/** @brief Sets the cursor to the specified column and row.  
+ *
+ * The first row has row number zero. 
+ * The first column has column number zero. 
+ **/
 void CharLCD_STM32F::setCursor(uint8_t col, uint8_t row)
 {
   /* 
@@ -310,39 +317,42 @@ void CharLCD_STM32F::setCursor(uint8_t col, uint8_t row)
   command(LCD_SETDDRAMADDR | (col + row_offsets[row]));
 }
 
-// Turn the display on/off (quickly)
+/*! Turn the display off (quickly) */
 void CharLCD_STM32F::noDisplay()
 {
   _displaycontrol &= ~LCD_DISPLAYON;
   command(LCD_DISPLAYCONTROL | _displaycontrol);
 }
 
+/*! Turn the display on (quickly) */
 void CharLCD_STM32F::display()
 {
   _displaycontrol |= LCD_DISPLAYON;
   command(LCD_DISPLAYCONTROL | _displaycontrol);
 }
 
-// Turns the underline cursor on/off
+/*! Turns the underline cursor off. */
 void CharLCD_STM32F::noCursor()
 {
   _displaycontrol &= ~LCD_CURSORON;
   command(LCD_DISPLAYCONTROL | _displaycontrol);
 }
 
+/*! Turns the underline cursor on. */
 void CharLCD_STM32F::cursor()
 {
   _displaycontrol |= LCD_CURSORON;
   command(LCD_DISPLAYCONTROL | _displaycontrol);
 }
 
-// Turn on and off the blinking cursor
+/*! Stops blinking of the cursor */
 void CharLCD_STM32F::noBlink()
 {
   _displaycontrol &= ~LCD_BLINKON;
   command(LCD_DISPLAYCONTROL | _displaycontrol);
 }
 
+/*! Starts blinking of the cursor */
 void CharLCD_STM32F::blink()
 {
   _displaycontrol |= LCD_BLINKON;
@@ -350,38 +360,40 @@ void CharLCD_STM32F::blink()
 }
 
 // These commands scroll the display without changing the RAM
+/*! Scrolls the display one character to the left. */
 void CharLCD_STM32F::scrollDisplayLeft(void)
 {
   command(LCD_CURSORSHIFT | LCD_DISPLAYMOVE | LCD_MOVELEFT);
 }
 
+/*! Scrolls the display one character to the right. */
 void CharLCD_STM32F::scrollDisplayRight(void)
 {
   command(LCD_CURSORSHIFT | LCD_DISPLAYMOVE | LCD_MOVERIGHT);
 }
 
-// This is for text that flows Left to Right
+/** This is for text that flows Left to Right */
 void CharLCD_STM32F::leftToRight(void)
 {
   _displaymode |= LCD_ENTRYLEFT;
   command(LCD_ENTRYMODESET | _displaymode);
 }
 
-// This is for text that flows Right to Left
+/*! This is for text that flows Right to Left */
 void CharLCD_STM32F::rightToLeft(void)
 {
   _displaymode &= ~LCD_ENTRYLEFT;
   command(LCD_ENTRYMODESET | _displaymode);
 }
 
-// This will 'right justify' text from the cursor
+/*! This will 'right justify' text from the cursor */
 void CharLCD_STM32F::autoscroll(void)
 {
   _displaymode |= LCD_ENTRYSHIFTINCREMENT;
   command(LCD_ENTRYMODESET | _displaymode);
 }
 
-// This will 'left justify' text from the cursor
+/*! This will 'left justify' text from the cursor */
 void CharLCD_STM32F::noAutoscroll(void)
 {
   _displaymode &= ~LCD_ENTRYSHIFTINCREMENT;
