@@ -1,35 +1,11 @@
-#ifndef _TELESCOPE_MODEL_H
-#define _TELESCOPE_MODEL_H
+#ifndef TELESCOPE_MODEL_H_
+#define TELESCOPE_MODEL_H_
 
 #include <cstdint>
 #include <vector>
 #include <memory>
 #include "AA3DCoordinate.h"
 #include "AA2DCoordinate.h"
-
-/** \defgroup wankitude ''Shit I Don't Give a Fuck About.'' */
-
-/** \addtogroup wankitude */
-namespace bogus{
-  /** \addtogroup wankitude 
-   * @brief Indication of my feelings about this project.
-   */
-  constexpr int dogfood = 86; /*!< metric indicating my indifference.  */
-
-
-
-
-}
-
-
-
-
-
-
-
-
-
-
 
 // #include "float_coordinates.h"
 // #include "quadrature_decoder.h"
@@ -43,7 +19,7 @@ class Quadrature_Decoder;
  * Use signed integer types for encoder data.
  *
  */
-typedef struct {
+typedef struct {[C
   int32_t azi_value;
   int32_t alt_value;
 } Alt_Azi_Snapshot_t;
