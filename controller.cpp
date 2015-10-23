@@ -34,11 +34,12 @@ void dsc_controller::set_character_reciever(Character_Reciever * cr)
   current_character_reciever = cr;
 }
 
-/** Returns a pointer to the currently active Character_Recoever. */
+/** Returns a pointer to the currently active Character_Reciever. */
 Character_Reciever *dsc_controller::get_character_reciever()
 {
   return current_character_reciever;
 }
+
 /** The default treatment of input characters is to take them as forming command language words. */
 void default_put_char(char c)
 {
@@ -107,5 +108,14 @@ std::string dsc_controller::pop_cmd_buffer()
   cmd_buffer.pop_back();
   return item;
 }
+
+void dsc_controller::push_cmd_buffer(std::string cmd)
+{
+  dsc_controller::cmd_buffer.push_back(cmd);
+}
+
+
+
+
 /** @} */
 // eof
