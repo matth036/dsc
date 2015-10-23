@@ -19,7 +19,7 @@ class Quadrature_Decoder;
  * Use signed integer types for encoder data.
  *
  */
-typedef struct {[C
+typedef struct {
   int32_t azi_value;
   int32_t alt_value;
 } Alt_Azi_Snapshot_t;

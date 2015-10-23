@@ -3,7 +3,7 @@
 
 #include <string>
   
-/** \defgroup custom_data_types ''Custom Data Types'' */
+/** \defgroup custom_data_types Custom Data Types */
 
 /** \addtogroup custom_data_types */
 namespace sexagesimal {

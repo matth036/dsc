@@ -8,11 +8,10 @@
  *  
  */
 #include <inttypes.h>
+
 #ifdef __cplusplus
 #include <sexagesimal.h>
-// class sexagesimal::Sexagesimal;
 #endif
-// #include <sexagesimal.h>
 
 #define WAKEUP_BUTTON_EXTI_LINE          EXTI_Line0
 #define TAMPER_BUTTON_EXTI_LINE          EXTI_Line13

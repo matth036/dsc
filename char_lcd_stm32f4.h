@@ -7,7 +7,9 @@
 #include "Print.h"
 #include <initializer_list>
 
-/**\defgroup char_lcd ''Character Liquid Crystal Display'' */
+/**\defgroup char_lcd Character Liquid Crystal Display 
+ * Class for controlling an LCD display.
+ */
 
 
 /**\addtogroup char_lcd 
@@ -64,6 +66,15 @@ using pin = uint16_t;
 using port = GPIO_TypeDef*;  // A pointer to a struct. 
 using std::initializer_list;
 
+
+  /**
+   * @brief Class controlling a character LCD display.  
+   *
+   * Adapted from Arduino code.  Code is rather specific to STM32F controllers
+   * but attempts to be generic about the LCD.
+   * 
+   **/
+/**\addtogroup char_lcd */
 class CharLCD_STM32F : public Print {
 public:
   /*! pins.size() determines the configuration.

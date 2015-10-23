@@ -12,7 +12,9 @@
  *
  */
 
+/** \addtogroup os */
 /** \namespace dsc_controller */
+/** Containing a stack for input characters and a stack of strings for input commands. */
 namespace dsc_controller {
 
 
